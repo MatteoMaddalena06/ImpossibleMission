@@ -6,4 +6,4 @@ import java.util.List;
 import model.GameObject;
 import model.Robot;
 
-public record RoomPrototype(List<GameObject> gameObjectList, List<Robot> robotList, Room.Color color) {}
+record RoomPrototype(List<GameObject> gameObjectList, List<Robot> robotList, Room.Color color) {}

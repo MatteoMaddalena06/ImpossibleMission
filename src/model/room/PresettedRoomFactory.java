@@ -8,7 +8,7 @@ import static java.util.Map.entry;
 import model.GameObject;
 import model.Robot;
 
-public abstract class PresettedRoomFactory
+abstract class PresettedRoomFactory
 {
 	//need gameObjectList implementation
 	private static Map<String, RoomPrototype> pressettedRoomsWithExitOnLeft = Map.ofEntries(
