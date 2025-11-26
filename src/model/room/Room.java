@@ -1,7 +1,12 @@
-package model;
+package model.room;
 
 import java.util.List;
 import java.util.Collections;
+
+//inproject import
+import model.Forniture;
+import model.GameObject;
+import model.Robot;
 
 public class Room
 {
@@ -15,6 +20,12 @@ public class Room
 	public enum ExitLayout
 	{ ONLEFT, ONRIGHT, ONLEFTANDRIGHT }
 	
+	public static class RoomNotFoundException extends Exception 
+	{
+		public RoomNotFoundException(String errorMessage)
+		{ super(errorMessage); }
+	}
+	
 	public Room(List<GameObject> gameObjectList, List<Robot> robotList, Color roomColor)
 	{
 		this.gameObjectList = gameObjectList;
@@ -22,7 +33,7 @@ public class Room
 		this.color = roomColor;
 	}
 	
-	public static Room getPresettedRoom(String roomID, ExitLayout exitLayout)
+	public static Room getPresettedRoom(String roomID, ExitLayout exitLayout) throws RoomNotFoundException
 	{ return PresettedRoomFactory.getRoom(roomID, exitLayout); }
 	
 	public List<GameObject> getGameObjectList()
