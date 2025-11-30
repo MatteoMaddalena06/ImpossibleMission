@@ -1,6 +1,6 @@
 package model.gameobject;
 
-public class Forniture extends GameObject
+public class Furniture extends GameObject
 {
 
 }

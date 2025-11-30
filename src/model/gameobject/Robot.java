@@ -1,5 +1,6 @@
 package model.gameobject;
 
-public class Robot {
+public class Robot extends GameObject 
+{
 
 }
