@@ -3,7 +3,7 @@ package model.room;
 import java.util.List;
 import java.util.Collections;
 
-import model.gameobject.Forniture;
+import model.gameobject.Furniture;
 import model.gameobject.GameObject;
 import model.gameobject.Robot;
 
@@ -11,7 +11,7 @@ public class Room
 {
 	private List<GameObject> otherGameObjectList;
 	private List<Robot> robotList;
-	private List<Forniture> fornitureList;
+	private List<Furniture> fornitureList;
 	private Color color;
 	private ExitLayout layout;
 
@@ -23,9 +23,9 @@ public class Room
 	
 	public Room(List<GameObject> gameObjectList, Color color, ExitLayout layout)
 	{
-		this.otherGameObjectList = gameObjectList.stream().filter(g -> !(g instanceof Robot) && !(g instanceof Forniture)).toList();
+		this.otherGameObjectList = gameObjectList.stream().filter(g -> !(g instanceof Robot) && !(g instanceof Furniture)).toList();
 		this.robotList = gameObjectList.stream().filter(g -> g instanceof Robot).map(g -> (Robot)g).toList();
-		this.fornitureList = gameObjectList.stream().filter(g -> g instanceof Forniture).map(g -> (Forniture)g).toList();
+		this.fornitureList = gameObjectList.stream().filter(g -> g instanceof Furniture).map(g -> (Furniture)g).toList();
 		this.color = color;
 		this.layout = layout;
 	}
@@ -33,10 +33,10 @@ public class Room
 	public List<GameObject> otherGameObjectList()
 	{ return Collections.unmodifiableList(otherGameObjectList); }
 	
-	public List<Forniture> getFornitureList()
+	public List<Furniture> getFornitureList()
 	{ return Collections.unmodifiableList(fornitureList); }
 	
-	public boolean removeForniture(Forniture object)
+	public boolean removeForniture(Furniture object)
 	{ return fornitureList.remove(object); }
 	
 	public List<Robot> getRobotList()

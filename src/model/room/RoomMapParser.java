@@ -9,26 +9,26 @@ import model.gameobject.GameObject;
 import model.gameobject.GameObjectFactory;
 import model.gameobject.Point;
 
-abstract class RoomAsciiMapParser
+abstract class RoomMapParser
 {	
-	public static List<GameObject> parse(RoomAsciiMap asciiRoom)
+	public static List<GameObject> parse(RoomMap room)
 	{
 		List<GameObject> result = new LinkedList<GameObject>();
 		
-		String[] room = asciiRoom.getAsciiMap().split("\n");
-		int rows = room.length, cols  = room[0].length();
-		int tileSize = asciiRoom.getTileSize(), emptyChar = asciiRoom.getEmptyChar();
+		int[][] map = room.getMap();
+		int rows = map.length, cols  = map[0].length;
+		int tileSize = room.getTileSize(), emptySpace = room.getEmptySpace();
 		boolean[][] visited = new boolean[rows][cols];
 		
 		for(int y = 0; y < rows; y++)
 		{
 			for(int x = 0; x < cols; x++)
 			{
-				char symbol = room[y].charAt(x);
+				int type = map[y][x];
 				
-				if(symbol == emptyChar || visited[y][x]) continue;
+				if(type == emptySpace || visited[y][x]) continue;
 				
-				List<Point> cluster = floodFill(room, x, y, visited, symbol);
+				List<Point> cluster = floodFill(map, x, y, visited, type);
 				
 				int minX = cluster.stream().mapToInt(p -> p.x()).min().getAsInt();
 				int maxX = cluster.stream().mapToInt(p -> p.x()).max().getAsInt();
@@ -39,19 +39,19 @@ abstract class RoomAsciiMapParser
 				int width  = (maxX - minX + 1) * tileSize;
 				int height = (maxY - minY + 1) * tileSize;
 				
-				result.add(GameObjectFactory.produce(symbol, realX, realY, width, height));
+				result.add(GameObjectFactory.produce(type, realX, realY, width, height));
 			}
 		}
 	
 		return result;
 	}
 	
-	private static List<Point> floodFill(String[] room, int x, int y, boolean[][] visited, char symbol)
+	private static List<Point> floodFill(int[][] map, int x, int y, boolean[][] visited, int type)
 	{
 		List<Point> cluster = new LinkedList<Point>();
 		
 		Stack<Point> stack = new Stack<Point>();
-		int rows = room.length, cols = room[0].length();
+		int rows = map.length, cols = map[0].length;
 		
 		stack.push(new Point(x, y));
 		
@@ -60,7 +60,7 @@ abstract class RoomAsciiMapParser
 			Point currentPoint = stack.pop();
 			int currX = currentPoint.x(), currY = currentPoint.y();
 			
-			if(currX < 0 || currY < 0 || currX >= cols || currY >= rows || visited[currY][currX] || room[currY].charAt(currX) != symbol) 
+			if(currX < 0 || currY < 0 || currX >= cols || currY >= rows || visited[currY][currX] || map[currY][currX] != type) 
 				continue;
 			
 			visited[currY][currX] = true;
