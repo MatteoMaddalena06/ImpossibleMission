@@ -6,12 +6,27 @@ public class GameObjectFactory
 	{ 
 		switch(symbol)
 		{
-			case FixedObject.TYPE_SOLID:
+			case FixedObject.TYPE_FLOOR:
+			case FixedObject.TYPE_WALL:
 				return new FixedObject(symbol, x, y, w, h);
+
 			case Player.TYPE_PLAYER:
 				return new Player(x, y);
-			//TODO altre entità
 
+			case Robot.TYPE_ROBOT:
+				return new Robot(x, y);
+
+			case BlackOrb.TYPE_BLACKORB:
+				return new BlackOrb(x, y);
+
+			case Furniture.TYPE_DESK:
+			case Furniture.TYPE_BOOKSHELF:
+			case Furniture.TYPE_TERMINAL:
+			case Furniture.TYPE_VENDING_MACHINE:
+				return new Furniture(symbol, x, y, w, h);
+
+			//TODO: movingPlatform 
+			
 			default:
 				return null;
 		}
