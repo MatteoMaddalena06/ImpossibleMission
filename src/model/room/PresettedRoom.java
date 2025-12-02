@@ -1,12 +1,15 @@
 package model.room;
 
+//data structure modules
+import java.util.Arrays;
+
 public enum PresettedRoom 
 {
-	ROOM1 (new Room(RoomMapParser.parse(RoomMap.ROOM1),  Room.Color.CYAN,   Room.ExitLayout.ONLEFT)),
-	ROOM2 (new Room(RoomMapParser.parse(RoomMap.ROOM2),  Room.Color.YELLOW, Room.ExitLayout.ONRIGHT)),
+	//TODO ROOM1 (new Room(RoomMapParser.parse(RoomMap.ROOM1),  Room.Color.CYAN,   Room.ExitLayout.ONLEFT)),
+	//TODO ROOM2 (new Room(RoomMapParser.parse(RoomMap.ROOM2),  Room.Color.YELLOW, Room.ExitLayout.ONRIGHT)),
 	ROOM3 (new Room(RoomMapParser.parse(RoomMap.ROOM3),  Room.Color.YELLOW, Room.ExitLayout.ONLEFT)),
 	ROOM4 (new Room(RoomMapParser.parse(RoomMap.ROOM4),  Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT)),
-	ROOM5 (new Room(RoomMapParser.parse(RoomMap.ROOM5),  Room.Color.GREEN,  Room.ExitLayout.ONRIGHT)),
+	ROOM5 (new Room(RoomMapParser.parse(RoomMap.ROOM5),	 Room.Color.GREEN,  Room.ExitLayout.ONRIGHT)),
 	ROOM6 (new Room(RoomMapParser.parse(RoomMap.ROOM6),  Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT)),
 	ROOM7 (new Room(RoomMapParser.parse(RoomMap.ROOM7),  Room.Color.GREEN,  Room.ExitLayout.ONLEFTANDRIGHT)),
 	ROOM8 (new Room(RoomMapParser.parse(RoomMap.ROOM8),  Room.Color.GREEN,  Room.ExitLayout.ONRIGHT)),
@@ -35,6 +38,15 @@ public enum PresettedRoom
 	ROOM31(new Room(RoomMapParser.parse(RoomMap.ROOM31), Room.Color.GREEN,  Room.ExitLayout.ONLEFTANDRIGHT)),
 	ROOM32(new Room(RoomMapParser.parse(RoomMap.ROOM32), Room.Color.YELLOW, Room.ExitLayout.ONRIGHT));
 	
+	private static final PresettedRoom[] leftRoom          = Arrays.stream(values()).filter(r -> r.room.getExitLayout() == Room.ExitLayout.ONLEFT).toArray(PresettedRoom[]::new);
+	private static final PresettedRoom[] rightRoom         = Arrays.stream(values()).filter(r -> r.room.getExitLayout() == Room.ExitLayout.ONRIGHT).toArray(PresettedRoom[]::new);
+	private static final PresettedRoom[] leftAndRightRoom  = Arrays.stream(values()).filter(r -> r.room.getExitLayout() == Room.ExitLayout.ONLEFTANDRIGHT).toArray(PresettedRoom[]::new);
+	
+	public static final int LEFT_ROOM_NUMBER       = leftRoom.length;
+	public static final int RIGHT_ROOM_NUMBER      = rightRoom.length;
+	public static final int LEFT_RIGHT_ROOM_NUMBER = leftAndRightRoom.length;
+	public static final int ROOM_NUMBER            = LEFT_ROOM_NUMBER + RIGHT_ROOM_NUMBER + LEFT_RIGHT_ROOM_NUMBER;
+	
 	private Room room;
 	
 	private PresettedRoom(Room room)
@@ -42,4 +54,13 @@ public enum PresettedRoom
 	
 	public Room getRoom()
 	{ return room; }
+	
+	public static Room getRoom(Room.ExitLayout layout, int index)
+	{ 
+		return switch(layout) {
+			case Room.ExitLayout.ONLEFT  		-> leftRoom[index].room;
+			case Room.ExitLayout.ONRIGHT		-> rightRoom[index].room;
+			case Room.ExitLayout.ONLEFTANDRIGHT -> leftAndRightRoom[index].room;
+		};
+	}
 }

@@ -815,8 +815,8 @@ enum RoomMap
 			{1,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,2}
 	});
 	
-	private final static int EMPTYSPACE = 0;
-	private final static int TILESIZE   = 16;
+	public static final int EMPTY_SPACE = 0;
+	public static final int TILE_SIZE   = 16;
 	
 	private int[][] asciiMap;
 	
@@ -825,10 +825,4 @@ enum RoomMap
 	
 	public int[][] getMap()
 	{ return asciiMap; }
-	
-	public char getEmptySpace()
-	{ return EMPTYSPACE; }
-	
-	public int getTileSize()
-	{ return TILESIZE; }
 }

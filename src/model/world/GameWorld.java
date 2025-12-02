@@ -1,8 +1,158 @@
 package model.world;
 
-import model.room.Room;
+//data structure modules
+import java.util.List;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.Arrays;
+import java.util.Collections;
 
-public class GameWorld 
+//IO modules
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.file.Path;
+
+//inproject import
+import model.room.Room;
+import model.room.PresettedRoom;
+import model.gameobject.Point;
+
+public class GameWorld implements Serializable
 {
+	private static final long   serialVersionUID = 1L;
 	
+	private static final int    STD_ELEVATOR_NUMBER = 8;
+	private static final int    STD_WORLD_DEPTH     = 6;
+	private static final String INVALID_SIZE_MSG    = "Invalid gameworld sizes";
+	
+	private Room[][] worldMatrix;
+
+	public GameWorld(Room[][] worldMatrix)
+	{ this.worldMatrix = worldMatrix; }
+	
+	public static GameWorld load(Path pathname) throws IOException, ClassNotFoundException 
+	{
+		FileInputStream fileInput = new FileInputStream(pathname.toFile());
+		ObjectInputStream objectInput = new ObjectInputStream(fileInput);
+		
+		GameWorld world = (GameWorld)objectInput.readObject();
+		objectInput.close();
+		
+		return world;
+	}
+	
+	public void store(Path pathname) throws IOException
+	{
+		FileOutputStream fileOutput = new FileOutputStream(pathname.toFile());
+		ObjectOutputStream objectOutput = new ObjectOutputStream(fileOutput);
+		
+		objectOutput.writeObject(this);
+		objectOutput.close();
+	}
+
+	//TODO: add distribution of puzzle pieces and passwords 
+	//(For now, the map is generated to ensure only traversability. Playability is easily achieved (pending implementation of Furniture.class)
+	public static GameWorld randomGeneration()
+	{
+		 Room[][] worldMatrix = new Room[STD_WORLD_DEPTH][(STD_ELEVATOR_NUMBER << 1) + 1];
+		 int rows = worldMatrix.length, cols = worldMatrix[0].length;
+		 
+		 List<Point> pointToRemove = new LinkedList<Point>();
+		 int leftRoomCounter = 0, rightRoomCounter = 0, leftRightRoomCounter = 0;
+				 
+		 for(int x = 0; x < cols; x += 2)
+		 {
+			 int y = (int)(Math.random() * rows);
+			 pointToRemove.add(new Point(x, y));
+			 
+			 if(x == 0)
+				 worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONRIGHT, rightRoomCounter++);
+			 
+			 else if(x == cols - 1)
+				 worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFT, leftRoomCounter++);
+			 
+			 else
+				 worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFTANDRIGHT, leftRightRoomCounter++);
+		 }
+		 
+		 List<Point> pointToUse = IntStream.range(0, cols).filter(x -> x % 2 == 0).mapToObj(
+				 x -> IntStream.range(0, rows).mapToObj(y -> new Point(x, y))).flatMap(p -> p).collect(Collectors.toList());
+		 pointToUse.removeAll(pointToRemove);
+		 Collections.shuffle(pointToUse);
+		 		 
+		 while(leftRoomCounter + rightRoomCounter + leftRightRoomCounter < PresettedRoom.ROOM_NUMBER)
+		 {
+			 Point point = pointToUse.remove(0);
+			 int x = point.x(), y = point.y();
+			 
+			 if(x == 0 && rightRoomCounter < PresettedRoom.RIGHT_ROOM_NUMBER)
+				 worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONRIGHT, rightRoomCounter++);
+			 
+			 else if(x == cols - 1 && leftRoomCounter < PresettedRoom.LEFT_ROOM_NUMBER)
+				 worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFT, leftRoomCounter++);
+			 
+			 else if(x != 0 && x != cols - 1)
+			 {
+				 List<Room.ExitLayout> toChoose = Arrays.asList(Room.ExitLayout.ONLEFT, Room.ExitLayout.ONRIGHT, Room.ExitLayout.ONLEFTANDRIGHT);
+				 Collections.shuffle(toChoose);
+				 
+				 for(Room.ExitLayout layout : toChoose)
+				 {
+					 if(layout == Room.ExitLayout.ONLEFT && leftRoomCounter < PresettedRoom.LEFT_ROOM_NUMBER)
+					 { worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFT, leftRoomCounter++); break; }
+						 
+					 if(layout == Room.ExitLayout.ONRIGHT && rightRoomCounter < PresettedRoom.RIGHT_ROOM_NUMBER)	
+					 { worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONRIGHT, rightRoomCounter++); break; }
+					 
+					 if(layout == Room.ExitLayout.ONLEFTANDRIGHT && leftRightRoomCounter < PresettedRoom.LEFT_RIGHT_ROOM_NUMBER)
+					 { worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFTANDRIGHT, leftRightRoomCounter++); break; }
+				 }	
+			 }	
+		 }
+		 
+		 return new GameWorld(worldMatrix);	
+	}
+	
+	public Room[][] getWorldMatrix()
+	{ return worldMatrix; }
+	
+	/* remove comment for debugging
+	@Override
+	public String toString()
+	{
+		String out = "";
+		
+		for(int i = 0; i < worldMatrix.length; i++)
+		{
+			for(int j = 0; j < worldMatrix[0].length; j++)
+			{
+				out += worldMatrix[i][j] + " ";
+				
+				if(worldMatrix[i][j] == null)
+					out += "          ";
+				
+				else if(worldMatrix[i][j].getExitLayout() == Room.ExitLayout.ONLEFT)
+					out += "        ";
+				
+				else if(worldMatrix[i][j].getExitLayout() == Room.ExitLayout.ONRIGHT)
+					out += "       ";			
+			}
+
+			out += "\n";
+		}
+		
+		return out;
+	}
+	
+	public static void main(String[] args)
+	{
+		GameWorld world = GameWorld.randomGeneration();
+		
+		System.out.println(world);
+	} */
 }

@@ -1,5 +1,6 @@
 package model.room;
 
+//data structure modules
 import java.util.List;
 import java.util.Stack;
 import java.util.LinkedList;
@@ -17,7 +18,7 @@ abstract class RoomMapParser
 		
 		int[][] map = room.getMap();
 		int rows = map.length, cols  = map[0].length;
-		int tileSize = room.getTileSize(), emptySpace = room.getEmptySpace();
+		int tileSize = RoomMap.TILE_SIZE, emptySpace = RoomMap.EMPTY_SPACE;
 		boolean[][] visited = new boolean[rows][cols];
 		
 		for(int y = 0; y < rows; y++)
