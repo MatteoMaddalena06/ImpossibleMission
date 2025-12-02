@@ -50,20 +50,57 @@ public class Player extends GameObject
         else{currentState = State.IDLE;}
     }
 
-    public void setVelX(double velX){this.velX = velX;}
+    public static int getPlayerWidth() {
+        return PLAYER_WIDTH;
+    }
 
-    public void setVelY(double velY){this.velY = velY;}
+    public static int getPlayerHeight() {
+        return PLAYER_HEIGHT;
+    }
 
-    public double getVelX(){ return velX; }
-    public double getVelY(){ return velY; }
+    public static int getTypePlayer() {
+        return TYPE_PLAYER;
+    }
 
-    public double getSpeed(){return speed;}
-    public void setSpeed(double speed){this.speed = speed;}
+    public double getVelX() {
+        return velX;
+    }
 
-    public Direction getDirection(){ return currentDirection; }
-    public State getState() {return currentState;}
+    public void setVelX(double velX) {
+        this.velX = velX;
+    }
 
-    public void setState(State s) {this.currentState = s;}
-    public void setDirection(Direction d) {this.currentDirection = d;}
-//fix git
+    public double getVelY() {
+        return velY;
+    }
+
+    public void setVelY(double velY) {
+        this.velY = velY;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public Direction getCurrentDirection() {
+        return currentDirection;
+    }
+
+    public void setCurrentDirection(Direction currentDirection) {
+        this.currentDirection = currentDirection;
+    }
+
+    public State getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(State currentState) {
+        this.currentState = currentState;
+    }
+
+
 }
