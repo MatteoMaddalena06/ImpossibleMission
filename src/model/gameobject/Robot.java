@@ -14,7 +14,7 @@ public class Robot extends GameObject
     private Direction currentDirection = Direction.RIGHT;
     private State currentState = State.WALKING;
     
-    public Robot(int x, int y){ super(TYPE_ROBOT, x, y, ROBOT_WIDTH, ROBOT_HEIGHT); }
+    public Robot(int x, int y, int w, int h){ super(x, y, ROBOT_WIDTH, ROBOT_HEIGHT); }
 
     @Override
     public void update(){

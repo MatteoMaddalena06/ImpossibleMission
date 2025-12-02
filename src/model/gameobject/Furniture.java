@@ -14,8 +14,8 @@ public class Furniture extends GameObject
     private LootType content;
     private boolean isSearched;
 
-    public Furniture(int type, int x, int y, int w, int h){
-        super(type, x, y, w, h);
+    public Furniture(int x, int y, int w, int h){
+        super(x, y, w, h);
         this.isSearched = false;
         assignLootBasedOnType();
     }

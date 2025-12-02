@@ -10,7 +10,7 @@ public class BlackOrb extends GameObject{
     private int speed = 3;
     private int direction = 1;
 
-    public BlackOrb(int x, int y){ super(TYPE_BLACKORB, x, y, ORB_WIDTH, ORB_HEIGHT);}
+    public BlackOrb(int x, int y, int w, int h){ super(x, y, ORB_WIDTH, ORB_HEIGHT);}
 
     @Override
     public void update(){

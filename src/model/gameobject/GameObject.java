@@ -9,9 +9,8 @@ public abstract class GameObject
 	public String toString()
 	{ return type + ": (" + x + ", " + y + ")/(" + w + ", " + h + ")"; }
 	
-	public GameObject(int type, int x, int y, int w, int h)
+	public GameObject(int x, int y, int w, int h)
 	{
-		this.type = type;
 		this.x = x; this.y = y;
 		this.w = w; this.h = h;
 	}

@@ -1,6 +1,6 @@
 package model.room;
 
-enum RoomMap 
+public enum RoomMap 
 {
 	ROOM1 (new int[][] {}), //TODO
 	ROOM2 (new int[][] {}), //TODO
@@ -817,6 +817,14 @@ enum RoomMap
 	
 	public static final int EMPTY_SPACE = 0;
 	public static final int TILE_SIZE   = 16;
+	
+	public static final int WALL_ID      = 1;
+	public static final int FLOOR_ID 	 = 2;
+	public static final int PLATFORM_ID  = 3;
+	public static final int ROBOT_ID     = 4;
+	public static final int FURNITURE_ID = 5;
+	public static final int TERMINAL_ID  = 6;
+	public static final int BLACK_ORB_ID = 7;
 	
 	private int[][] asciiMap;
 	

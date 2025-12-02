@@ -19,7 +19,7 @@ public class Player extends GameObject
     private State currentState;
 
     public Player(int startX, int startY){
-        super(TYPE_PLAYER, startX, startY, PLAYER_WIDTH, PLAYER_HEIGHT);
+        super(startX, startY, PLAYER_WIDTH, PLAYER_HEIGHT);
 
         this.velX = 0;
         this.velY = 0;
