@@ -33,7 +33,12 @@ public class GameWorld implements Serializable
 	private Room[][] worldMatrix;
 
 	public GameWorld(Room[][] worldMatrix)
-	{ this.worldMatrix = worldMatrix; }
+	{ 
+		if(worldMatrix == null || worldMatrix.length == 0 || worldMatrix[0].length % 2 == 0)
+			throw new IllegalArgumentException(INVALID_SIZE_MSG);
+		
+		this.worldMatrix = worldMatrix; 
+	}
 	
 	public static GameWorld load(Path pathname) throws IOException, ClassNotFoundException 
 	{
