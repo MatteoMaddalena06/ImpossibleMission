@@ -1,8 +1,10 @@
 package model.gameobject;
 
+import model.room.RoomMap;
+
 public class BlackOrb extends GameObject{
 
-    public static final int TYPE_BLACKORB = 51;
+    public static final int TYPE_BLACKORB = RoomMap.BLACK_ORB_ID;
 
     private static final int ORB_WIDTH = 24;
     private static final int ORB_HEIGHT = 24;
@@ -10,7 +12,9 @@ public class BlackOrb extends GameObject{
     private int speed = 3;
     private int direction = 1;
 
-    public BlackOrb(int x, int y, int w, int h){ super(x, y, ORB_WIDTH, ORB_HEIGHT);}
+    public BlackOrb(int x, int y, int w, int h){ super(new Point(x, y), ORB_WIDTH, ORB_HEIGHT);
+        this.type = TYPE_BLACKORB;
+    }
 
     @Override
     public void update(){

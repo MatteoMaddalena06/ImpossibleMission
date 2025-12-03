@@ -1,6 +1,8 @@
 package model.gameobject;
 
-public abstract class GameObject 
+import java.io.Serializable;
+
+public abstract class GameObject implements Serializable
 {
 	protected int x, y, w, h;
 	protected int type;
@@ -9,9 +11,10 @@ public abstract class GameObject
 	public String toString()
 	{ return type + ": (" + x + ", " + y + ")/(" + w + ", " + h + ")"; }
 	
-	public GameObject(int x, int y, int w, int h)
+	public GameObject(Point point, int w, int h)
 	{
-		this.x = x; this.y = y;
+		this.x = point.getX();
+		this.y = point.getY();
 		this.w = w; this.h = h;
 	}
 

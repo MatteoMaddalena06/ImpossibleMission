@@ -19,8 +19,9 @@ public class Player extends GameObject
     private State currentState;
 
     public Player(int startX, int startY){
-        super(startX, startY, PLAYER_WIDTH, PLAYER_HEIGHT);
+        super(new Point(startX, startY), PLAYER_WIDTH, PLAYER_HEIGHT);
 
+        this.type = TYPE_PLAYER;
         this.velX = 0;
         this.velY = 0;
         this.currentDirection= Direction.RIGHT;

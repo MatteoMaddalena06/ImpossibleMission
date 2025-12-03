@@ -1,8 +1,10 @@
 package model.gameobject;
 
+import model.room.RoomMap;
+
 public class Robot extends GameObject 
 {
-    public static final int TYPE_ROBOT = 50;
+    public static final int TYPE_ROBOT = RoomMap.ROBOT_ID;
     private static final int ROBOT_WIDTH = 30;//sempre numeri da rivedere
     private static final int ROBOT_HEIGHT = 50;
 
@@ -14,7 +16,10 @@ public class Robot extends GameObject
     private Direction currentDirection = Direction.RIGHT;
     private State currentState = State.WALKING;
     
-    public Robot(int x, int y, int w, int h){ super(x, y, ROBOT_WIDTH, ROBOT_HEIGHT); }
+    public Robot(int x, int y, int w, int h){ 
+        super( new Point(x, y), ROBOT_WIDTH, ROBOT_HEIGHT);
+        this.type=TYPE_ROBOT;
+     }
 
     @Override
     public void update(){

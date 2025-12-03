@@ -10,8 +10,8 @@ public abstract class GameObjectFactory
 	public static GameObject produce(int type, int x, int y, int width, int height)
 	{ 
 		return switch(type) {
-			case RoomMap.WALL_ID      -> new FixedObject(x, y, width, height);
-			case RoomMap.FLOOR_ID     -> new FixedObject(x, y, width, height);
+			case RoomMap.WALL_ID      -> new FixedObject(type, x, y, width, height);
+			case RoomMap.FLOOR_ID     -> new FixedObject(type, x, y, width, height);
 			case RoomMap.PLATFORM_ID  -> new Platform(x, y, width, height);
 			case RoomMap.ROBOT_ID     -> new Robot(x, y, width, height);
 			case RoomMap.FURNITURE_ID -> new Furniture(x, y, width, height);
