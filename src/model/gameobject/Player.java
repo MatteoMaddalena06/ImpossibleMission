@@ -103,5 +103,20 @@ public class Player extends GameObject
         this.currentState = currentState;
     }
 
+	public Object givePuzzlePiece() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object giveRobotPassword() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object givePlatfromPassword() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

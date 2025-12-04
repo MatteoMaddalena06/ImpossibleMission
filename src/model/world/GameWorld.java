@@ -24,21 +24,15 @@ import model.gameobject.Point;
 
 public class GameWorld implements Serializable
 {
-	private static final long   serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	
-	private static final int    STD_ELEVATOR_NUMBER = 8;
-	private static final int    STD_WORLD_DEPTH     = 6;
-	private static final String INVALID_SIZE_MSG    = "Invalid gameworld sizes";
-	
+	private static final int STD_ELEVATOR_NUMBER = 8;
+	private static final int STD_WORLD_DEPTH     = 6;
+
 	private Room[][] worldMatrix;
 
 	public GameWorld(Room[][] worldMatrix)
-	{ 
-		if(worldMatrix == null || worldMatrix.length == 0 || worldMatrix[0].length % 2 == 0)
-			throw new IllegalArgumentException(INVALID_SIZE_MSG);
-		
-		this.worldMatrix = worldMatrix; 
-	}
+	{ this.worldMatrix = worldMatrix; }
 	
 	public static GameWorld load(Path pathname) throws IOException, ClassNotFoundException 
 	{
@@ -93,7 +87,7 @@ public class GameWorld implements Serializable
 		 while(leftRoomCounter + rightRoomCounter + leftRightRoomCounter < PresettedRoom.ROOM_NUMBER)
 		 {
 			 Point point = pointToUse.remove(0);
-			 int x = point.x(), y = point.y();
+			 int x = point.getX(), y = point.getY();
 			 
 			 if(x == 0 && rightRoomCounter < PresettedRoom.RIGHT_ROOM_NUMBER)
 				 worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONRIGHT, rightRoomCounter++);
@@ -153,11 +147,5 @@ public class GameWorld implements Serializable
 		
 		return out;
 	}
-	
-	public static void main(String[] args)
-	{
-		GameWorld world = GameWorld.randomGeneration();
-		
-		System.out.println(world);
-	} */
+	*/
 }

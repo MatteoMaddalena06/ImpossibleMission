@@ -1,75 +1,44 @@
 package model.gameobject;
 
+//IO modules
 import java.io.Serializable;
 
 public abstract class GameObject implements Serializable
 {
-	protected int x, y, w, h;
-	protected int type;
+	private static final long serialVersionUID = 1L;
 	
-	@Override
-	public String toString()
-	{ return type + ": (" + x + ", " + y + ")/(" + w + ", " + h + ")"; }
+	protected Point position;
+	protected int width, height;
 	
-	public GameObject(Point point, int w, int h)
-	{
-		this.x = point.getX();
-		this.y = point.getY();
-		this.w = w; this.h = h;
+	public GameObject(Point position, int width, int height)
+	{	
+		this.position = position;
+		this.width = width;
+		this.height = height;
+	}
+	
+	protected boolean isColliding(GameObject other)
+	{		
+		int x1 = position.getX(), y1 = position.getY();
+		int w1 = width, h1 = height;
+		
+		int x2 = other.position.getX(), y2 = other.position.getY();
+		int w2 = other.width, h2 = other.height;
+		
+		boolean firstCheck  = x1 < x2 + w2 && y1 < y2 + h2;
+		boolean secondCheck = x2 < x1 + w1 && y2 < y1 + h1;
+		
+		return firstCheck && secondCheck;
 	}
 
-	public abstract void update();
-
-	public boolean intersects(GameObject other){
-		return this.x < other.x +other.w &&
-			this.x + this.w > other.x &&
-			this.y < other.y + other.h &&
-			this.y + this.h > other.y;
-	}
-
-	public boolean intersects(int otherX, int otherY, int otherW, int otherH){
-		return this.x < otherX +otherW &&
-			this.x + this.w > otherX &&
-			this.y < otherY + otherH &&
-			this.y + this.h > otherY;
-	}
-
-	public int getX(){return x;}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getW() {
-		return w;
-	}
-
-	public void setW(int w) {
-		this.w = w;
-	}
-
-	public int getH() {
-		return h;
-	}
-
-	public void setH(int h) {
-		this.h = h;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-//fix git
+	public abstract void update(GameContext context);
+	
+	public Point getPosition()
+	{ return new Point(position); }
+	
+	public int getWidth()
+	{ return width; }
+	
+	public int getHeight()
+	{ return height; }
 }

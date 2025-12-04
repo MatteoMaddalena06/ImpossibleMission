@@ -31,16 +31,16 @@ abstract class RoomMapParser
 				
 				List<Point> cluster = floodFill(map, x, y, visited, type);
 				
-				int minX = cluster.stream().mapToInt(p -> p.x()).min().getAsInt();
-				int maxX = cluster.stream().mapToInt(p -> p.x()).max().getAsInt();
-				int minY = cluster.stream().mapToInt(p -> p.y()).min().getAsInt();
-				int maxY = cluster.stream().mapToInt(p -> p.y()).max().getAsInt();
+				int minX = cluster.stream().mapToInt(p -> p.getX()).min().getAsInt();
+				int maxX = cluster.stream().mapToInt(p -> p.getX()).max().getAsInt();
+				int minY = cluster.stream().mapToInt(p -> p.getY()).min().getAsInt();
+				int maxY = cluster.stream().mapToInt(p -> p.getY()).max().getAsInt();
 				
 				int realX  = x * tileSize, realY = y * tileSize; 
 				int width  = (maxX - minX + 1) * tileSize;
 				int height = (maxY - minY + 1) * tileSize;
 				
-				result.add(GameObjectFactory.produce(type, realX, realY, width, height));
+				result.add(GameObjectFactory.produce(type, new Point(realX, realY), width, height));
 			}
 		}
 	
@@ -59,7 +59,7 @@ abstract class RoomMapParser
 		while(!stack.empty())
 		{
 			Point currentPoint = stack.pop();
-			int currX = currentPoint.x(), currY = currentPoint.y();
+			int currX = currentPoint.getX(), currY = currentPoint.getY();
 			
 			if(currX < 0 || currY < 0 || currX >= cols || currY >= rows || visited[currY][currX] || map[currY][currX] != type) 
 				continue;

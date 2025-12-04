@@ -1,55 +1,54 @@
 package model.gameobject;
 
-import java.util.Random;
-
-import model.room.RoomMap;
-
+//TODO put information on the specific puzzle piece
 public class Furniture extends GameObject
 {
-    public static final int TYPE = RoomMap.FURNITURE_ID;
-    public enum LootType{ EMPTY, PUZZLE_PIECE}
+    private static final long serialVersionUID = 1L;
+   
+	private LootType content;
+    private Type type;
+    private int remainingTicksForSearch;
+    
+    public enum LootType
+    { EMPTY, PUZZLE_PIECE, ROBOT_PASSWORD, PLATFORM_PASSWORD, UNDEFINED }
 
-    private LootType content;
-    private boolean isSearched;
-
-    public Furniture(int x, int y, int w, int h){
-        super(new Point(x, y), w, h);
-        this.type = TYPE;
-        this.isSearched = false;
-        assignRandomLoot();
+    public enum Type
+    {
+    	NIGHTSTAND, TRASH_CAN, SINK, BATHTUB, TOILET, LARGE_DISCS, 
+    	MONITOR, DESK, PRINTER, KITCHEN, REFRIGERATOR, BED,
+    	LARGE_DOOR, CANDY, LARGE_COMPUTER, SMALL_DISKS, FIREPLACE, BOOKCASE, 
+    	ARMCHAIR, LAMP, READERS, SPEAKERS, SMALL_SOFA, LARGE_SOFA,
+    	RANDOM
     }
-
-    private void assignRandomLoot(){
-        Random rand = new Random();
-        if(rand.nextBoolean()) this.content = LootType.PUZZLE_PIECE;
-        else this.content = LootType.EMPTY;
+    
+    public Furniture(Point position, int width, int height, Type type, LootType content)
+    {
+    	super(position, width, height);
+    	this.type = type;
+    	this.content = content;
+    	this.remainingTicksForSearch = 42; //TODO
     }
-
-    @Override
-    public void update(){
-
-    }
-
-    public LootType search(){
-        if (isSearched) return LootType.EMPTY;
-        isSearched = true;
-        return content;
-    }
-
-    public LootType getContent() {
-        return content;
-    }
-
-    public void setContent(LootType content) {
-        this.content = content;
-    }
-
-    public boolean isSearched() {
-        return isSearched;
-    }
-
-    public void setSearched(boolean isSearched) {
-        this.isSearched = isSearched;
-    }
+    
+	@Override
+	public void update(GameContext context) 
+	{
+		Player player = context.getPlayer();
+		
+		if(context.getUserInput() != GameContext.UserInput.UP || !isColliding(player))
+			return;
+		
+		if(remainingTicksForSearch-- != 0)
+			return;
+		
+		//TODO method implementation in Player class
+		switch(content)
+		{
+			case PUZZLE_PIECE      -> player.givePuzzlePiece();
+			case ROBOT_PASSWORD    -> player.giveRobotPassword();  
+			case PLATFORM_PASSWORD -> player.givePlatfromPassword();
+			case EMPTY             -> { /*do nothing */}
+		}
+		
+		context.getCurrentRoom().removeForniture(this);
+	}
 }
-
