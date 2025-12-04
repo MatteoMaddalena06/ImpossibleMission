@@ -8,6 +8,8 @@ public class GameContext
 	private Player player; 
 	private Room currentRoom;
 	private UserInput userInput;
+	private boolean isRobotsDisabled;
+	private boolean isPlatformResetted;
 	
 	public enum UserInput 
 	{ UP, DOWN, LEFT, RIGHT, JUMP }
@@ -27,6 +29,15 @@ public class GameContext
 	public void setUserInput(UserInput userInput)
 	{ this.userInput = userInput; }
 	
+	public void disableRobots()
+	{ isRobotsDisabled = true; }
+	
+	public void enableRobots()
+	{ isRobotsDisabled = false; }
+	
+	public void resetPlatform()
+	{ isPlatformResetted = true; }
+	
 	public Player getPlayer()
 	{ return player; }
 	
@@ -35,4 +46,10 @@ public class GameContext
 	
 	public UserInput getUserInput()
 	{ return userInput; }
+	
+	public boolean isRobotsDisabled()
+	{ return isRobotsDisabled; }
+	
+	public boolean isPlatformResetted()
+	{ return isPlatformResetted; }
 }

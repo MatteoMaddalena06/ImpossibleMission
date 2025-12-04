@@ -2,6 +2,8 @@ package model.room;
 
 //data structure modules
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
 import java.util.Collections;
 
 //IO modules
@@ -16,6 +18,7 @@ public class Room implements Serializable
 	private static final long serialVersionUID = 1L;
 	
 	private List<GameObject> gameObjectList;
+	private List<Furniture> furnitureList;
 	private Color color;
 	private ExitLayout layout;
 
@@ -27,7 +30,8 @@ public class Room implements Serializable
 	
 	public Room(List<GameObject> gameObjectList, Color color, ExitLayout layout)
 	{
-		this.gameObjectList = gameObjectList;
+		this.gameObjectList = gameObjectList.stream().filter(g -> !(g instanceof Furniture)).collect(Collectors.toList());
+		this.furnitureList  = gameObjectList.stream().filter(g -> g instanceof Furniture).map(g -> (Furniture)g).collect(Collectors.toList());
 		this.color = color;
 		this.layout = layout;
 	}
@@ -35,8 +39,14 @@ public class Room implements Serializable
 	public List<GameObject> getGameObjectList()
 	{ return Collections.unmodifiableList(gameObjectList); }
 	
+	public List<Furniture> getFurnitureList()
+	{ return new ArrayList<Furniture>(furnitureList); }
+	
+	public int getFurnitureNumber()
+	{ return furnitureList.size(); }
+	
 	public boolean removeForniture(Furniture object)
-	{ return gameObjectList.remove(object); }
+	{ return furnitureList.remove(object); }
 	
 	public Color getColor()
 	{ return color; }

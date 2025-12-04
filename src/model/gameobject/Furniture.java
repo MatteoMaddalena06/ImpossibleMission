@@ -1,5 +1,8 @@
 package model.gameobject;
 
+//inproject import
+import model.puzzle.PuzzlePiece;
+
 //TODO put information on the specific puzzle piece
 public class Furniture extends GameObject
 {
@@ -7,10 +10,11 @@ public class Furniture extends GameObject
    
 	private LootType content;
     private Type type;
+	private PuzzlePiece puzzlePiece;
     private int remainingTicksForSearch;
     
     public enum LootType
-    { EMPTY, PUZZLE_PIECE, ROBOT_PASSWORD, PLATFORM_PASSWORD, UNDEFINED }
+    { EMPTY, PUZZLE_PIECE, ROBOT_PASSWORD, PLATFORM_PASSWORD }
 
     public enum Type
     {
@@ -21,11 +25,11 @@ public class Furniture extends GameObject
     	RANDOM
     }
     
-    public Furniture(Point position, int width, int height, Type type, LootType content)
+    public Furniture(Point position, int width, int height, Type type)
     {
     	super(position, width, height);
+    	this.content = LootType.EMPTY;
     	this.type = type;
-    	this.content = content;
     	this.remainingTicksForSearch = 42; //TODO
     }
     
@@ -43,12 +47,18 @@ public class Furniture extends GameObject
 		//TODO method implementation in Player class
 		switch(content)
 		{
-			case PUZZLE_PIECE      -> player.givePuzzlePiece();
-			case ROBOT_PASSWORD    -> player.giveRobotPassword();  
-			case PLATFORM_PASSWORD -> player.givePlatfromPassword();
-			case EMPTY             -> { /*do nothing */}
+			case LootType.PUZZLE_PIECE      -> player.givePuzzlePiece();
+			case LootType.ROBOT_PASSWORD    -> player.giveRobotPassword();  
+			case LootType.PLATFORM_PASSWORD -> player.givePlatfromPassword();
+			case LootType.EMPTY             -> { /*do nothing */} 
 		}
 		
 		context.getCurrentRoom().removeForniture(this);
 	}
+	
+	public void setContent(LootType content)
+	{ this.content = content; }
+	
+	public void setPuzzlePiece(PuzzlePiece puzzlePiece)
+	{ this.puzzlePiece = puzzlePiece; }
 }
