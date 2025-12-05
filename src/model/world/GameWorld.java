@@ -64,21 +64,21 @@ public class GameWorld implements Serializable
 	{
 		Room[][] worldMatrix = new Room[STD_WORLD_DEPTH][(STD_ELEVATOR_NUMBER << 1) + 1];
 		
-		List<List<Furniture>> furnituresPerRoom = createTraversableRandomMap(worldMatrix);
+		createTraversableRandomMap(worldMatrix);
 		PresettedPassword randomPassword = PresettedPassword.values()[(int)(Math.random() * PresettedPassword.PASSWORD_NUMBER)];
-		makeTheMapPlayable(worldMatrix, furnituresPerRoom, randomPassword);
+		List<Furniture> allFurnitures =
+				Arrays.stream(PresettedRoom.values()).flatMap(r -> r.getRoom().getFurnitureList().stream()).collect(Collectors.toList());
+		makeTheMapPlayable(allFurnitures, randomPassword);
 		
 		return new GameWorld(worldMatrix);
 	}
 	
-	private static List<List<Furniture>> createTraversableRandomMap(Room[][] worldMatrix)
+	private static void createTraversableRandomMap(Room[][] worldMatrix)
 	{
 		int rows = worldMatrix.length, cols = worldMatrix[0].length;
 		 
 		List<Point> pointToRemove = new LinkedList<Point>();
 		int leftRoomCounter = 0, rightRoomCounter = 0, leftRightRoomCounter = 0;
-	 
-		List<List<Furniture>> furnituresPerRoom = new LinkedList<List<Furniture>>();
 			 
 		for(int x = 0; x < cols; x += 2)
 		{
@@ -93,10 +93,6 @@ public class GameWorld implements Serializable
 		 
 			else
 				worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFTANDRIGHT, leftRightRoomCounter++);
-		 
-			List<Furniture> furnitureListCopy = worldMatrix[y][x].getFurnitureList();
-			Collections.shuffle(furnitureListCopy);
-			furnituresPerRoom.add(furnitureListCopy);
 		}
 	 
 		List<Point> pointToUse = IntStream.range(0, cols).filter(x -> x % 2 == 0).mapToObj(
@@ -132,52 +128,34 @@ public class GameWorld implements Serializable
 					{ worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFTANDRIGHT, leftRightRoomCounter++); break; }
 				}	
 			}	
-		 
-			if(worldMatrix[y][x] != null)
-			{
-				List<Furniture> furnitureListCopy = worldMatrix[y][x].getFurnitureList();
-				Collections.shuffle(furnitureListCopy);
-				furnituresPerRoom.add(furnitureListCopy);
-			}
 		}
-	 
-		return furnituresPerRoom;
 	}
 	
-	private static void makeTheMapPlayable(Room[][] worldMatrix, List<List<Furniture>> furnituresPerRoom, PresettedPassword password)
+	private static void makeTheMapPlayable(List<Furniture> furnitureList, PresettedPassword password)
 	{
-		distributeInFurniture(furnituresPerRoom, PuzzlePiece.getPieces(password.getPassword()));
-		distributeInFurniture(furnituresPerRoom, (int)(Math.random() * STD_MAX_ROBOT_PASSWORD) + 1, Furniture.LootType.ROBOT_PASSWORD);
-		distributeInFurniture(furnituresPerRoom, (int)(Math.random() * STD_MAX_PLATFORM_PASSWORD) + 1, Furniture.LootType.PLATFORM_PASSWORD);
+		Collections.shuffle(furnitureList);
+		distributeInFurniture(furnitureList, PuzzlePiece.getPieces(password.getPassword()));
+		distributeInFurniture(furnitureList, (int)(Math.random() * STD_MAX_ROBOT_PASSWORD) + 1, Furniture.LootType.ROBOT_PASSWORD);
+		distributeInFurniture(furnitureList, (int)(Math.random() * STD_MAX_PLATFORM_PASSWORD) + 1, Furniture.LootType.PLATFORM_PASSWORD);
 	}
 	
-	private static List<Furniture> distributeInFurniture(List<List<Furniture>> furnituresPerRoom, int amount, Furniture.LootType type)
+	private static List<Furniture> distributeInFurniture(List<Furniture> furnitureList, int amount, Furniture.LootType type)
 	{
 		List<Furniture> visitedFurniture = new ArrayList<Furniture>();
-		int index = 0;
 		
-		while(index < amount)
+		for(int i = 0; i < amount; i++)
 		{
-			int randomRoom = (int)(Math.random() * furnituresPerRoom.size());
-			
-			if(furnituresPerRoom.get(randomRoom).size() == 0)
-			{
-				furnituresPerRoom.remove(randomRoom);
-				continue;
-			}
-			
-			Furniture chosenFurniture = furnituresPerRoom.get(randomRoom).remove(0);
-			chosenFurniture.setContent(type);
-			visitedFurniture.add(chosenFurniture);
-			index++;
+			Furniture furniture = furnitureList.remove(i);
+			visitedFurniture.add(furniture);
+			furniture.setContent(type);
 		}
 		
 		return visitedFurniture;
 	}
 	
-	private static void distributeInFurniture(List<List<Furniture>> furnituresPerRoom, PuzzlePiece[] puzzlePieces)
+	private static void distributeInFurniture(List<Furniture> furnitureList, PuzzlePiece[] puzzlePieces)
 	{ 
-		List<Furniture> visitedFurniture =  distributeInFurniture(furnituresPerRoom, puzzlePieces.length, Furniture.LootType.PUZZLE_PIECE); 
+		List<Furniture> visitedFurniture =  distributeInFurniture(furnitureList, puzzlePieces.length, Furniture.LootType.PUZZLE_PIECE); 
 		IntStream.range(0, visitedFurniture.size()).forEach(i -> visitedFurniture.get(i).setPuzzlePiece(puzzlePieces[i]));
 	}
 	
