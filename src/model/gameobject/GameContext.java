@@ -7,17 +7,30 @@ public class GameContext
 {
 	private Player player; 
 	private Room currentRoom;
-	private UserInput userInput;
+	private boolean[] userInput;
 	private boolean isRobotsDisabled;
-	private boolean isPlatformResetted;
+	private int platformsToReset;
 	
 	public enum UserInput 
-	{ UP, DOWN, LEFT, RIGHT, JUMP }
+	{ 
+		UP(0), DOWN(1), LEFT(2), RIGHT(3), JUMP(4);
+		
+		private int index;
+		
+		private UserInput(int index)
+		{ this.index = index; }
+		
+		public int getInput()
+		{ return index; }
+	}
 	
 	public GameContext(Player player, Room currentRoom)
 	{	
 		this.player = player;
 		this.currentRoom = currentRoom;
+		userInput = new boolean[4];
+		isRobotsDisabled = false;
+		platformsToReset = 0;
 	}
 	
 	public void setPlayer(Player player)
@@ -26,8 +39,8 @@ public class GameContext
 	public void setCurrentRoom(Room currentRoom)
 	{ this.currentRoom = currentRoom; }
 	
-	public void setUserInput(UserInput userInput)
-	{ this.userInput = userInput; }
+	public void setUserInput(UserInput userInput, boolean state)
+	{ this.userInput[userInput.getInput()] = state; }
 	
 	public void disableRobots()
 	{ isRobotsDisabled = true; }
@@ -36,7 +49,10 @@ public class GameContext
 	{ isRobotsDisabled = false; }
 	
 	public void resetPlatform()
-	{ isPlatformResetted = true; }
+	{ platformsToReset = currentRoom.getPlatformsNumber(); }
+	
+	public void resetOnePlatform()
+	{ platformsToReset--; }
 	
 	public Player getPlayer()
 	{ return player; }
@@ -44,12 +60,12 @@ public class GameContext
 	public Room getCurrentRoom()
 	{ return currentRoom; }
 	
-	public UserInput getUserInput()
-	{ return userInput; }
+	public boolean getUserInput(UserInput userInput)
+	{ return this.userInput[userInput.getInput()]; }
 	
 	public boolean isRobotsDisabled()
 	{ return isRobotsDisabled; }
 	
-	public boolean isPlatformResetted()
-	{ return isPlatformResetted; }
+	public int getPlatformsToReset()
+	{ return platformsToReset; }
 }

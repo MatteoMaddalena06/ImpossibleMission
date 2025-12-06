@@ -28,7 +28,7 @@ public enum PresettedPassword
 	
 	private String password;
 	
-	private PresettedPassword (String password)
+	private PresettedPassword(String password)
 	{ this.password = password; }
 	
 	public String getPassword()

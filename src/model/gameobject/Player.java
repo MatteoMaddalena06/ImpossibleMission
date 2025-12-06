@@ -1,122 +1,42 @@
 package model.gameobject;
 
-public class Player extends GameObject  
-{
-    private static final int PLAYER_WIDTH = 32;//non so quanto sia di preciso, da modificare
-    private static final int PLAYER_HEIGHT = 64;//uguale 
+//data structure modules
+import java.util.List;
 
-    public static final int TYPE_PLAYER = 999;
+//inproject import
+import model.puzzle.PuzzlePiece;
+import model.room.Room;
 
-    //per le animazioni 
-    public enum Direction {LEFT, RIGHT};
-    public enum State {IDLE, WALKING, SEARCHING, JUMPING, FALLING};
+public class Player extends MovingObject
+{	
+	private static final double HORIZONTAL_SPEED = 200f; 
+	private static final double VERTICAL_SPEED   = 350f; 
+	
+	private List<PuzzlePiece> puzzlePiecesObtained;
+	private int robotPasswordsObtained;
+	private int platformPasswordsObtained;
+	
+	public Player(Point position, int width, int height)
+	{ super(position, width, height, HORIZONTAL_SPEED, VERTICAL_SPEED); }
 
-    private double velX;
-    private double velY;
-    private double speed = 3.0; 
-
-    private Direction currentDirection;
-    private State currentState;
-
-    public Player(int startX, int startY){
-        super(new Point(startX, startY), PLAYER_WIDTH, PLAYER_HEIGHT);
-
-        this.type = TYPE_PLAYER;
-        this.velX = 0;
-        this.velY = 0;
-        this.currentDirection= Direction.RIGHT;
-        this.currentState = State.IDLE;
-
-    }    
-
-    @Override
-    public void update(){
-        x+=(int)velX;
-        y+=(int)velY;
-
-        updateAnimationsState();
-    }
-
-    private void updateAnimationsState(){
-        if (velX != 0) {
-        currentDirection = (velX > 0) ? Direction.RIGHT : Direction.LEFT;
-        }
-
-        if(velY != 0){
-            currentState = (velY > 0) ? State.FALLING : State.JUMPING;
-            return;            
-        }
-
-        if (velX != 0){currentState = State.WALKING;}
-        else{currentState = State.IDLE;}
-    }
-
-    public static int getPlayerWidth() {
-        return PLAYER_WIDTH;
-    }
-
-    public static int getPlayerHeight() {
-        return PLAYER_HEIGHT;
-    }
-
-    public static int getTypePlayer() {
-        return TYPE_PLAYER;
-    }
-
-    public double getVelX() {
-        return velX;
-    }
-
-    public void setVelX(double velX) {
-        this.velX = velX;
-    }
-
-    public double getVelY() {
-        return velY;
-    }
-
-    public void setVelY(double velY) {
-        this.velY = velY;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public Direction getCurrentDirection() {
-        return currentDirection;
-    }
-
-    public void setCurrentDirection(Direction currentDirection) {
-        this.currentDirection = currentDirection;
-    }
-
-    public State getCurrentState() {
-        return currentState;
-    }
-
-    public void setCurrentState(State currentState) {
-        this.currentState = currentState;
-    }
-
-	public Object givePuzzlePiece() {
-		// TODO Auto-generated method stub
-		return null;
+	@Override
+	public void update(GameContext context) 
+	{
+		
 	}
-
-	public Object giveRobotPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Object givePlatfromPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
+	
+	public void givePuzzlePiece(PuzzlePiece piece)
+	{ puzzlePiecesObtained.add(piece); }
+	
+	public void giveRobotPassword()
+	{ robotPasswordsObtained++; }
+	
+	public void givePlatformPassword()
+	{ platformPasswordsObtained++; }
+	
+	public boolean useRobotPassword()
+	{ return (robotPasswordsObtained == 0) ? false : robotPasswordsObtained-- >= 0; }
+	
+	public boolean usePlatoformPassword()
+	{ return (platformPasswordsObtained == 0) ? false : platformPasswordsObtained-- >= 0; }
 }

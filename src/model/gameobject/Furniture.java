@@ -3,13 +3,12 @@ package model.gameobject;
 //inproject import
 import model.puzzle.PuzzlePiece;
 
-//TODO put information on the specific puzzle piece
 public class Furniture extends GameObject
 {
     private static final long serialVersionUID = 1L;
    
-	private LootType content;
     private Type type;
+    private LootType content;
 	private PuzzlePiece puzzlePiece;
     private int remainingTicksForSearch;
     
@@ -38,18 +37,17 @@ public class Furniture extends GameObject
 	{
 		Player player = context.getPlayer();
 		
-		if(context.getUserInput() != GameContext.UserInput.UP || !isColliding(player))
+		if(context.getUserInput(GameContext.UserInput.UP) || !isColliding(player))
 			return;
 		
 		if(remainingTicksForSearch-- != 0)
 			return;
 		
-		//TODO method implementation in Player class
 		switch(content)
 		{
-			case LootType.PUZZLE_PIECE      -> player.givePuzzlePiece();
+			case LootType.PUZZLE_PIECE      -> player.givePuzzlePiece(puzzlePiece);
 			case LootType.ROBOT_PASSWORD    -> player.giveRobotPassword();  
-			case LootType.PLATFORM_PASSWORD -> player.givePlatfromPassword();
+			case LootType.PLATFORM_PASSWORD -> player.givePlatformPassword();
 			case LootType.EMPTY             -> { /*do nothing */} 
 		}
 		
@@ -61,4 +59,13 @@ public class Furniture extends GameObject
 	
 	public void setPuzzlePiece(PuzzlePiece puzzlePiece)
 	{ this.puzzlePiece = puzzlePiece; }
+	
+	/* remove for debugging
+	@Override 
+	public String toString()
+	{ return content.toString(); }
+	
+	public LootType getContent()
+	{ return content; }
+	*/
 }

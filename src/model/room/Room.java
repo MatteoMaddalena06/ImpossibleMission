@@ -12,13 +12,19 @@ import java.io.Serializable;
 //inproject import
 import model.gameobject.Furniture;
 import model.gameobject.GameObject;
+import model.gameobject.Platform;
+import model.gameobject.Robot;
+import model.gameobject.FixedObject;
 
 public class Room implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	
-	private List<GameObject> gameObjectList;
+	private List<GameObject> otherGameObjectList;
+	private List<FixedObject> fixedObjectList;
 	private List<Furniture> furnitureList;
+	private List<Robot> robotList;
+	private int platformsNumber;
 	private Color color;
 	private ExitLayout layout;
 
@@ -30,23 +36,32 @@ public class Room implements Serializable
 	
 	public Room(List<GameObject> gameObjectList, Color color, ExitLayout layout)
 	{
-		this.gameObjectList = gameObjectList.stream().filter(g -> !(g instanceof Furniture)).collect(Collectors.toList());
-		this.furnitureList  = gameObjectList.stream().filter(g -> g instanceof Furniture).map(g -> (Furniture)g).collect(Collectors.toList());
+		otherGameObjectList = gameObjectList.stream().filter(g -> !(g instanceof FixedObject || g instanceof Furniture || g instanceof Robot)).collect(Collectors.toList());
+		fixedObjectList = gameObjectList.stream().filter(g -> g instanceof FixedObject).map(g -> (FixedObject)g).collect(Collectors.toList());
+		furnitureList = gameObjectList.stream().filter(g -> g instanceof Furniture).map(g -> (Furniture)g).collect(Collectors.toList());
+		robotList = gameObjectList.stream().filter(g -> g instanceof Robot).map(g -> (Robot)g).collect(Collectors.toList());
+		platformsNumber = (int)gameObjectList.stream().filter(g -> g instanceof Platform).count();
 		this.color = color;
 		this.layout = layout;
 	}
 	
-	public List<GameObject> getGameObjectList()
-	{ return Collections.unmodifiableList(gameObjectList); }
+	public List<GameObject> getOtherGameObjectList()
+	{ return Collections.unmodifiableList(otherGameObjectList); }
+	
+	public List<FixedObject> getFixedObjectList()
+	{ return Collections.unmodifiableList(fixedObjectList); }
 	
 	public List<Furniture> getFurnitureList()
 	{ return new ArrayList<Furniture>(furnitureList); }
 	
-	public int getFurnitureNumber()
-	{ return furnitureList.size(); }
-	
+	public List<Robot> getRobotList()
+	{ return Collections.unmodifiableList(robotList); }
+
 	public boolean removeForniture(Furniture object)
 	{ return furnitureList.remove(object); }
+	
+	public int getPlatformsNumber()
+	{ return platformsNumber; }
 	
 	public Color getColor()
 	{ return color; }
@@ -54,8 +69,9 @@ public class Room implements Serializable
 	public ExitLayout getExitLayout()
 	{ return layout; }
 	
-	/* remove comment for debugging
+	/* remove for debugging
 	@Override
 	public String toString()
-	{ return layout.toString(); } */
+	{ return furnitureList.toString(); } 
+	*/
 }

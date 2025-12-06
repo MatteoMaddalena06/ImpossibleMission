@@ -162,7 +162,7 @@ public class GameWorld implements Serializable
 	public Room[][] getWorldMatrix()
 	{ return worldMatrix; }
 	
-	/* remove comment for debugging
+	/* remove for debbuging
 	@Override
 	public String toString()
 	{
@@ -189,5 +189,36 @@ public class GameWorld implements Serializable
 		
 		return out;
 	}
-	*/
+	
+	public static void main(String[] args)
+	{
+		GameWorld world = GameWorld.randomGeneration();
+		Room[][] matrix = world.getWorldMatrix();
+		int c1 = 0, c2 = 0,c3 = 0;
+		
+		System.out.println(world);
+		
+		for(int i = 0; i < matrix.length; i++)
+		{
+			for(int j = 0; j < matrix[0].length; j++)
+			{
+				if(matrix[i][j] == null)
+					continue;
+				
+				for(Furniture f : matrix[i][j].getFurnitureList())
+				{
+					if(f.getContent() == LootType.PLATFORM_PASSWORD)
+						c1++;
+					
+					else if(f.getContent() == LootType.ROBOT_PASSWORD)
+						c2++;
+					
+					else if(f.getContent() == LootType.PUZZLE_PIECE)
+						c3++;
+				}
+			}
+		}
+		
+		System.out.println(c1 + ", " + c2 + ", " + c3);	
+	}*/	
 }
