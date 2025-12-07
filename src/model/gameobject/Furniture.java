@@ -41,6 +41,8 @@ public class Furniture extends GameObject
 		if(!context.getUserInput(GameContext.UserInput.UP) || !isColliding(player))
 			return;
 		
+		player.setStateOnSearching();
+		
 		if(remainingTicksForSearch-- != 0)
 			return;
 

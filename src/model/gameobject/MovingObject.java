@@ -12,7 +12,8 @@ public abstract class MovingObject extends GameObject
 	protected transient double horizontalSpeed;
 	protected transient double verticalSpeed;
 	protected transient boolean onGround;
-	private   transient double deltaTime;
+	
+	private static double deltaTime;
 	
 	public MovingObject(Point position, int width, int height, double horizontalSpeed, double verticalSpeed)
 	{
@@ -101,13 +102,31 @@ public abstract class MovingObject extends GameObject
 	    if(nearest != null) 
 	    {
 	        position.setY(correctionY);
-	        onGround = verticalVelocity > 0;	
+	        if(verticalVelocity > 0) onGround = true;	
 	        verticalVelocity = 0;
+	        return;
 	    }
-	    else 
-	    	onGround = false;
+
+	    onGround = gameObjectList.stream().anyMatch(g -> isStandingOn(g));
+	    if(onGround == true) verticalVelocity = 0;
 	}
 	
-	public void setDeltaTime(double deltaTime)
-	{ this.deltaTime = deltaTime; } 
+	private boolean isStandingOn(GameObject other)
+	{
+	    int x1 = position.getX(), y1 = position.getY();
+	    int w1 = width, h1 = height;
+	    
+	    int x2 = other.getPosition().getX(), y2 = other.getPosition().getY();
+	    int w2 = other.getWidth();
+
+	    final int tolerance = 2;
+
+	    boolean horizontalOverlap = x1 + w1 > x2 && x1 < x2 + w2;
+	    boolean verticalAlignment = (y1 + h1 >= y2 - tolerance) && (y1 + h1 <= y2 + tolerance);
+
+	    return horizontalOverlap && verticalAlignment;
+	}
+	
+	public static void setDeltaTime(double deltaTime)
+	{ MovingObject.deltaTime = deltaTime; } 
 }

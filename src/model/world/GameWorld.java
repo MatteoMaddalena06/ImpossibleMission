@@ -113,7 +113,7 @@ public class GameWorld implements Serializable
 		 
 			else if(x != 0 && x != cols - 1)
 			{
-				List<Room.ExitLayout> toChoose = Arrays.asList(Room.ExitLayout.ONLEFT, Room.ExitLayout.ONRIGHT, Room.ExitLayout.ONLEFTANDRIGHT);
+				List<Room.ExitLayout> toChoose = Arrays.asList(Room.ExitLayout.values());
 				Collections.shuffle(toChoose);
 			 
 				for(Room.ExitLayout layout : toChoose)

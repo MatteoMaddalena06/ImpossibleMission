@@ -22,11 +22,22 @@ public class Player extends MovingObject
 	private int robotPasswordsObtained;
 	private int platformPasswordsObtained;
 	
+	private State state;
+	
+	private boolean wasHitboxModified;
+	
+	public enum State 
+	{ 
+		WALKING_LEFT, WALKING_RIGHT, JUMPING_LEFT, JUMPING_RIGHT, FALLING_LEFT, 
+		FALLING_RIGHT, JUMPING, FALLING, SEARCHING, IDLE 
+	}
+	
 	public Player(Point position)
 	{
 		super(position, NORMAL_WIDTH, NORMAL_HEIGHT, HORIZONTAL_SPEED, VERTICAL_SPEED); 
 		puzzlePiecesObtained = new ArrayList<PuzzlePiece>();
 		robotPasswordsObtained = platformPasswordsObtained = 0;
+		state = State.IDLE;	wasHitboxModified = false;
 	}
 
 	@Override
@@ -40,9 +51,14 @@ public class Player extends MovingObject
 		
 		if(context.getUserInput(GameContext.UserInput.LEFT))  horizontalVelocity = -HORIZONTAL_SPEED;
 		if(context.getUserInput(GameContext.UserInput.RIGHT)) horizontalVelocity = HORIZONTAL_SPEED;
+		if(state == State.SEARCHING) horizontalVelocity = 0;
 		
 		if(context.getUserInput(GameContext.UserInput.JUMP) && onGround)
-		{ verticalVelocity = -VERTICAL_SPEED; shrinkHitbox(JUMP_WIDTH, JUMP_HEIGHT); }
+		{ 
+			verticalVelocity = -VERTICAL_SPEED; 
+			shrinkHitbox(JUMP_WIDTH, JUMP_HEIGHT);
+			wasHitboxModified = true;
+		}	
 		
 		addGravity();
 		
@@ -52,8 +68,14 @@ public class Player extends MovingObject
 		applyVerticalForce();
 		resolveVerticalCollision(interestingGameObject);
 		
-		if(onGround)
-			expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
+		if(onGround && horizontalVelocity == 0) state = State.IDLE;
+		else if(onGround)  state = (horizontalVelocity > 0) ? State.WALKING_RIGHT : State.WALKING_LEFT;
+		else if(horizontalVelocity == 0) state = (verticalVelocity < 0) ? State.JUMPING : State.FALLING;
+		else if(horizontalVelocity > 0) state = (verticalVelocity < 0) ? State.JUMPING_RIGHT : State.FALLING_RIGHT;
+		else state = (verticalVelocity < 0) ? State.JUMPING_LEFT : State.FALLING_LEFT;
+
+		if(onGround && wasHitboxModified) 
+		{ expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT); wasHitboxModified = false; }
 		
 		if(currentRoom.getRobotList().stream().anyMatch(g -> isColliding(g)) || position.getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
 		{ /*die */ }
@@ -74,9 +96,9 @@ public class Player extends MovingObject
 	public boolean usePlatoformPassword()
 	{ return (platformPasswordsObtained == 0) ? false : platformPasswordsObtained-- >= 0; }
 	
-	/* remove for debugging
-	@Override
-	public String toString()
-	{ return "PZP: " + puzzlePiecesObtained.toString() + ", RP:" + robotPasswordsObtained + ", PP:" + platformPasswordsObtained; }
-	*/
+	public State getState()
+	{ return state; }
+	
+	public void setStateOnSearching()
+	{ state = State.SEARCHING; }
 }
