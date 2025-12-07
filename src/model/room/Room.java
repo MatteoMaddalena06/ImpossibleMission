@@ -73,10 +73,4 @@ public class Room implements Serializable
 	
 	public ExitLayout getExitLayout()
 	{ return layout; }
-	
-	/* remove for debugging
-	@Override
-	public String toString()
-	{ return furnitureList.toString(); } 
-	*/
 }

@@ -2,13 +2,14 @@ package model.gameobject;
 
 //inproject import
 import model.puzzle.PuzzlePiece;
+import model.room.RoomMap;
 
 public class Furniture extends GameObject
 {
     private static final long serialVersionUID = 1L;
    
-    private Type type;
     private LootType content;
+    private Type type;
 	private PuzzlePiece puzzlePiece;
     private int remainingTicksForSearch;
     
@@ -29,7 +30,7 @@ public class Furniture extends GameObject
     	super(position, width, height);
     	this.content = LootType.EMPTY;
     	this.type = type;
-    	this.remainingTicksForSearch = 42; //TODO
+    	this.remainingTicksForSearch = (width * height) / (RoomMap.TILE_SIZE*RoomMap.TILE_SIZE) * 10; //10 = FPS/6 TODO
     }
     
 	@Override
@@ -41,17 +42,14 @@ public class Furniture extends GameObject
 			return;
 		
 		if(remainingTicksForSearch-- != 0)
-		{	
-			System.out.println(remainingTicksForSearch);
 			return;
-		}
-		
+
 		switch(content)
 		{
-			case LootType.PUZZLE_PIECE      -> player.givePuzzlePiece(puzzlePiece);
+			case LootType.PUZZLE_PIECE      -> player.givePuzzlePiece(puzzlePiece); 
 			case LootType.ROBOT_PASSWORD    -> player.giveRobotPassword();  
-			case LootType.PLATFORM_PASSWORD -> player.givePlatformPassword();
-			case LootType.EMPTY             -> { /*do nothing */} 
+			case LootType.PLATFORM_PASSWORD -> player.givePlatformPassword(); 
+			case LootType.EMPTY             -> { /*do nothing */ }
 		}
 		
 		context.getCurrentRoom().removeForniture(this);
@@ -61,14 +59,5 @@ public class Furniture extends GameObject
 	{ this.content = content; }
 	
 	public void setPuzzlePiece(PuzzlePiece puzzlePiece)
-	{ this.puzzlePiece = puzzlePiece; }
-	
-	/* remove for debugging
-	@Override 
-	public String toString()
-	{ return content.toString(); }
-	
-	public LootType getContent()
-	{ return content; }
-	*/
+	{ this.puzzlePiece = puzzlePiece; }	
 }

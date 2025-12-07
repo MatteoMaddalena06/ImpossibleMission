@@ -164,6 +164,8 @@ public enum PuzzlePiece
 		int passwordLength = password.length();
 		PuzzlePiece[] pieces = new PuzzlePiece[passwordLength * LETTER_SIZE];
 		
+		password = password.toUpperCase();
+		
 		for(int i = 0; i < passwordLength; i++)
 		{
 			int arrayIndex = i * LETTER_SIZE;
@@ -180,6 +182,5 @@ public enum PuzzlePiece
 	{ return position; }
 	
 	public char getLetter()
-	{ return letter; }
-	
+	{ return letter; }	
 }

@@ -2,6 +2,7 @@ package model.gameobject;
 
 //data structure modules
 import java.util.List;
+import java.util.ArrayList;
 
 //inproject import
 import model.puzzle.PuzzlePiece;
@@ -10,19 +11,23 @@ import model.room.RoomMap;
 
 public class Player extends MovingObject
 {	
-	private static final int    NORMAL_WIDTH  = 1 * RoomMap.TILE_SIZE;
-	private static final int    NORMAL_HEIGHT = 3 * RoomMap.TILE_SIZE; 
-	private static final int    JUMP_WIDTH    = NORMAL_WIDTH;
-	private static final int    JUMP_HEIGHT   = 1 * RoomMap.TILE_SIZE; 
-	private static final double HORIZONTAL_SPEED = 200f; 
-	private static final double VERTICAL_SPEED   = 500f; 
+	private static final int    NORMAL_WIDTH     = 1 * RoomMap.TILE_SIZE;
+	private static final int    NORMAL_HEIGHT    = 3 * RoomMap.TILE_SIZE; 
+	private static final int    JUMP_WIDTH       = NORMAL_WIDTH;
+	private static final int    JUMP_HEIGHT      = 1 * RoomMap.TILE_SIZE; 
+	private static final double HORIZONTAL_SPEED = 300f; 
+	private static final double VERTICAL_SPEED   = 700f;
 	
 	private List<PuzzlePiece> puzzlePiecesObtained;
 	private int robotPasswordsObtained;
 	private int platformPasswordsObtained;
 	
 	public Player(Point position)
-	{ super(position, NORMAL_WIDTH, NORMAL_HEIGHT, HORIZONTAL_SPEED, VERTICAL_SPEED); }
+	{
+		super(position, NORMAL_WIDTH, NORMAL_HEIGHT, HORIZONTAL_SPEED, VERTICAL_SPEED); 
+		puzzlePiecesObtained = new ArrayList<PuzzlePiece>();
+		robotPasswordsObtained = platformPasswordsObtained = 0;
+	}
 
 	@Override
 	public void update(GameContext context) 
@@ -37,11 +42,7 @@ public class Player extends MovingObject
 		if(context.getUserInput(GameContext.UserInput.RIGHT)) horizontalVelocity = HORIZONTAL_SPEED;
 		
 		if(context.getUserInput(GameContext.UserInput.JUMP) && onGround)
-		{ 
-			verticalVelocity = -VERTICAL_SPEED; 
-			onGround = false;
-			shrinkHitbox();		
-		}
+		{ verticalVelocity = -VERTICAL_SPEED; shrinkHitbox(JUMP_WIDTH, JUMP_HEIGHT); }
 		
 		addGravity();
 		
@@ -52,34 +53,10 @@ public class Player extends MovingObject
 		resolveVerticalCollision(interestingGameObject);
 		
 		if(onGround)
-			expandHitbox();
+			expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
 		
 		if(currentRoom.getRobotList().stream().anyMatch(g -> isColliding(g)) || position.getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
-		{ /* die */ }
-	}
-	
-	private void shrinkHitbox() 
-	{
-	    int oldWidth = width;
-	    int oldHeight = height;
-
-	    width  = JUMP_WIDTH;
-	    height = JUMP_HEIGHT;
-
-	    position.setX(position.getX() + (oldWidth - width) / 2);
-	    position.setY(position.getY() + (oldHeight - height));
-	}
-	
-	private void expandHitbox() 
-	{
-	    int oldWidth = width;
-	    int oldHeight = height;
-
-	    width  = NORMAL_WIDTH;
-	    height = NORMAL_HEIGHT;
-
-	    position.setX(position.getX() - (width - oldWidth) / 2);
-	    position.setY(position.getY() - (height - oldHeight));
+		{ /*die */ }
 	}
 	
 	public void givePuzzlePiece(PuzzlePiece piece)
@@ -96,4 +73,10 @@ public class Player extends MovingObject
 	
 	public boolean usePlatoformPassword()
 	{ return (platformPasswordsObtained == 0) ? false : platformPasswordsObtained-- >= 0; }
+	
+	/* remove for debugging
+	@Override
+	public String toString()
+	{ return "PZP: " + puzzlePiecesObtained.toString() + ", RP:" + robotPasswordsObtained + ", PP:" + platformPasswordsObtained; }
+	*/
 }

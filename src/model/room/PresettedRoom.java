@@ -5,8 +5,6 @@ import java.util.Arrays;
 
 public enum PresettedRoom 
 {
-	//TODO ROOM1 (new Room(RoomMapParser.parse(RoomMap.ROOM1),  Room.Color.CYAN,   Room.ExitLayout.ONLEFT)),
-	//TODO ROOM2 (new Room(RoomMapParser.parse(RoomMap.ROOM2),  Room.Color.YELLOW, Room.ExitLayout.ONRIGHT)),
 	ROOM3 (new Room(RoomMapParser.parse(RoomMap.ROOM3),  Room.Color.YELLOW, Room.ExitLayout.ONLEFT)),
 	ROOM4 (new Room(RoomMapParser.parse(RoomMap.ROOM4),  Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT)),
 	ROOM5 (new Room(RoomMapParser.parse(RoomMap.ROOM5),	 Room.Color.GREEN,  Room.ExitLayout.ONRIGHT)),
