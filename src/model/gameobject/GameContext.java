@@ -28,7 +28,7 @@ public class GameContext
 	{	
 		this.player = player;
 		this.currentRoom = currentRoom;
-		userInput = new boolean[4];
+		userInput = new boolean[5];
 		isRobotsDisabled = false;
 		platformsToReset = 0;
 	}

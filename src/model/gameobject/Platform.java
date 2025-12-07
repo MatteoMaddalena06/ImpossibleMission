@@ -2,12 +2,12 @@ package model.gameobject;
 
 public class Platform extends GameObject
 {
-	public Platform(int x, int y, int w, int h){
-        super(x, y, w, h);
-    }
+	public Platform(Point position, int w, int h){
+        super(position, w, h);
+	}
 
 	@Override
-	public void update() {
+	public void update(GameContext context) {
 		// TODO Auto-generated method stub
 		
 	}

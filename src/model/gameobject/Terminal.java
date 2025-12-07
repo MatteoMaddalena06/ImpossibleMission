@@ -12,10 +12,9 @@ public class Terminal extends GameObject
 	private TerminalEffect effect;
 	private boolean isHacked;
 
-	public Terminal(int x, int y, int w, int h) {
-		super(new Point(x, y), w, h);
+	public Terminal(Point position, int w, int h) {
+		super(position, w, h);
 		this.isHacked = false;
-		this.type = TYPE;
 		assignRandomEffect();
 	}
 
@@ -35,9 +34,6 @@ public class Terminal extends GameObject
 		return effect;
 	}
 
-	@Override
-	public void update() {
-	}
 
 	public int getType() {
 		return TYPE;
@@ -57,6 +53,12 @@ public class Terminal extends GameObject
 
 	public void setHacked(boolean isHacked) {
 		this.isHacked = isHacked;
+	}
+
+	@Override
+	public void update(GameContext context) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -37,11 +37,14 @@ public class Furniture extends GameObject
 	{
 		Player player = context.getPlayer();
 		
-		if(context.getUserInput(GameContext.UserInput.UP) || !isColliding(player))
+		if(!context.getUserInput(GameContext.UserInput.UP) || !isColliding(player))
 			return;
 		
 		if(remainingTicksForSearch-- != 0)
+		{	
+			System.out.println(remainingTicksForSearch);
 			return;
+		}
 		
 		switch(content)
 		{

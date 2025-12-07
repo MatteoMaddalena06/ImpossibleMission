@@ -20,7 +20,8 @@ public class Room implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	
-	private List<GameObject> otherGameObjectList;
+	private List<GameObject> gameObjectList;
+	private List<Platform> platformList;
 	private List<FixedObject> fixedObjectList;
 	private List<Furniture> furnitureList;
 	private List<Robot> robotList;
@@ -36,17 +37,21 @@ public class Room implements Serializable
 	
 	public Room(List<GameObject> gameObjectList, Color color, ExitLayout layout)
 	{
-		otherGameObjectList = gameObjectList.stream().filter(g -> !(g instanceof FixedObject || g instanceof Furniture || g instanceof Robot)).collect(Collectors.toList());
+		this.gameObjectList = gameObjectList;
+		platformList = gameObjectList.stream().filter(g -> g instanceof Platform).map(g -> (Platform)g).collect(Collectors.toList());
 		fixedObjectList = gameObjectList.stream().filter(g -> g instanceof FixedObject).map(g -> (FixedObject)g).collect(Collectors.toList());
 		furnitureList = gameObjectList.stream().filter(g -> g instanceof Furniture).map(g -> (Furniture)g).collect(Collectors.toList());
 		robotList = gameObjectList.stream().filter(g -> g instanceof Robot).map(g -> (Robot)g).collect(Collectors.toList());
-		platformsNumber = (int)gameObjectList.stream().filter(g -> g instanceof Platform).count();
+		platformsNumber = platformList.size();
 		this.color = color;
 		this.layout = layout;
 	}
 	
-	public List<GameObject> getOtherGameObjectList()
-	{ return Collections.unmodifiableList(otherGameObjectList); }
+	public List<GameObject> getGameObjectList()
+	{ return Collections.unmodifiableList(gameObjectList); }
+	
+	public List<GameObject> getPlatformList()
+	{ return Collections.unmodifiableList(platformList); }
 	
 	public List<FixedObject> getFixedObjectList()
 	{ return Collections.unmodifiableList(fixedObjectList); }
@@ -58,7 +63,7 @@ public class Room implements Serializable
 	{ return Collections.unmodifiableList(robotList); }
 
 	public boolean removeForniture(Furniture object)
-	{ return furnitureList.remove(object); }
+	{ return furnitureList.remove(object) && gameObjectList.remove(object); }
 	
 	public int getPlatformsNumber()
 	{ return platformsNumber; }

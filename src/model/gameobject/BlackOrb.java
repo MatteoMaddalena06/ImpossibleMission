@@ -2,7 +2,7 @@ package model.gameobject;
 
 import model.room.RoomMap;
 
-public class BlackOrb extends GameObject{
+public class BlackOrb extends Robot{
 
     public static final int TYPE_BLACKORB = RoomMap.BLACK_ORB_ID;
 
@@ -12,13 +12,8 @@ public class BlackOrb extends GameObject{
     private int speed = 3;
     private int direction = 1;
 
-    public BlackOrb(int x, int y, int w, int h){ super(new Point(x, y), ORB_WIDTH, ORB_HEIGHT);
-        this.type = TYPE_BLACKORB;
-    }
-
-    @Override
-    public void update(){
-        x += speed * direction;
+    public BlackOrb(Point position, int w, int h){
+    	super(position, w, h);
     }
 
     public void reverseDirection(){this.direction *= -1;}
@@ -50,5 +45,11 @@ public class BlackOrb extends GameObject{
     public void setDirection(int direction) {
         this.direction = direction;
     }
+
+	@Override
+	public void update(GameContext context) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

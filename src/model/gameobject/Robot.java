@@ -16,17 +16,9 @@ public class Robot extends GameObject
     private Direction currentDirection = Direction.RIGHT;
     private State currentState = State.WALKING;
     
-    public Robot(int x, int y, int w, int h){ 
-        super( new Point(x, y), ROBOT_WIDTH, ROBOT_HEIGHT);
-        this.type=TYPE_ROBOT;
+    public Robot(Point position, int w, int h){ 
+        super(position, w, h);
      }
-
-    @Override
-    public void update(){
-        if (currentDirection == Direction.RIGHT) x+= speed;
-        else x-=speed;
-
-    }   
 
     public void reverseDirection(){
         if(currentDirection == Direction.RIGHT) currentDirection = Direction.LEFT;
@@ -68,6 +60,12 @@ public class Robot extends GameObject
     public void setCurrentState(State currentState) {
         this.currentState = currentState;
     }
+
+	@Override
+	public void update(GameContext context) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }
