@@ -47,8 +47,8 @@ public class Player extends MovingObject
 		
 		setHorizontalVelocity(0);
 		
-		if(context.getUserInput(GameContext.UserInput.LEFT)  && state != State.SEARCHING) setHorizontalVelocity(HORIZONTAL_SPEED);
-		if(context.getUserInput(GameContext.UserInput.RIGHT) && state != State.SEARCHING) setHorizontalVelocity(-HORIZONTAL_SPEED);
+		if(context.getUserInput(GameContext.UserInput.LEFT)  && state != State.SEARCHING) setHorizontalVelocity(-HORIZONTAL_SPEED);
+		if(context.getUserInput(GameContext.UserInput.RIGHT) && state != State.SEARCHING) setHorizontalVelocity(HORIZONTAL_SPEED);
 		
 		if(context.getUserInput(GameContext.UserInput.JUMP) && isOnGround())
 		{ setVerticalVelocity(-VERTICAL_SPEED); shrinkHitbox(JUMP_WIDTH, JUMP_HEIGHT); }	
@@ -69,7 +69,7 @@ public class Player extends MovingObject
 
 		if(isOnGround() && wasHitboxModified()) expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
 		
-		if(currentRoom.getEnemiesList().stream().anyMatch(g -> isColliding(g)) || copyPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
+		if(currentRoom.getEnemiesList().stream().anyMatch(g -> isColliding(g)) || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
 		{ /*die */ }
 	}
 	

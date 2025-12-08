@@ -18,8 +18,8 @@ public class RunnerRobot extends Enemy
 	private static final double VERTICAL_SPEED   = 0f;
 	private static final int    FOV_WIDTH        = 16 * RoomMap.TILE_SIZE;
 	private static final int    FOV_HEIGHT       = 4 * RoomMap.TILE_SIZE;
-	private transient final int FOV_X            = copyPosition().getX() - (FOV_WIDTH - getWidth())/2;
-	private transient final int FOV_Y            = copyPosition().getY() - (FOV_HEIGHT - getHeight()); 
+	private transient final int FOV_X            = getPosition().getX() - (FOV_WIDTH - getWidth())/2;
+	private transient final int FOV_Y            = getPosition().getY() - (FOV_HEIGHT - getHeight()); 
 	private static final double RESPONSE_DELAY   = 0.03f;
 	
 	private State state;
@@ -38,7 +38,7 @@ public class RunnerRobot extends Enemy
 	{
 		Player player = context.getPlayer();
 		Point currentPlayerPosition = player.copyPosition();
-		Point thisPosition = copyPosition();
+		Point thisPosition = getPosition();
 		int thisX = thisPosition.getX(), thisY = thisPosition.getY();
 		
 		if(getFov().isColliding(player))
@@ -59,7 +59,7 @@ public class RunnerRobot extends Enemy
 			setHorizontalVelocity(0);
 		
 		List<GameObject> interestingGameObjects = 
-				context.getCurrentRoom().getGameObjectList().stream().filter(g -> g instanceof FixedObject || g instanceof Platform).toList();
+				context.getCurrentRoom().getGameObjectList().stream().filter(g -> g instanceof FixedObject).toList();
 	
 		addGravity();
 		

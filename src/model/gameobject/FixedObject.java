@@ -16,8 +16,8 @@ public class FixedObject extends GameObject
     
 	public boolean containsPoint(Point point)
 	{ 
-		int fx = position.getX(), fy = position.getY();
-		int fw = width, fh = height;
+		int fx = getPosition().getX(), fy = getPosition().getY();
+		int fw = getWidth(), fh = getHeight();
 		
 		int px = point.getX(), py = point.getY();
 		

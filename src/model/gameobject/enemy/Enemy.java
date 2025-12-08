@@ -56,7 +56,7 @@ public abstract class Enemy extends MovingObject
 	
 	protected boolean isOnLedge(List<FixedObject> fixedObjectList)
 	{
-		Point thisPosition = copyPosition();
+		Point thisPosition = getPosition();
 		int footX = thisPosition.getX() + ((getHorizontalVelocity() > 0) ? getWidth() : -1);
 		int footY = thisPosition.getY() + getHeight() + 1;
 		Point footPosition = new Point(footX, footY);

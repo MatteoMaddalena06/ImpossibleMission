@@ -54,8 +54,8 @@ public abstract class MovingObject extends GameObject
 	{
 		Point thisPosition = getPosition();
 		int thisWidth = getWidth(), thisHeight = getHeight();
-	    thisPosition.setX(thisPosition.getX() - (thisWidth - newWidth) / 2);
-	    thisPosition.setY(thisPosition.getY() - (thisHeight - newHeight));
+	    thisPosition.setX(thisPosition.getX() - (newWidth - thisWidth) / 2);
+	    thisPosition.setY(thisPosition.getY() - (newHeight - thisHeight));
 	    setWidth(newWidth); setHeight(newHeight);
 	    
 	    wasHitboxModified = false;
