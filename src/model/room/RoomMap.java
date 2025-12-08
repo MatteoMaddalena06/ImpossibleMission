@@ -826,11 +826,11 @@ public enum RoomMap
 	public static final int TERMINAL_ID  = 6;
 	public static final int BLACK_ORB_ID = 7;
 	
-	private int[][] asciiMap;
+	private int[][] mapMatrix;
 	
-	private RoomMap(int[][] asciiMap)
-	{ this.asciiMap = asciiMap; }	
+	private RoomMap(int[][] mapMatrix)
+	{ this.mapMatrix = mapMatrix; }	
 	
 	public int[][] getMap()
-	{ return asciiMap; }
+	{ return mapMatrix; }
 }

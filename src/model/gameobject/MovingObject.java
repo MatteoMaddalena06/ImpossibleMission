@@ -1,67 +1,80 @@
 package model.gameobject;
 
-//data structure modulesd
+//data structure modules
 import java.util.List;
+
 
 public abstract class MovingObject extends GameObject
 {
-	protected static final double GRAVITY = 2000f; 
+	private static final double GRAVITY = 2000f; 
+	private static final int    STANDING_TOLLERANCE = 2; 
 	
-	protected transient double horizontalVelocity;
-	protected transient double verticalVelocity;
-	protected transient double horizontalSpeed;
-	protected transient double verticalSpeed;
-	protected transient boolean onGround;
+	private transient double horizontalVelocity;
+	private transient double verticalVelocity;
+	
+	private transient boolean onGround;
+	private transient boolean wasHitboxModified;
 	
 	private static double deltaTime;
 	
-	public MovingObject(Point position, int width, int height, double horizontalSpeed, double verticalSpeed)
+	public MovingObject(Point position, int width, int height)
 	{
 		super(position, width, height);
-		this.horizontalSpeed = horizontalSpeed;
-		this.verticalSpeed = verticalSpeed;
 		horizontalVelocity = verticalVelocity = 0;
-		onGround = true;
+		onGround = true; wasHitboxModified = false;
 	}
 	
 	protected void addGravity()
 	{ verticalVelocity += GRAVITY * deltaTime; }
 	
 	protected void applyHorizontalForce()
-	{ position.setX((int)(position.getX() + horizontalVelocity * deltaTime)); }
+	{ 
+		Point thisPosition = getPosition();
+		thisPosition.setX((int)(thisPosition.getX() + horizontalVelocity * deltaTime)); 
+	}
 	
 	protected void applyVerticalForce()
-	{ position.setY((int)(position.getY() + verticalVelocity * deltaTime)); }
+	{ 
+		Point thisPosition = getPosition();
+		thisPosition.setY((int)(thisPosition.getY() + verticalVelocity * deltaTime)); 
+	}
 	
 	protected void shrinkHitbox(int newWidth, int newHeight) 
 	{
-	    position.setX(position.getX() + (width - newWidth) / 2);
-	    position.setY(position.getY() + (height - newHeight));
-	    width = newWidth; height = newHeight;
+		Point thisPosition = getPosition();
+		int thisWidth = getWidth(), thisHeight = getHeight();
+	    thisPosition.setX(thisPosition.getX() + (thisWidth - newWidth) / 2);
+	    thisPosition.setY(thisPosition.getY() + (thisHeight - newHeight));
+	    setWidth(newWidth); setHeight(newHeight);
+	    
+	    wasHitboxModified = true;
 	}
 	
 	protected void expandHitbox(int newWidth, int newHeight) 
 	{
-	    position.setX(position.getX() - (newWidth - width) / 2);
-	    position.setY(position.getY() - (newHeight - height));
-	    width = newWidth; height = newHeight;
+		Point thisPosition = getPosition();
+		int thisWidth = getWidth(), thisHeight = getHeight();
+	    thisPosition.setX(thisPosition.getX() - (thisWidth - newWidth) / 2);
+	    thisPosition.setY(thisPosition.getY() - (thisHeight - newHeight));
+	    setWidth(newWidth); setHeight(newHeight);
+	    
+	    wasHitboxModified = false;
 	}
 	
 	protected void resolveHorizontalCollision(List<GameObject> gameObjectList)
 	{
-		GameObject nearest = null;
-	    int correctionX = position.getX(); 
-	    int minDistance = Integer.MAX_VALUE;
+		Point thisPosition = getPosition();
+	    int correctionX = thisPosition.getX(), minDistance = Integer.MAX_VALUE;
+	    GameObject nearest = null;
 
 	    for (GameObject fixed : gameObjectList) 
 	    {
 	        if(!isColliding(fixed))
 	        	continue;
 
-	        int gameObjectX = fixed.getPosition().getX();
-	        int gameObjectWidth = fixed.getWidth();
-	        int newX = (horizontalVelocity > 0) ? gameObjectX - width : gameObjectX + gameObjectWidth;
-	        int distance = Math.abs(newX - position.getX());
+	        int fixedX = fixed.copyPosition().getX();
+	        int newX = (horizontalVelocity > 0) ? fixedX - getWidth() : fixedX + fixed.getWidth();
+	        int distance = Math.abs(newX - thisPosition.getX());
 
 	        if(distance < minDistance) 
 	        {
@@ -72,24 +85,23 @@ public abstract class MovingObject extends GameObject
 	    }
 
 	    if(nearest != null) 
-	    { position.setX(correctionX); horizontalVelocity = 0; }
+	    { thisPosition.setX(correctionX); horizontalVelocity = 0; }
 	}
 	
 	protected void resolveVerticalCollision(List<GameObject> gameObjectList)
 	{
+		Point thisPosition = getPosition();
+	    int correctionY = thisPosition.getY(), minDistance = Integer.MAX_VALUE;
 		GameObject nearest = null;
-	    int correctionY = position.getY();
-	    int minDistance = Integer.MAX_VALUE;
 
-	    for (GameObject fixed : gameObjectList) {
-
+	    for (GameObject fixed : gameObjectList)
+	    {
 	        if(!isColliding(fixed)) 
 	        	continue;
 
-	        int gameObjectY = fixed.getPosition().getY();
-	        int gameObjectHeight = fixed.getHeight();
-	        int newY = (verticalVelocity > 0) ? gameObjectY - height : gameObjectY + gameObjectHeight;
-	        int distance = Math.abs(newY - position.getY());
+	        int fixedY = fixed.copyPosition().getY();
+	        int newY = (verticalVelocity > 0) ? fixedY - getHeight() : fixedY + fixed.getHeight();
+	        int distance = Math.abs(newY - thisPosition.getY());
 
 	        if(distance < minDistance) 
 	        {
@@ -101,7 +113,7 @@ public abstract class MovingObject extends GameObject
 
 	    if(nearest != null) 
 	    {
-	        position.setY(correctionY);
+	        thisPosition.setY(correctionY);
 	        if(verticalVelocity > 0) onGround = true;	
 	        verticalVelocity = 0;
 	        return;
@@ -113,19 +125,39 @@ public abstract class MovingObject extends GameObject
 	
 	private boolean isStandingOn(GameObject other)
 	{
-	    int x1 = position.getX(), y1 = position.getY();
-	    int w1 = width, h1 = height;
+		Point thisPosition = getPosition();
+	    int x1 = thisPosition.getX(), y1 = thisPosition.getY();
+	    int w1 = getWidth(), h1 = getHeight();
 	    
-	    int x2 = other.getPosition().getX(), y2 = other.getPosition().getY();
+	    Point otherPosition = other.copyPosition();
+	    int x2 = otherPosition.getX(), y2 = otherPosition.getY();
 	    int w2 = other.getWidth();
 
-	    final int tolerance = 2;
+	    final int tolerance = STANDING_TOLLERANCE;
 
 	    boolean horizontalOverlap = x1 + w1 > x2 && x1 < x2 + w2;
 	    boolean verticalAlignment = (y1 + h1 >= y2 - tolerance) && (y1 + h1 <= y2 + tolerance);
 
 	    return horizontalOverlap && verticalAlignment;
 	}
+	
+	protected double getHorizontalVelocity()
+	{ return horizontalVelocity; }
+	
+	protected double getVerticalVelocity()
+	{ return verticalVelocity; }
+	
+	protected void setHorizontalVelocity(double velocity)
+	{ horizontalVelocity = velocity; }
+	
+	protected void setVerticalVelocity(double velocity)
+	{ verticalVelocity = velocity; }
+	
+	protected boolean isOnGround()
+	{ return onGround; }
+	
+	protected boolean wasHitboxModified()
+	{ return wasHitboxModified; }
 	
 	public static void setDeltaTime(double deltaTime)
 	{ MovingObject.deltaTime = deltaTime; } 

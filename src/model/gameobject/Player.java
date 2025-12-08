@@ -24,8 +24,6 @@ public class Player extends MovingObject
 	
 	private State state;
 	
-	private boolean wasHitboxModified;
-	
 	public enum State 
 	{ 
 		WALKING_LEFT, WALKING_RIGHT, JUMPING_LEFT, JUMPING_RIGHT, FALLING_LEFT, 
@@ -34,50 +32,44 @@ public class Player extends MovingObject
 	
 	public Player(Point position)
 	{
-		super(position, NORMAL_WIDTH, NORMAL_HEIGHT, HORIZONTAL_SPEED, VERTICAL_SPEED); 
+		super(position, NORMAL_WIDTH, NORMAL_HEIGHT); 
 		puzzlePiecesObtained = new ArrayList<PuzzlePiece>();
 		robotPasswordsObtained = platformPasswordsObtained = 0;
-		state = State.IDLE;	wasHitboxModified = false;
+		state = State.IDLE;
 	}
 
 	@Override
 	public void update(GameContext context) 
 	{
 		Room currentRoom = context.getCurrentRoom();
-		List<GameObject> interestingGameObject = 
+		List<GameObject> interestingGameObjects = 
 				currentRoom.getGameObjectList().stream().filter(g -> g instanceof FixedObject || g instanceof Platform).toList();
 		
-		horizontalVelocity = 0;
+		setHorizontalVelocity(0);
 		
-		if(context.getUserInput(GameContext.UserInput.LEFT))  horizontalVelocity = -HORIZONTAL_SPEED;
-		if(context.getUserInput(GameContext.UserInput.RIGHT)) horizontalVelocity = HORIZONTAL_SPEED;
-		if(state == State.SEARCHING) horizontalVelocity = 0;
+		if(context.getUserInput(GameContext.UserInput.LEFT)  && state != State.SEARCHING) setHorizontalVelocity(HORIZONTAL_SPEED);
+		if(context.getUserInput(GameContext.UserInput.RIGHT) && state != State.SEARCHING) setHorizontalVelocity(-HORIZONTAL_SPEED);
 		
-		if(context.getUserInput(GameContext.UserInput.JUMP) && onGround)
-		{ 
-			verticalVelocity = -VERTICAL_SPEED; 
-			shrinkHitbox(JUMP_WIDTH, JUMP_HEIGHT);
-			wasHitboxModified = true;
-		}	
+		if(context.getUserInput(GameContext.UserInput.JUMP) && isOnGround())
+		{ setVerticalVelocity(-VERTICAL_SPEED); shrinkHitbox(JUMP_WIDTH, JUMP_HEIGHT); }	
 		
 		addGravity();
 		
 		applyHorizontalForce();
-		resolveHorizontalCollision(interestingGameObject);
+		resolveHorizontalCollision(interestingGameObjects);
 		
 		applyVerticalForce();
-		resolveVerticalCollision(interestingGameObject);
+		resolveVerticalCollision(interestingGameObjects);
 		
-		if(onGround && horizontalVelocity == 0) state = State.IDLE;
-		else if(onGround)  state = (horizontalVelocity > 0) ? State.WALKING_RIGHT : State.WALKING_LEFT;
-		else if(horizontalVelocity == 0) state = (verticalVelocity < 0) ? State.JUMPING : State.FALLING;
-		else if(horizontalVelocity > 0) state = (verticalVelocity < 0) ? State.JUMPING_RIGHT : State.FALLING_RIGHT;
-		else state = (verticalVelocity < 0) ? State.JUMPING_LEFT : State.FALLING_LEFT;
+		if(isOnGround() && getHorizontalVelocity() == 0) state = State.IDLE;
+		else if(isOnGround())  state = (getHorizontalVelocity() > 0) ? State.WALKING_RIGHT : State.WALKING_LEFT;
+		else if(getHorizontalVelocity() == 0) state = (getVerticalVelocity() < 0) ? State.JUMPING : State.FALLING;
+		else if(getHorizontalVelocity() > 0) state = (getVerticalVelocity() < 0) ? State.JUMPING_RIGHT : State.FALLING_RIGHT;
+		else state = (getVerticalVelocity() < 0) ? State.JUMPING_LEFT : State.FALLING_LEFT;
 
-		if(onGround && wasHitboxModified) 
-		{ expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT); wasHitboxModified = false; }
+		if(isOnGround() && wasHitboxModified()) expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
 		
-		if(currentRoom.getRobotList().stream().anyMatch(g -> isColliding(g)) || position.getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
+		if(currentRoom.getEnemiesList().stream().anyMatch(g -> isColliding(g)) || copyPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
 		{ /*die */ }
 	}
 	

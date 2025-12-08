@@ -7,8 +7,8 @@ public abstract class GameObject implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	
-	protected Point position;
-	protected int width, height;
+	private Point position;
+	private int width, height;
 	
 	public GameObject(Point position, int width, int height)
 	{	
@@ -17,7 +17,7 @@ public abstract class GameObject implements Serializable
 		this.height = height;
 	}
 	
-	protected boolean isColliding(GameObject other)
+	public boolean isColliding(GameObject other)
 	{		
 		int x1 = position.getX(), y1 = position.getY();
 		int w1 = width, h1 = height;
@@ -33,7 +33,10 @@ public abstract class GameObject implements Serializable
 
 	public abstract void update(GameContext context);
 	
-	public Point getPosition()
+	protected Point getPosition()
+	{ return position; }
+	
+	public Point copyPosition()
 	{ return new Point(position); }
 	
 	public int getWidth()
@@ -41,4 +44,10 @@ public abstract class GameObject implements Serializable
 	
 	public int getHeight()
 	{ return height; }
+	
+	protected void setWidth(int width)
+	{ this.width = width; }
+	
+	protected void setHeight(int height)
+	{ this.height = height; }
 }

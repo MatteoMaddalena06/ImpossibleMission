@@ -14,6 +14,16 @@ public class FixedObject extends GameObject
         this.type = type;
     }
     
+	public boolean containsPoint(Point point)
+	{ 
+		int fx = position.getX(), fy = position.getY();
+		int fw = width, fh = height;
+		
+		int px = point.getX(), py = point.getY();
+		
+		return px > fx && px < fx + fw && py > fy && py < fy + fh;
+	}
+    
     public Type getType()
     { return type; }
 

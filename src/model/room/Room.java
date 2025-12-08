@@ -4,7 +4,6 @@ package model.room;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
-import java.util.Collections;
 
 //IO modules
 import java.io.Serializable;
@@ -13,7 +12,7 @@ import java.io.Serializable;
 import model.gameobject.Furniture;
 import model.gameobject.GameObject;
 import model.gameobject.Platform;
-import model.gameobject.Robot;
+import model.gameobject.enemy.Enemy;
 import model.gameobject.FixedObject;
 
 public class Room implements Serializable
@@ -24,7 +23,7 @@ public class Room implements Serializable
 	private List<Platform> platformList;
 	private List<FixedObject> fixedObjectList;
 	private List<Furniture> furnitureList;
-	private List<Robot> robotList;
+	private List<Enemy> enemiesList;
 	private int platformsNumber;
 	private Color color;
 	private ExitLayout layout;
@@ -41,26 +40,26 @@ public class Room implements Serializable
 		platformList = gameObjectList.stream().filter(g -> g instanceof Platform).map(g -> (Platform)g).collect(Collectors.toList());
 		fixedObjectList = gameObjectList.stream().filter(g -> g instanceof FixedObject).map(g -> (FixedObject)g).collect(Collectors.toList());
 		furnitureList = gameObjectList.stream().filter(g -> g instanceof Furniture).map(g -> (Furniture)g).collect(Collectors.toList());
-		robotList = gameObjectList.stream().filter(g -> g instanceof Robot).map(g -> (Robot)g).collect(Collectors.toList());
+		enemiesList = gameObjectList.stream().filter(g -> g instanceof Enemy).map(g -> (Enemy)g).collect(Collectors.toList());
 		platformsNumber = platformList.size();
 		this.color = color;
 		this.layout = layout;
 	}
 	
 	public List<GameObject> getGameObjectList()
-	{ return Collections.unmodifiableList(gameObjectList); }
+	{ return new ArrayList<GameObject>(gameObjectList); }
 	
-	public List<GameObject> getPlatformList()
-	{ return Collections.unmodifiableList(platformList); }
+	public List<Platform> getPlatformList()
+	{ return new ArrayList<Platform>(platformList); }
 	
 	public List<FixedObject> getFixedObjectList()
-	{ return Collections.unmodifiableList(fixedObjectList); }
+	{ return new ArrayList<FixedObject>(fixedObjectList); }
 	
 	public List<Furniture> getFurnitureList()
 	{ return new ArrayList<Furniture>(furnitureList); }
 	
-	public List<Robot> getRobotList()
-	{ return Collections.unmodifiableList(robotList); }
+	public List<Enemy> getEnemiesList()
+	{ return new ArrayList<Enemy>(enemiesList); }
 
 	public boolean removeForniture(Furniture object)
 	{ return furnitureList.remove(object) && gameObjectList.remove(object); }
