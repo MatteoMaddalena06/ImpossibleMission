@@ -2,7 +2,7 @@ package model.gameobject;
 
 //data structure modules
 import java.util.List;
-
+import model.utils.Point;
 
 public abstract class MovingObject extends GameObject
 {
@@ -16,6 +16,14 @@ public abstract class MovingObject extends GameObject
 	private transient boolean wasHitboxModified;
 	
 	private static double deltaTime;
+	
+	private State state;
+	
+	public enum State 
+	{ 
+		WALKING_LEFT, WALKING_RIGHT, JUMPING_LEFT, JUMPING_RIGHT, FALLING_LEFT, 
+		FALLING_RIGHT, JUMPING, FALLING, SEARCHING, IDLE 
+	}
 	
 	public MovingObject(Point position, int width, int height)
 	{
@@ -158,6 +166,12 @@ public abstract class MovingObject extends GameObject
 	
 	protected boolean wasHitboxModified()
 	{ return wasHitboxModified; }
+	
+	protected void setState(State state)
+	{ this.state = state; }
+	
+	public State getState()
+	{ return state; }
 	
 	public static void setDeltaTime(double deltaTime)
 	{ MovingObject.deltaTime = deltaTime; } 

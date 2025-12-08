@@ -8,7 +8,7 @@ import java.util.LinkedList;
 //inproject import
 import model.gameobject.GameObject;
 import model.gameobject.GameObjectFactory;
-import model.gameobject.Point;
+import model.utils.Point;
 
 abstract class RoomMapParser
 {	

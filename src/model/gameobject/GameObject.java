@@ -3,6 +3,9 @@ package model.gameobject;
 //IO modules
 import java.io.Serializable;
 
+import model.utils.GameContext;
+import model.utils.Point;
+
 public abstract class GameObject implements Serializable
 {
 	private static final long serialVersionUID = 1L;

@@ -3,6 +3,8 @@ package model.gameobject;
 //inproject import
 import model.puzzle.PuzzlePiece;
 import model.room.RoomMap;
+import model.utils.GameContext;
+import model.utils.Point;
 
 public class Furniture extends GameObject
 {

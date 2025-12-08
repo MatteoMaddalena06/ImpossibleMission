@@ -1,5 +1,6 @@
-package model.gameobject;
+package model.utils;
 
+import model.gameobject.Player;
 //inproject import
 import model.room.Room;
 

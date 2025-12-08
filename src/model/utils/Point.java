@@ -1,4 +1,4 @@
-package model.gameobject;
+package model.utils;
 
 //IO modules
 import java.io.Serializable;
@@ -11,6 +11,19 @@ public class Point implements Serializable
 
     public Point(int x, int y)
     { this.x = x; this.y = y; }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj) 
+        	return true;
+        
+        if(obj == null || getClass() != obj.getClass()) 
+        	return false;
+        
+        Point other = (Point) obj;
+        return x == other.x && y == other.y;
+    }
     
     //for a copy of the point
   	public Point(Point source)
@@ -27,23 +40,4 @@ public class Point implements Serializable
 
     public int getY() 
     { return y; }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        if(this == obj) 
-        	return true;
-        
-        if(obj == null || getClass() != obj.getClass()) 
-        	return false;
-        
-        Point other = (Point) obj;
-        return x == other.x && y == other.y;
-    }
-    
-    /* remove comment for debugging
-    @Override
-    public String toString()
-    { return "(" + x + ", " + y + ")"; }
-    */
 }

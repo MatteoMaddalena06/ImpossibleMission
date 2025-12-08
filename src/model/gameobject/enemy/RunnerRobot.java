@@ -2,18 +2,18 @@ package model.gameobject.enemy;
 
 //data structure modules
 import java.util.List;
-
-//inproject import
-import model.gameobject.Point;
 import model.room.RoomMap;
+import model.utils.GameContext;
+import model.utils.Point;
 import model.gameobject.FixedObject;
-import model.gameobject.GameContext;
 import model.gameobject.GameObject;
-import model.gameobject.Platform;
+import model.gameobject.MovingObject;
 import model.gameobject.Player;
 
 public class RunnerRobot extends Enemy
 {	
+	private static final long serialVersionUID = 1L;
+	
 	private static final double HORIZONTAL_SPEED = 500f;
 	private static final double VERTICAL_SPEED   = 0f;
 	private static final int    FOV_WIDTH        = 16 * RoomMap.TILE_SIZE;
@@ -21,11 +21,6 @@ public class RunnerRobot extends Enemy
 	private transient final int FOV_X            = getPosition().getX() - (FOV_WIDTH - getWidth())/2;
 	private transient final int FOV_Y            = getPosition().getY() - (FOV_HEIGHT - getHeight()); 
 	private static final double RESPONSE_DELAY   = 0.03f;
-	
-	private State state;
-	
-	private enum State 
-	{ WALKING_LEFT, WALLKING_RIGHT, IDLE }
 	
 	public RunnerRobot(Point point, int width, int height)
 	{ 
@@ -69,11 +64,11 @@ public class RunnerRobot extends Enemy
 		applyVerticalForce();
 		resolveVerticalCollision(interestingGameObjects);
 		
+		setState((getHorizontalVelocity() > 0) ? MovingObject.State.WALKING_RIGHT : MovingObject.State.WALKING_LEFT);
+		if (getHorizontalVelocity() == 0) setState(MovingObject.State.IDLE);
+		
 		Enemy.FieldOfView thisFov = getFov();
 		thisFov.setX(thisX - (FOV_WIDTH - getWidth())/2); 
 		thisFov.setY(thisY - (FOV_HEIGHT - getHeight()));
 	}
-	
-	public State getState()
-	{ return state; }
 }

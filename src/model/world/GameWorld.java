@@ -20,8 +20,8 @@ import java.nio.file.Path;
 
 //inproject import
 import model.room.Room;
+import model.utils.Point;
 import model.room.PresettedRoom;
-import model.gameobject.Point;
 import model.puzzle.PresettedPassword;
 import model.puzzle.PuzzlePiece;
 import model.gameobject.Furniture;

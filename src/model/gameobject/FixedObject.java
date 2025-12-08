@@ -1,5 +1,8 @@
 package model.gameobject;
 
+import model.utils.GameContext;
+import model.utils.Point;
+
 public class FixedObject extends GameObject
 {
 	private static final long serialVersionUID = 1L;

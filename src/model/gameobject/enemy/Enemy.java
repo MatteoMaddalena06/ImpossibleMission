@@ -5,9 +5,9 @@ import java.util.List;
 
 //inproject import
 import model.gameobject.MovingObject;
-import model.gameobject.Point;
+import model.utils.GameContext;
+import model.utils.Point;
 import model.gameobject.FixedObject;
-import model.gameobject.GameContext;
 import model.gameobject.GameObject;
 
 public abstract class Enemy extends MovingObject 
