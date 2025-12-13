@@ -17,13 +17,15 @@ public abstract class MovingObject extends GameObject
 	
 	private static double deltaTime;
 	
-	private State state;
+	private PhysicsState physicsState;
+	private Direction direction;
+	private Direction previousDirection;
 	
-	public enum State 
-	{ 
-		WALKING_LEFT, WALKING_RIGHT, JUMPING_LEFT, JUMPING_RIGHT, FALLING_LEFT, 
-		FALLING_RIGHT, JUMPING, FALLING, SEARCHING, IDLE 
-	}
+	public enum PhysicsState 
+	{ IDLE, WALKING, JUMPING, FALLING }
+	
+	public enum Direction 
+	{ LEFT, RIGHT }
 	
 	public MovingObject(Point position, int width, int height)
 	{
@@ -167,12 +169,27 @@ public abstract class MovingObject extends GameObject
 	protected boolean wasHitboxModified()
 	{ return wasHitboxModified; }
 	
-	protected void setState(State state)
-	{ this.state = state; }
+	protected void setPhysicsState(PhysicsState physicsState)
+	{ this.physicsState = physicsState; }
 	
-	public State getState()
-	{ return state; }
+	public PhysicsState getPhysicsState()
+	{ return physicsState; }
+	
+	protected void setDirection(Direction direction)
+	{ this.direction = direction; }
+	
+	public Direction getDirection()
+	{ return direction; }
+	
+	protected void setPreviousDirection(Direction direction)
+	{ previousDirection = direction; }
+	
+	protected Direction getPreviousDirection()
+	{ return previousDirection; }
 	
 	public static void setDeltaTime(double deltaTime)
 	{ MovingObject.deltaTime = deltaTime; } 
+	
+	public double getDeltaTime()
+	{ return deltaTime; }
 }

@@ -39,11 +39,13 @@ public class Furniture extends GameObject
 	public void update(GameContext context) 
 	{
 		Player player = context.getPlayer();
+			
+		player.setSearchingState(false);
 		
 		if(!context.getUserInput(GameContext.UserInput.UP) || !isColliding(player))
 			return;
 		
-		player.setStateOnSearching();
+		player.setSearchingState(true);
 		
 		if(remainingTicksForSearch-- != 0)
 			return;

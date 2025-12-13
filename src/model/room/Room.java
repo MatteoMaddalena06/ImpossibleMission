@@ -12,6 +12,7 @@ import java.io.Serializable;
 import model.gameobject.Furniture;
 import model.gameobject.GameObject;
 import model.gameobject.Platform;
+import model.gameobject.enemy.LaserRobot;
 import model.gameobject.enemy.Enemy;
 import model.gameobject.FixedObject;
 
@@ -63,6 +64,12 @@ public class Room implements Serializable
 
 	public boolean removeForniture(Furniture object)
 	{ return furnitureList.remove(object) && gameObjectList.remove(object); }
+	
+	public void addEnemyAttack(GameObject attack)
+	{ gameObjectList.add(attack); }
+	
+	public boolean removeEnemyAttack(GameObject attack)
+	{ return gameObjectList.remove(attack); }
 	
 	public int getPlatformsNumber()
 	{ return platformsNumber; }
