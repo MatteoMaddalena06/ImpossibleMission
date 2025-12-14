@@ -13,7 +13,6 @@ public abstract class MovingObject extends GameObject
 	private transient double verticalVelocity;
 	
 	private transient boolean onGround;
-	private transient boolean wasHitboxModified;
 	
 	private static double deltaTime;
 	
@@ -30,7 +29,7 @@ public abstract class MovingObject extends GameObject
 	{
 		super(position, width, height);
 		horizontalVelocity = verticalVelocity = 0;
-		onGround = true; wasHitboxModified = false;
+		onGround = true;
 	}
 	
 	protected void addGravity()
@@ -46,28 +45,6 @@ public abstract class MovingObject extends GameObject
 	{ 
 		Point thisPosition = getPosition();
 		thisPosition.setY((int)(thisPosition.getY() + verticalVelocity * deltaTime)); 
-	}
-	
-	protected void shrinkHitbox(int newWidth, int newHeight) 
-	{
-		Point thisPosition = getPosition();
-		int thisWidth = getWidth(), thisHeight = getHeight();
-	    thisPosition.setX(thisPosition.getX() + (thisWidth - newWidth) / 2);
-	    thisPosition.setY(thisPosition.getY() + (thisHeight - newHeight));
-	    setWidth(newWidth); setHeight(newHeight);
-	    
-	    wasHitboxModified = true;
-	}
-	
-	protected void expandHitbox(int newWidth, int newHeight) 
-	{
-		Point thisPosition = getPosition();
-		int thisWidth = getWidth(), thisHeight = getHeight();
-	    thisPosition.setX(thisPosition.getX() - (newWidth - thisWidth) / 2);
-	    thisPosition.setY(thisPosition.getY() - (newHeight - thisHeight));
-	    setWidth(newWidth); setHeight(newHeight);
-	    
-	    wasHitboxModified = false;
 	}
 	
 	protected void resolveHorizontalCollision(List<GameObject> gameObjectList)
@@ -164,9 +141,6 @@ public abstract class MovingObject extends GameObject
 	
 	protected boolean isOnGround()
 	{ return onGround; }
-	
-	protected boolean wasHitboxModified()
-	{ return wasHitboxModified; }
 	
 	protected void setPhysicsState(PhysicsState physicsState)
 	{ this.physicsState = physicsState; }

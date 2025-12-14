@@ -16,7 +16,7 @@ public abstract class Enemy extends MovingObject
 { 
 	private static final long serialVersionUID = 1L;
 	
-	private static final double SHARED_HORIZONTAL_SPEED = 200f;
+	private static final double SHARED_HORIZONTAL_SPEED = 150f;
 	
 	private FieldOfView fieldOfView;
 	private Point previousPlayerPosition;
@@ -54,9 +54,6 @@ public abstract class Enemy extends MovingObject
 		
 		if(fieldOfView.isColliding(player))
 		{
-			if(previousPlayerPosition == null)
-				previousPlayerPosition = currentPlayerPosition;
-			
 			int targetX = getTargetPosition(currentPlayerPosition).getX();
 			setHorizontalVelocity(0);
 			
@@ -96,6 +93,9 @@ public abstract class Enemy extends MovingObject
 	
 	protected Point getTargetPosition(Point currentPlayerPosition)
 	{ 
+		if(previousPlayerPosition == null)
+			previousPlayerPosition = currentPlayerPosition;
+		
 		int targetX = (int)(previousPlayerPosition.getX() + (currentPlayerPosition.getX() - previousPlayerPosition.getX()) * actionDelay);
 		int targetY = (int)(previousPlayerPosition.getY() + (currentPlayerPosition.getY() - previousPlayerPosition.getY()) * actionDelay);
 		

@@ -10,6 +10,7 @@ import model.room.Room;
 import model.room.RoomMap;
 import model.utils.GameContext;
 import model.utils.Point;
+import model.gameobject.enemy.AttackerRobot;
 
 public class Player extends MovingObject
 {	
@@ -26,6 +27,7 @@ public class Player extends MovingObject
 	private int platformPasswordsObtained;
 	
 	private boolean isSearching;
+	private boolean wasHitboxModified;
 	
 	public Player(Point position)
 	{
@@ -33,6 +35,7 @@ public class Player extends MovingObject
 		puzzlePiecesObtained = new ArrayList<PuzzlePiece>();
 		robotPasswordsObtained = platformPasswordsObtained = 0;
 		setPhysicsState(MovingObject.PhysicsState.IDLE);
+		wasHitboxModified = false;
 	}
 
 	@Override
@@ -78,10 +81,35 @@ public class Player extends MovingObject
 			setDirection((getHorizontalVelocity() > 0) ? MovingObject.Direction.RIGHT : MovingObject.Direction.LEFT);	
 		}
 		
-		if(isOnGround() && wasHitboxModified()) expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
+		if(isOnGround() && wasHitboxModified) expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
 		
-		if((currentRoom.getEnemiesList().stream().anyMatch(g -> isColliding(g)) && !context.isRobotsDisabled()) || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
-		{ /*die */ }
+		boolean isCollidingWithEnemy = currentRoom.getEnemiesList().stream().anyMatch(g -> isColliding(g));
+		boolean isCollidingWithAttack = currentRoom.getGameObjectList().stream().filter(g -> g instanceof AttackerRobot.Attack).anyMatch(a -> isColliding(a));
+		
+		if((isCollidingWithEnemy || isCollidingWithAttack) /*&& context.isRobotsDisabled())*/ || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
+		{ System.out.println("DIE"); }
+	}
+	
+	private void shrinkHitbox(int newWidth, int newHeight) 
+	{
+		Point thisPosition = getPosition();
+		int thisWidth = getWidth(), thisHeight = getHeight();
+	    thisPosition.setX(thisPosition.getX() + (thisWidth - newWidth) / 2);
+	    thisPosition.setY(thisPosition.getY() + (thisHeight - newHeight));
+	    setWidth(newWidth); setHeight(newHeight);
+	    
+	    wasHitboxModified = true;
+	}
+	
+	private void expandHitbox(int newWidth, int newHeight) 
+	{
+		Point thisPosition = getPosition();
+		int thisWidth = getWidth(), thisHeight = getHeight();
+	    thisPosition.setX(thisPosition.getX() - (newWidth - thisWidth) / 2);
+	    thisPosition.setY(thisPosition.getY() - (newHeight - thisHeight));
+	    setWidth(newWidth); setHeight(newHeight);
+	    
+	    wasHitboxModified = false;
 	}
 	
 	public void givePuzzlePiece(PuzzlePiece piece)

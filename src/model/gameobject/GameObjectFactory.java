@@ -1,10 +1,15 @@
 package model.gameobject;
 
+//data strucutre modeules
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.LinkedList;
+
 //inproject import
 import model.room.RoomMap;
 import model.utils.Point;
-import model.gameobject.enemy.BlackOrb;
-import model.gameobject.enemy.RunnerRobot;
+import model.gameobject.enemy.EnemyFactory;
 
 public abstract class GameObjectFactory 
 {	
@@ -16,10 +21,17 @@ public abstract class GameObjectFactory
 			case RoomMap.WALL_ID      -> new FixedObject(FixedObject.Type.WALL, position, width, height);
 			case RoomMap.FLOOR_ID     -> new FixedObject(FixedObject.Type.FLOOR, position, width, height);
 			case RoomMap.PLATFORM_ID  -> new Platform(position, width, height);
-			case RoomMap.ROBOT_ID     -> new RunnerRobot(position, width, height);
+			case RoomMap.ROBOT_ID     -> {
+				List<EnemyFactory.Type> wantedEnemyType = new LinkedList<EnemyFactory.Type>(Arrays.asList(EnemyFactory.Type.values()));
+				wantedEnemyType.remove(EnemyFactory.Type.BLACKORB);
+				Collections.shuffle(wantedEnemyType);
+				EnemyFactory.Type rndEnemyType = wantedEnemyType.getFirst();
+				
+				yield EnemyFactory.produce(position, width, height, rndEnemyType);
+			}
 			case RoomMap.FURNITURE_ID -> new Furniture(position, width, height, Furniture.Type.RANDOM);
 			case RoomMap.TERMINAL_ID  -> new Terminal(position, width, height);
-			case RoomMap.BLACK_ORB_ID -> new BlackOrb(position, width, height);
+			case RoomMap.BLACK_ORB_ID -> EnemyFactory.produce(position, width, height, EnemyFactory.Type.BLACKORB);
 			default -> throw new IllegalArgumentException(FACTORY_ERROR + type);
 		};
 	}

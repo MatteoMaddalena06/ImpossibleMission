@@ -1,13 +1,6 @@
 package model.gameobject.enemy;
 
-//data structure modules
-import java.util.List;
-
 //inproject import
-import model.gameobject.FixedObject;
-import model.gameobject.GameObject;
-import model.gameobject.Player;
-import model.room.Room;
 import model.room.RoomMap;
 import model.utils.GameContext;
 import model.utils.Point;
@@ -17,7 +10,7 @@ public class LaserRobot extends AttackerRobot
 {
 	private static final long serialVersionUID = 1L;
 	
-	private static final double HORIZONTAL_SPEED   = 300f;
+	private static final double HORIZONTAL_SPEED   = 200f;
 	private static final int    FOV_WIDTH          = 6 * RoomMap.TILE_SIZE;
 	private static final int    FOV_HEIGHT         = 3 * RoomMap.TILE_SIZE;
 	private static final double ACTION_DELAY       = 0.01f;

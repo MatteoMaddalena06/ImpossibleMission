@@ -15,7 +15,7 @@ import model.room.RoomMap;
 
 public class ThrowerRobot extends AttackerRobot
 {
-	private static final double HORIZONTAL_SPEED        = 300f;
+	private static final double HORIZONTAL_SPEED        = 200f;
 	private static final int    FOV_WIDTH               = 12 * RoomMap.TILE_SIZE;
 	private static final int    FOV_HEIGHT              = 5 * RoomMap.TILE_SIZE;
 	private final  int          INITIAL_FOV_X           = getPosition().getX();
@@ -26,7 +26,7 @@ public class ThrowerRobot extends AttackerRobot
 	private static final int    ATTACK_HEIGHT     	    = 1 * RoomMap.TILE_SIZE;
 	private static final double ATTACK_HORIZONTAL_SPEED = 600f;
 	private static final double ATTACK_VERTICAL_SPEED   = 450f;
-	private static final double BOUND                   = 10f;
+	private static final double BOUND                   = 200f;
 	
 	private int attackCounter;
 	
