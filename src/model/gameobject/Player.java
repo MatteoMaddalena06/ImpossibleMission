@@ -62,27 +62,21 @@ public class Player extends MovingObject
 		resolveVerticalCollision(interestingGameObjects);
 		
 		if(isOnGround() && getHorizontalVelocity() == 0) 
-		{
 			setPhysicsState(MovingObject.PhysicsState.IDLE);
-			setDirection(getPreviousDirection());
-		}
+		
 		else if(isOnGround())  
 		{
 			setPhysicsState(MovingObject.PhysicsState.WALKING);
 			setDirection((getHorizontalVelocity() > 0) ? MovingObject.Direction.RIGHT : MovingObject.Direction.LEFT);
 		}
 		else if(getHorizontalVelocity() == 0) 
-		{
 			setPhysicsState((getVerticalVelocity() < 0) ? MovingObject.PhysicsState.JUMPING : MovingObject.PhysicsState.FALLING);
-			setDirection(getPreviousDirection());
-		}
+
 		else
 		{
 			setPhysicsState((getVerticalVelocity() < 0) ? MovingObject.PhysicsState.JUMPING : MovingObject.PhysicsState.FALLING);
 			setDirection((getHorizontalVelocity() > 0) ? MovingObject.Direction.RIGHT : MovingObject.Direction.LEFT);	
 		}
-
-		setPreviousDirection(getDirection());
 		
 		if(isOnGround() && wasHitboxModified()) expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
 		

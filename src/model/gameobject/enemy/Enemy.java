@@ -5,6 +5,8 @@ import java.util.List;
 
 //inproject import
 import model.gameobject.MovingObject;
+import model.gameobject.Player;
+import model.room.Room;
 import model.utils.GameContext;
 import model.utils.Point;
 import model.gameobject.FixedObject;
@@ -44,6 +46,54 @@ public abstract class Enemy extends MovingObject
 		randomDelay = 0;
 	}
 	
+	protected void applyGroundMovement(GameContext context, double horizontalSpeed, double bound)
+	{
+		Player player = context.getPlayer();
+		int thisX = getPosition().getX();
+		Point currentPlayerPosition = player.copyPosition();
+		
+		if(fieldOfView.isColliding(player))
+		{
+			if(previousPlayerPosition == null)
+				previousPlayerPosition = currentPlayerPosition;
+			
+			int targetX = getTargetPosition(currentPlayerPosition).getX();
+			setHorizontalVelocity(0);
+			
+			if(Math.abs(thisX - targetX) >= bound) 
+				setHorizontalVelocity((thisX > targetX) ? -horizontalSpeed : horizontalSpeed);
+		}
+		else
+		{
+			previousPlayerPosition = currentPlayerPosition;
+			setRandomHorizontalVelocity();
+		}
+		
+		List<FixedObject> fixedObjects = context.getCurrentRoom().getFixedObjectList();
+		List<GameObject> interestingGameObjects = fixedObjects.stream().map(f -> (GameObject)f).toList();
+		
+		if(isOnLedge(fixedObjects))
+			setHorizontalVelocity(0);
+		
+		addGravity();
+		
+		applyHorizontalForce();
+		resolveHorizontalCollision(interestingGameObjects);
+		
+		applyVerticalForce();
+		resolveVerticalCollision(interestingGameObjects);
+		
+		double currentHorizontalVelocity = getHorizontalVelocity();
+		
+		if(currentHorizontalVelocity != 0)
+		{
+			setPhysicsState(MovingObject.PhysicsState.WALKING);
+			setDirection((currentHorizontalVelocity > 0) ? MovingObject.Direction.RIGHT : MovingObject.Direction.LEFT);
+		}
+		else 
+			setPhysicsState(MovingObject.PhysicsState.IDLE);
+	}
+	
 	protected Point getTargetPosition(Point currentPlayerPosition)
 	{ 
 		int targetX = (int)(previousPlayerPosition.getX() + (currentPlayerPosition.getX() - previousPlayerPosition.getX()) * actionDelay);
@@ -54,7 +104,7 @@ public abstract class Enemy extends MovingObject
 		return new Point(targetX, targetY);
 	}
 	
-	protected boolean isOnLedge(List<FixedObject> fixedObjectList)
+	private boolean isOnLedge(List<FixedObject> fixedObjectList)
 	{
 		Point thisPosition = getPosition();
 		int footX = thisPosition.getX() + ((getHorizontalVelocity() > 0) ? getWidth() : -1);
@@ -85,17 +135,11 @@ public abstract class Enemy extends MovingObject
 	protected void setFov(FieldOfView fov)
 	{ fieldOfView = fov; }
 	
-	protected void setPreviousPlayerPosition(Point previousPosition)
-	{ previousPlayerPosition = previousPosition; }
-	
 	protected void setActionDelay(double delay)
 	{ actionDelay = delay; }
 	
 	protected FieldOfView getFov()
 	{ return fieldOfView; }
-	
-	protected Point getPreviousPlayerPosition()
-	{ return previousPlayerPosition; }
 	
 	protected double getActionDelay()
 	{ return actionDelay; }

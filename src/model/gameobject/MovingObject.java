@@ -19,7 +19,6 @@ public abstract class MovingObject extends GameObject
 	
 	private PhysicsState physicsState;
 	private Direction direction;
-	private Direction previousDirection;
 	
 	public enum PhysicsState 
 	{ IDLE, WALKING, JUMPING, FALLING }
@@ -180,12 +179,6 @@ public abstract class MovingObject extends GameObject
 	
 	public Direction getDirection()
 	{ return direction; }
-	
-	protected void setPreviousDirection(Direction direction)
-	{ previousDirection = direction; }
-	
-	protected Direction getPreviousDirection()
-	{ return previousDirection; }
 	
 	public static void setDeltaTime(double deltaTime)
 	{ MovingObject.deltaTime = deltaTime; } 
