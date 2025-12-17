@@ -14,7 +14,8 @@ public class GameContext
 	
 	public enum UserInput 
 	{ 
-		UP(0), DOWN(1), LEFT(2), RIGHT(3), JUMP(4);
+		UP(0), DOWN(1), LEFT(2), RIGHT(3), 
+		JUMP(4), A_KEY(5), B_KEY(6), E_KEY(7);
 		
 		private int index;
 		
@@ -29,7 +30,7 @@ public class GameContext
 	{	
 		this.player = player;
 		this.currentRoom = currentRoom;
-		userInput = new boolean[5];
+		userInput = new boolean[UserInput.values().length];
 		isRobotsDisabled = false;
 		platformsToReset = 0;
 	}

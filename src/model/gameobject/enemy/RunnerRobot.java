@@ -26,6 +26,9 @@ public class RunnerRobot extends Enemy
 	@Override
 	public void update(GameContext context) 
 	{
+		if(context.isRobotsDisabled())
+			return;
+		
 		applyGroundMovement(context, HORIZONTAL_SPEED, BOUND);
 		
 		Enemy.FieldOfView thisFov = getFov();

@@ -6,7 +6,6 @@ import java.util.List;
 //inproject import
 import model.gameobject.MovingObject;
 import model.gameobject.Player;
-import model.room.Room;
 import model.utils.GameContext;
 import model.utils.Point;
 import model.gameobject.FixedObject;
@@ -113,7 +112,7 @@ public abstract class Enemy extends MovingObject
 		return !fixedObjectList.stream().filter(f -> f.getType() == FixedObject.Type.FLOOR).anyMatch(f -> f.containsPoint(footPosition));
 	}
 	
-	protected void setRandomHorizontalVelocity()
+	private void setRandomHorizontalVelocity()
 	{
 		int randomMovementNumber = RandomHorizontalMovement.values().length;
 		RandomHorizontalMovement randomMovement = RandomHorizontalMovement.values()[(int)(Math.random() * randomMovementNumber)];
@@ -140,9 +139,6 @@ public abstract class Enemy extends MovingObject
 	
 	protected FieldOfView getFov()
 	{ return fieldOfView; }
-	
-	protected double getActionDelay()
-	{ return actionDelay; }
 	
 	public FieldOfView getFOV()
 	{ return fieldOfView; }

@@ -35,6 +35,9 @@ public class JumperRobot extends Enemy
 	@Override
 	public void update(GameContext context)
 	{
+		if(context.isRobotsDisabled())
+			return;
+		
 		Enemy.FieldOfView thisFov = getFov();
 		List<GameObject> interestingGameObjects = 
 				context.getCurrentRoom().getGameObjectList().stream().filter(g -> g instanceof FixedObject || g instanceof Platform).toList();

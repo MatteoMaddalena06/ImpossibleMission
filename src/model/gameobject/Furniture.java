@@ -39,13 +39,15 @@ public class Furniture extends GameObject
 	public void update(GameContext context) 
 	{
 		Player player = context.getPlayer();
-			
-		player.setSearchingState(false);
 		
-		if(!context.getUserInput(GameContext.UserInput.UP) || !isColliding(player))
+		if(player.isSearching() && player.getUsedFurniture() != this)
 			return;
 		
-		player.setSearchingState(true);
+		if(!context.getUserInput(GameContext.UserInput.UP) || !isColliding(player))
+		{ player.setSearchingState(false); return; } 
+
+		player.setUsedFurniture(this);
+		player.setSearchingState(true);	
 		
 		if(remainingTicksForSearch-- != 0)
 			return;
@@ -58,11 +60,15 @@ public class Furniture extends GameObject
 			case LootType.EMPTY             -> { /*do nothing */ }
 		}
 		
+		player.setSearchingState(false);
 		context.getCurrentRoom().removeForniture(this);
 	}
 	
 	public void setContent(LootType content)
 	{ this.content = content; }
+	
+	public Type getType()
+	{ return type; }
 	
 	public void setPuzzlePiece(PuzzlePiece puzzlePiece)
 	{ this.puzzlePiece = puzzlePiece; }	

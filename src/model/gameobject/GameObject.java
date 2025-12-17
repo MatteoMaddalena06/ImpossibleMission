@@ -33,11 +33,24 @@ public abstract class GameObject implements Serializable
 		
 		return firstCheck && secondCheck;
 	}
+	
+	public boolean containsPoint(Point point)
+	{ 
+		int fx = getPosition().getX(), fy = getPosition().getY();
+		int fw = getWidth(), fh = getHeight();
+		
+		int px = point.getX(), py = point.getY();
+		
+		return px > fx && px < fx + fw && py > fy && py < fy + fh;
+	}
 
 	public abstract void update(GameContext context);
 	
 	protected Point getPosition()
 	{ return position; }
+	
+	protected void setPosition(Point position)
+	{ this.position = position; }
 	
 	public Point copyPosition()
 	{ return new Point(position); }

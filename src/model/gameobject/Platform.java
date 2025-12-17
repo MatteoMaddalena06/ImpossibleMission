@@ -1,14 +1,26 @@
 package model.gameobject;
 
-public class Platform extends GameObject
-{
-	public Platform(Point position, int w, int h){
-        super(position, w, h);
-	}
+//inproejct import
+import model.utils.GameContext;
+import model.utils.Point;
 
+public class Platform extends MovingObject
+{
+	private Point originalPosition;
+	
+	public Platform(Point position, int width, int height)
+	{ 
+		super(position, width, height);
+		originalPosition = position;
+	}
+	
 	@Override
-	public void update(GameContext context) {
-		// TODO Auto-generated method stub
+	public void update(GameContext context)
+	{
+		if(context.getPlatformsToReset() == 0)
+			return;
 		
+		setPosition(originalPosition);
+		context.resetOnePlatform();		
 	}
 }

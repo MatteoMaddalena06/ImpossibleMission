@@ -7,7 +7,7 @@ import model.utils.Point;
 public abstract class MovingObject extends GameObject
 {
 	private static final double GRAVITY = 2000f; 
-	private static final int    STANDING_TOLLERANCE = 2; 
+	protected static final int  STANDING_TOLLERANCE = 2; 
 	
 	private transient double horizontalVelocity;
 	private transient double verticalVelocity;
@@ -76,6 +76,9 @@ public abstract class MovingObject extends GameObject
 	
 	protected void resolveVerticalCollision(List<GameObject> gameObjectList)
 	{
+		if(verticalVelocity == 0)
+			return;
+		
 		Point thisPosition = getPosition();
 	    int correctionY = thisPosition.getY(), minDistance = Integer.MAX_VALUE;
 		GameObject nearest = null;
@@ -104,29 +107,10 @@ public abstract class MovingObject extends GameObject
 	        verticalVelocity = 0;
 	        return;
 	    }
-
-	    onGround = gameObjectList.stream().anyMatch(g -> isStandingOn(g));
-	    if(onGround == true) verticalVelocity = 0;
-	}
-	
-	private boolean isStandingOn(GameObject other)
-	{
-		Point thisPosition = getPosition();
-	    int x1 = thisPosition.getX(), y1 = thisPosition.getY();
-	    int w1 = getWidth(), h1 = getHeight();
 	    
-	    Point otherPosition = other.copyPosition();
-	    int x2 = otherPosition.getX(), y2 = otherPosition.getY();
-	    int w2 = other.getWidth();
-
-	    final int tolerance = STANDING_TOLLERANCE;
-
-	    boolean horizontalOverlap = x1 + w1 > x2 && x1 < x2 + w2;
-	    boolean verticalAlignment = (y1 + h1 >= y2 - tolerance) && (y1 + h1 <= y2 + tolerance);
-
-	    return horizontalOverlap && verticalAlignment;
+		onGround = false;
 	}
-	
+
 	protected double getHorizontalVelocity()
 	{ return horizontalVelocity; }
 	

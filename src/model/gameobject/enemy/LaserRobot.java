@@ -32,7 +32,7 @@ public class LaserRobot extends AttackerRobot
 	@Override
 	public void update(GameContext context)
 	{	
-		if(isAttacking())
+		if(isAttacking() || context.isRobotsDisabled())
 			return;
 
 		Enemy.FieldOfView thisFov = getFov();

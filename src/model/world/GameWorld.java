@@ -67,7 +67,7 @@ public class GameWorld implements Serializable
 		createTraversableRandomMap(worldMatrix);
 		PresettedPassword randomPassword = PresettedPassword.values()[(int)(Math.random() * PresettedPassword.PASSWORD_NUMBER)];
 		List<Furniture> allFurnitures =
-				Arrays.stream(PresettedRoom.values()).flatMap(r -> r.getRoom().getFurnitureList().stream()).collect(Collectors.toList());
+				Arrays.stream(PresettedRoom.values()).flatMap(r -> r.getFurnitures().stream()).collect(Collectors.toList());
 		makeTheMapPlayable(allFurnitures, randomPassword);
 		
 		return new GameWorld(worldMatrix);
