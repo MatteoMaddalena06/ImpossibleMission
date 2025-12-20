@@ -1,0 +1,164 @@
+package code.model.world;
+
+//data structure modules
+import java.util.List;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+//IO modules
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.file.Path;
+
+//inproject import
+import code.model.room.Room;
+import code.model.utils.Point;
+import code.model.room.PresettedRoom;
+import code.model.puzzle.PresettedPassword;
+import code.model.puzzle.PuzzlePiece;
+import code.model.gameobject.Furniture;
+
+public class GameWorld implements Serializable
+{
+	private static final long serialVersionUID = 1L;
+	
+	private static final int STD_ELEVATOR_NUMBER       = 8;
+	private static final int STD_WORLD_DEPTH           = 6;
+	private static final int STD_MAX_ROBOT_PASSWORD    = 10;
+	private static final int STD_MAX_PLATFORM_PASSWORD = 10;
+
+	private Room[][] worldMatrix;
+
+	public GameWorld(Room[][] worldMatrix)
+	{ this.worldMatrix = worldMatrix; }
+	
+	public static GameWorld load(Path pathname) throws IOException, ClassNotFoundException 
+	{
+		FileInputStream fileInput = new FileInputStream(pathname.toFile());
+		ObjectInputStream objectInput = new ObjectInputStream(fileInput);
+		
+		GameWorld world = (GameWorld)objectInput.readObject();
+		objectInput.close();
+		
+		return world;
+	}
+	
+	public void store(Path pathname) throws IOException
+	{
+		FileOutputStream fileOutput = new FileOutputStream(pathname.toFile());
+		ObjectOutputStream objectOutput = new ObjectOutputStream(fileOutput);
+		
+		objectOutput.writeObject(this);
+		objectOutput.close();
+	}
+
+	public static GameWorld randomGeneration()
+	{
+		Room[][] worldMatrix = new Room[STD_WORLD_DEPTH][(STD_ELEVATOR_NUMBER << 1) + 1];
+		
+		createTraversableRandomMap(worldMatrix);
+		PresettedPassword randomPassword = PresettedPassword.values()[(int)(Math.random() * PresettedPassword.PASSWORD_NUMBER)];
+		List<Furniture> allFurnitures =
+				Arrays.stream(PresettedRoom.values()).flatMap(r -> r.getFurnitures().stream()).collect(Collectors.toList());
+		makeTheMapPlayable(allFurnitures, randomPassword);
+		
+		return new GameWorld(worldMatrix);
+	}
+	
+	private static void createTraversableRandomMap(Room[][] worldMatrix)
+	{
+		int rows = worldMatrix.length, cols = worldMatrix[0].length;
+		 
+		List<Point> pointToRemove = new LinkedList<Point>();
+		int leftRoomCounter = 0, rightRoomCounter = 0, leftRightRoomCounter = 0;
+			 
+		for(int x = 0; x < cols; x += 2)
+		{
+			int y = (int)(Math.random() * rows);
+			pointToRemove.add(new Point(x, y));
+		 
+			if(x == 0)
+				worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONRIGHT, rightRoomCounter++);
+		 
+			else if(x == cols - 1)
+				worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFT, leftRoomCounter++);
+		 
+			else
+				worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFTANDRIGHT, leftRightRoomCounter++);
+		}
+	 
+		List<Point> pointToUse = IntStream.range(0, cols).filter(x -> x % 2 == 0).mapToObj(
+				x -> IntStream.range(0, rows).mapToObj(y -> new Point(x, y))).flatMap(p -> p).collect(Collectors.toList());
+		pointToUse.removeAll(pointToRemove);
+		Collections.shuffle(pointToUse);
+	 		 
+		while(leftRoomCounter + rightRoomCounter + leftRightRoomCounter < PresettedRoom.ROOM_NUMBER)
+		{
+			Point point = pointToUse.remove(0);
+			int x = point.getX(), y = point.getY();
+		 
+			if(x == 0 && rightRoomCounter < PresettedRoom.RIGHT_ROOM_NUMBER)
+				worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONRIGHT, rightRoomCounter++);
+		 
+			else if(x == cols - 1 && leftRoomCounter < PresettedRoom.LEFT_ROOM_NUMBER)
+				worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFT, leftRoomCounter++);
+		 
+			else if(x != 0 && x != cols - 1)
+			{
+				List<Room.ExitLayout> toChoose = Arrays.asList(Room.ExitLayout.values());
+				Collections.shuffle(toChoose);
+			 
+				for(Room.ExitLayout layout : toChoose)
+				{
+					if(layout == Room.ExitLayout.ONLEFT && leftRoomCounter < PresettedRoom.LEFT_ROOM_NUMBER)
+					{ worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFT, leftRoomCounter++); break; }
+					
+					if(layout == Room.ExitLayout.ONRIGHT && rightRoomCounter < PresettedRoom.RIGHT_ROOM_NUMBER)	
+					{ worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONRIGHT, rightRoomCounter++); break; }
+				 
+					if(layout == Room.ExitLayout.ONLEFTANDRIGHT && leftRightRoomCounter < PresettedRoom.LEFT_RIGHT_ROOM_NUMBER)
+					{ worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONLEFTANDRIGHT, leftRightRoomCounter++); break; }
+				}	
+			}	
+		}
+	}
+	
+	private static void makeTheMapPlayable(List<Furniture> furnitureList, PresettedPassword password)
+	{
+		Collections.shuffle(furnitureList);
+		distributeInFurniture(furnitureList, PuzzlePiece.getPieces(password.getPassword()));
+		distributeInFurniture(furnitureList, (int)(Math.random() * STD_MAX_ROBOT_PASSWORD) + 1, Furniture.LootType.ROBOT_PASSWORD);
+		distributeInFurniture(furnitureList, (int)(Math.random() * STD_MAX_PLATFORM_PASSWORD) + 1, Furniture.LootType.PLATFORM_PASSWORD);
+	}
+	
+	private static List<Furniture> distributeInFurniture(List<Furniture> furnitureList, int amount, Furniture.LootType type)
+	{
+		List<Furniture> visitedFurniture = new ArrayList<Furniture>();
+		
+		for(int i = 0; i < amount; i++)
+		{
+			Furniture furniture = furnitureList.remove(i);
+			visitedFurniture.add(furniture);
+			furniture.setContent(type);
+		}
+		
+		return visitedFurniture;
+	}
+	
+	private static void distributeInFurniture(List<Furniture> furnitureList, PuzzlePiece[] puzzlePieces)
+	{ 
+		List<Furniture> visitedFurniture =  distributeInFurniture(furnitureList, puzzlePieces.length, Furniture.LootType.PUZZLE_PIECE); 
+		IntStream.range(0, visitedFurniture.size()).forEach(i -> visitedFurniture.get(i).setPuzzlePiece(puzzlePieces[i]));
+	}
+	
+	public Room[][] getWorldMatrix()
+	{ return worldMatrix; }
+}
