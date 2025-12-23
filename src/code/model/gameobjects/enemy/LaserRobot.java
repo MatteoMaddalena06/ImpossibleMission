@@ -1,4 +1,4 @@
-package code.model.gameobject.enemy;
+package code.model.gameobjects.enemy;
 
 import code.model.gameobjects.MovingObject;
 //inproject import

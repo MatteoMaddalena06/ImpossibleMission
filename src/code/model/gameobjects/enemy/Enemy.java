@@ -1,4 +1,4 @@
-package code.model.gameobject.enemy;
+package code.model.gameobjects.enemy;
 
 //data structure module
 import java.util.List;

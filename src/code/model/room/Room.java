@@ -8,12 +8,12 @@ import java.util.ArrayList;
 //IO modules
 import java.io.Serializable;
 
-import code.model.gameobject.enemy.Enemy;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.Furniture;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.Platform;
-import code.model.gameobject.enemy.AttackerRobot;
+import code.model.gameobjects.enemy.AttackerRobot;
+import code.model.gameobjects.enemy.Enemy;
 
 public class Room implements Serializable
 {

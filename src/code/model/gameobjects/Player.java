@@ -4,13 +4,13 @@ package code.model.gameobjects;
 import java.util.List;
 import java.util.ArrayList;
 
+import code.model.gameobjects.enemy.AttackerRobot;
 //inproject import
 import code.model.puzzle.PuzzlePiece;
 import code.model.room.Room;
 import code.model.room.RoomMap;
 import code.model.utils.GameContext;
 import code.model.utils.Point;
-import code.model.gameobject.enemy.AttackerRobot;
 
 public class Player extends MovingObject
 {	

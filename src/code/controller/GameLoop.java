@@ -4,11 +4,11 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-import code.model.gameobject.enemy.Enemy;
-import code.model.gameobject.enemy.LaserRobot;
-import code.model.gameobject.enemy.RunnerRobot;
 import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.PlatformCluster;
+import code.model.gameobjects.enemy.Enemy;
+import code.model.gameobjects.enemy.LaserRobot;
+import code.model.gameobjects.enemy.RunnerRobot;
 import code.model.room.Room;
 import code.model.utils.GameContext;
 

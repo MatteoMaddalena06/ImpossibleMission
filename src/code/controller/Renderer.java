@@ -11,9 +11,9 @@ import javax.swing.*;
 
 import code.model.utils.GameContext;
 import code.model.utils.Point;
-import code.model.gameobject.enemy.BlackOrb;
-import code.model.gameobject.enemy.Enemy;
 import code.model.gameobjects.*;
+import code.model.gameobjects.enemy.BlackOrb;
+import code.model.gameobjects.enemy.Enemy;
 
 import java.util.List;
 
