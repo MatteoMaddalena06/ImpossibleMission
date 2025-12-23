@@ -78,8 +78,11 @@ public class Renderer extends JPanel
         	
         	GameObject go = s.getGameObject();
         	Point goPosition = go.copyPosition();
-        	int goX = goPosition.getX(), goY = goPosition.getY();
-        	gBuf.drawImage(s.getImage(), goX, goY, null);
+        	int goX = (int)goPosition.getX(), goY = (int)goPosition.getY();
+        	BufferedImage spriteImage = s.getImage();
+        	int overflow = spriteImage.getHeight() - go.getHeight();
+
+        	gBuf.drawImage(spriteImage, goX, goY - overflow, null);
         }
     	
     	for(GameObject gameObject : gameObjectList)
@@ -95,7 +98,7 @@ public class Renderer extends JPanel
     				gBuf.setColor(Color.RED);
     			
     			GameObject fov = ((Enemy) gameObject).getFOV();
-    			int x = fov.copyPosition().getX(), y = fov.copyPosition().getY();
+    			int x = (int)fov.copyPosition().getX(), y = (int)fov.copyPosition().getY();
     			int w = fov.getWidth(), h = fov.getHeight();
     			gBuf.drawRect(x, y, w, h);
     		}
@@ -105,18 +108,19 @@ public class Renderer extends JPanel
     			gBuf.setColor(Color.BLUE);
     		
     		Point gameObjectPosition = gameObject.copyPosition();
-    		int x = gameObjectPosition.getX(), y = gameObjectPosition.getY();
+    		int x = (int)gameObjectPosition.getX(), y = (int)gameObjectPosition.getY();
     		int w = gameObject.getWidth(), h = gameObject.getHeight();
     		
-    		gBuf.drawRect(x, y, w, h);
+    		if(context.getUserInput(GameContext.UserInput.H_KEY))
+    			gBuf.drawRect(x, y, w, h);
     	}
     	
     	// --- PLAYER SPRITE ---
     	Player player = context.getPlayer();
     	Point pos = player.copyPosition();
 
-    	int px = pos.getX();
-    	int py = pos.getY();
+    	int px = (int)pos.getX();
+    	int py = (int)pos.getY();
     	int pw = player.getWidth();
     	int ph = player.getHeight();
     	

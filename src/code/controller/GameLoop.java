@@ -32,9 +32,6 @@ public class GameLoop implements Runnable
     public void run()
     {
         double lastTime = System.nanoTime() / 1e9;
-        double accumulator = 0.0;
-        
-        MovingObject.setDeltaTime(1/60f);
        
     	context.enableRobots();
     	
@@ -46,8 +43,9 @@ public class GameLoop implements Runnable
             double now = System.nanoTime() / 1e9;
             double delta = now - lastTime;
             lastTime = now;
+            
+            GameContext.setDeltaTime(delta);
 
-            accumulator += delta;
             robot = context.getCurrentRoom().getEnemiesList().get(0);
             
             if(context.getCurrentRoom() != prevRoom)
@@ -56,20 +54,14 @@ public class GameLoop implements Runnable
             	prevRoom = context.getCurrentRoom();
             }
 
-            // aggiornamento logico fisso
-            while (accumulator >= FRAME_TIME)
-            {
-            	 for(int i = context.getCurrentRoom().getGameObjectList().size() - 1; i >= 0; i--)
-                 {
-                 	context.getCurrentRoom().getGameObjectList().get(i).update(context);
-                 }
-            	 
-            	platformClusters.forEach(c -> c.update(context));
-            	
-                context.getPlayer().update(context);
 
-                accumulator -= FRAME_TIME;
-            }
+            for(int i = context.getCurrentRoom().getGameObjectList().size() - 1; i >= 0; i--)
+            	context.getCurrentRoom().getGameObjectList().get(i).update(context);
+
+            	 
+        	platformClusters.forEach(c -> c.update(context));
+        	
+            context.getPlayer().update(context);
             
             // render
             SwingUtilities.invokeLater(() -> renderer.repaint());

@@ -18,21 +18,19 @@ public class ThrowerRobot extends AttackerRobot
 	private static final double HORIZONTAL_SPEED        = 200f;
 	private static final int    FOV_WIDTH               = 12 * RoomMap.TILE_SIZE;
 	private static final int    FOV_HEIGHT              = 5 * RoomMap.TILE_SIZE;
-	private final  int          INITIAL_FOV_X           = getPosition().getX();
-	private final  int          INITIAL_FOV_Y           = getPosition().getY() - (FOV_HEIGHT - getHeight());
-	private static final double ACTION_DELAY            = 0.01f;
+	private final  double       INITIAL_FOV_X           = getPosition().getX();
+	private final  double       INITIAL_FOV_Y           = getPosition().getY() - (FOV_HEIGHT - getHeight());
 	private static final double ATTACK_PROBABILITY      = 0.5f;
  	private static final int    ATTACK_WIDTH      	    = 1 * RoomMap.TILE_SIZE;
 	private static final int    ATTACK_HEIGHT     	    = 1 * RoomMap.TILE_SIZE;
 	private static final double ATTACK_HORIZONTAL_SPEED = 600f;
-	private static final double ATTACK_VERTICAL_SPEED   = 450f;
-	private static final double BOUND                   = 200f;
+	private static final double ATTACK_VERTICAL_SPEED   = 450f;;
 	
 	private int attackCounter;
 	
 	public ThrowerRobot(Point position, int width, int height)
 	{
-		super(position, width, height, ACTION_DELAY);
+		super(position, width, height);
 		setFov(this.new FieldOfView(new Point(INITIAL_FOV_X, INITIAL_FOV_Y), FOV_WIDTH, FOV_HEIGHT));
 		attackCounter = 0;
 	}
@@ -45,7 +43,7 @@ public class ThrowerRobot extends AttackerRobot
 
 		Enemy.FieldOfView thisFov = getFov();
 		
-		double pThisFrame = 1.0 - Math.pow(1.0 - ATTACK_PROBABILITY, getDeltaTime());
+		double pThisFrame = 1.0 - Math.pow(1.0 - ATTACK_PROBABILITY, GameContext.getDeltaTime());
 		
 		if(thisFov.isColliding(context.getPlayer()) && Math.random() < pThisFrame)
 		{
@@ -54,10 +52,10 @@ public class ThrowerRobot extends AttackerRobot
 			return;
 		}
 		
-		applyGroundMovement(context, HORIZONTAL_SPEED, BOUND);
+		applyGroundMovement(context, HORIZONTAL_SPEED);
 		
 		double currentHorizontalVelocity = getHorizontalVelocity();
-		int thisX = getPosition().getX(), thisY = getPosition().getY();
+		double thisX = getPosition().getX(), thisY = getPosition().getY();
 		
 		if(currentHorizontalVelocity != 0)
 		{
@@ -70,9 +68,9 @@ public class ThrowerRobot extends AttackerRobot
 	protected Attack produceAttack()
 	{
 		Point thisPosition = getPosition();
-		int thisX = thisPosition.getX();
+		double thisX = thisPosition.getX();
 		
-		int attackX, attackY = thisPosition.getY();
+		double attackX, attackY = thisPosition.getY();
 		
 		if(getHorizontalVelocity() == 0) 
 			attackX = ((getDirection()) == MovingObject.Direction.RIGHT) ? thisX + RoomMap.TILE_SIZE: thisX;

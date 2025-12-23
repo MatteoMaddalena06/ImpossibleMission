@@ -31,10 +31,10 @@ abstract class RoomMapParser
 				
 				List<Point> cluster = floodFill(map, x, y, visited, type);
 				
-				int minX = cluster.stream().mapToInt(p -> p.getX()).min().getAsInt();
-				int maxX = cluster.stream().mapToInt(p -> p.getX()).max().getAsInt();
-				int minY = cluster.stream().mapToInt(p -> p.getY()).min().getAsInt();
-				int maxY = cluster.stream().mapToInt(p -> p.getY()).max().getAsInt();
+				int minX = cluster.stream().mapToInt(p -> (int)p.getX()).min().getAsInt();
+				int maxX = cluster.stream().mapToInt(p -> (int)p.getX()).max().getAsInt();
+				int minY = cluster.stream().mapToInt(p -> (int)p.getY()).min().getAsInt();
+				int maxY = cluster.stream().mapToInt(p -> (int)p.getY()).max().getAsInt();
 				
 				int realX  = x * tileSize, realY = y * tileSize; 
 				int width  = (maxX - minX + 1) * tileSize;
@@ -59,7 +59,7 @@ abstract class RoomMapParser
 		while(!stack.empty())
 		{
 			Point currentPoint = stack.pop();
-			int currX = currentPoint.getX(), currY = currentPoint.getY();
+			int currX = (int)currentPoint.getX(), currY = (int)currentPoint.getY();
 			
 			if(currX < 0 || currY < 0 || currX >= cols || currY >= rows || visited[currY][currX] || map[currY][currX] != type) 
 				continue;

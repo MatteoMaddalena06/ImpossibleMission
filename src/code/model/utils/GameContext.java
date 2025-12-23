@@ -12,10 +12,12 @@ public class GameContext
 	private boolean isRobotsDisabled;
 	private int platformsToReset;
 	
+	private static double deltaTime;
+	
 	public enum UserInput 
 	{ 
 		UP(0), DOWN(1), LEFT(2), RIGHT(3), 
-		JUMP(4), A_KEY(5), B_KEY(6), E_KEY(7);
+		JUMP(4), A_KEY(5), B_KEY(6), E_KEY(7), H_KEY(8);
 		
 		private int index;
 		
@@ -70,4 +72,10 @@ public class GameContext
 	
 	public int getPlatformsToReset()
 	{ return platformsToReset; }
+	
+	public static double getDeltaTime()
+	{ return deltaTime; }
+	
+	public static void setDeltaTime(double deltaTime)
+	{ GameContext.deltaTime = deltaTime; }
 }

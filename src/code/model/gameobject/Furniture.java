@@ -13,7 +13,7 @@ public class Furniture extends GameObject
     private LootType content;
     private Type type;
 	private PuzzlePiece puzzlePiece;
-    private int remainingTicksForSearch;
+    private double remainingTimeForSearch;
     
     public enum LootType
     { EMPTY, PUZZLE_PIECE, ROBOT_PASSWORD, PLATFORM_PASSWORD }
@@ -34,7 +34,7 @@ public class Furniture extends GameObject
     	super(position, width, height);
     	this.content = LootType.EMPTY;
     	this.type = type;
-    	this.remainingTicksForSearch = (width * height) / (RoomMap.TILE_SIZE*RoomMap.TILE_SIZE) * 10; //10 = FPS/6 TODO
+    	this.remainingTimeForSearch = (width * height) / (2*(RoomMap.TILE_SIZE*RoomMap.TILE_SIZE));
     }
     
 	@Override
@@ -50,8 +50,8 @@ public class Furniture extends GameObject
 
 		player.setUsedFurniture(this);
 		player.setSearchingState(true);	
-		
-		if(remainingTicksForSearch-- != 0)
+
+		if((remainingTimeForSearch -= GameContext.getDeltaTime()) > 0)
 			return;
 
 		switch(content)

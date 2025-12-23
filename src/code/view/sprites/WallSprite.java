@@ -39,7 +39,7 @@ public class WallSprite extends Sprite
 	{ 
 		FixedObject bindedWall = (FixedObject)getGameObject();
 		Point bindedWallPosition = bindedWall.copyPosition();
-		int bindedWallX = bindedWallPosition.getX();
+		int bindedWallX = (int)bindedWallPosition.getX();
 		int bindedWallWidth = bindedWall.getWidth();
 		int bindedWallHeight = bindedWall.getHeight();
 		int wallImageHeight = rightMiddleWallImage.getHeight();

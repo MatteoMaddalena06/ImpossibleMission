@@ -22,10 +22,10 @@ public abstract class GameObject implements Serializable
 	
 	public boolean isColliding(GameObject other)
 	{		
-		int x1 = position.getX(), y1 = position.getY();
+		double x1 = position.getX(), y1 = position.getY();
 		int w1 = width, h1 = height;
 		
-		int x2 = other.position.getX(), y2 = other.position.getY();
+		double x2 = other.position.getX(), y2 = other.position.getY();
 		int w2 = other.width, h2 = other.height;
 		
 		boolean firstCheck  = x1 < x2 + w2 && y1 < y2 + h2;
@@ -36,10 +36,10 @@ public abstract class GameObject implements Serializable
 	
 	public boolean containsPoint(Point point)
 	{ 
-		int fx = getPosition().getX(), fy = getPosition().getY();
+		double fx = getPosition().getX(), fy = getPosition().getY();
 		int fw = getWidth(), fh = getHeight();
 		
-		int px = point.getX(), py = point.getY();
+		double px = point.getX(), py = point.getY();
 		
 		return px > fx && px < fx + fw && py > fy && py < fy + fh;
 	}

@@ -47,6 +47,7 @@ public class Test
         bindKey(renderer, context, "B DOWN", KeyEvent.VK_B, true);
         bindKey(renderer, context, "E DOWN", KeyEvent.VK_E, true);
         bindKey(renderer, context, "N DOWN", KeyEvent.VK_N, true);
+        bindKey(renderer, context, "H DOWN", KeyEvent.VK_H, true);
 
         bindKey(renderer, context, "released LEFT", KeyEvent.VK_LEFT, false);
         bindKey(renderer, context, "released RIGHT", KeyEvent.VK_RIGHT, false);
@@ -56,6 +57,7 @@ public class Test
         bindKey(renderer, context, "A UP", KeyEvent.VK_A, false);
         bindKey(renderer, context, "B UP", KeyEvent.VK_B, false);
         bindKey(renderer, context, "E UP", KeyEvent.VK_E, false);
+        bindKey(renderer, context, "H UP", KeyEvent.VK_H, false);
         
         new Thread(new GameLoop(context, renderer)).start();
 	}
@@ -86,6 +88,7 @@ public class Test
                     case KeyEvent.VK_B     -> context.setUserInput(GameContext.UserInput.B_KEY, pressed);
                     case KeyEvent.VK_E     -> context.setUserInput(GameContext.UserInput.E_KEY, pressed);
                     case KeyEvent.VK_N     -> { context.setCurrentRoom(rooms.get(++i % 30)); tester.setSprites(createSpriteList(context.getCurrentRoom().getGameObjectList())); System.out.println(++times);}
+                    case KeyEvent.VK_H     -> context.setUserInput(GameContext.UserInput.H_KEY, pressed);
                 }
             }
         });

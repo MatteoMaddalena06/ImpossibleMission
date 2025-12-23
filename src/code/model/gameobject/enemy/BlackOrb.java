@@ -9,35 +9,36 @@ import code.model.gameobject.FixedObject;
 import code.model.gameobject.GameObject;
 import code.model.gameobject.MovingObject;
 import code.model.gameobject.Platform;
+import code.model.gameobject.Player;
 import code.model.utils.GameContext;
 
 public class BlackOrb extends Enemy
 {
 	private static final double HORIZONTAL_SPEED = 100f;
 	private static final double VERTICAL_SPEED   = 150f;
-	private static final double ACTION_DELAY     = 0.03f;
 	private static final double BOUND            = 3;
 	
 	public BlackOrb(Point position, int width, int height)
-	{ super(position, width, height, ACTION_DELAY); }
-	
+	{ super(position, width, height); }
+
 	@Override
 	public void update(GameContext context)
 	{
 		if(context.isRobotsDisabled())
 			return;
-		
-		Point targetPosition = getTargetPosition(context.getPlayer().copyPosition());
-		int targetX = targetPosition.getX(), targetY = targetPosition.getY();
-		int thisX = getPosition().getX(), thisY = getPosition().getY();
+
+		Player player = context.getPlayer();
+		Point playerPosition = player.copyPosition();
+		double playerX = playerPosition.getX(), playerY = playerPosition.getY();
+		double thisX = getPosition().getX(), thisY = getPosition().getY();
 		
 		setHorizontalVelocity(0); setVerticalVelocity(0);
 				
-		if(Math.abs(thisX - targetX) >= BOUND) 
-			setHorizontalVelocity((thisX > targetX) ? -HORIZONTAL_SPEED : HORIZONTAL_SPEED);
+		if(Math.abs(thisX - playerX) >= BOUND) 
+			setHorizontalVelocity((thisX > playerX) ? -HORIZONTAL_SPEED : HORIZONTAL_SPEED);
 		
-		if(Math.abs(thisY - targetY) >= BOUND)
-			setVerticalVelocity((thisY > targetY) ? -VERTICAL_SPEED : VERTICAL_SPEED);
+		if(Math.abs(thisY - playerY) >= BOUND)
+			setVerticalVelocity((thisY > playerY) ? -VERTICAL_SPEED : VERTICAL_SPEED);
 		
 		List<GameObject> interestingGameObjects = 
 				context.getCurrentRoom().getGameObjectList().stream().filter(g -> g instanceof Platform || g instanceof FixedObject).map(g -> (GameObject)g).toList();

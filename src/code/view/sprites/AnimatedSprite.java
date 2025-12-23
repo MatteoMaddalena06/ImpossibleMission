@@ -7,7 +7,6 @@ import code.view.images.Animation;
 public abstract class AnimatedSprite extends Sprite 
 {
 	 private Animation animation;
-	 private Animation.State state;
 	 
 	 private long spriteDuration;
 	 private long elapsedTime;
@@ -21,9 +20,6 @@ public abstract class AnimatedSprite extends Sprite
 		 elapsedTime = spriteIndex = 0;
 	 }
 	  
-	 protected void setState(Animation.State state)
-	 { this.state = state; }
-	 
 	 protected long getSpriteDuration()
 	 { return spriteDuration; }
 	 

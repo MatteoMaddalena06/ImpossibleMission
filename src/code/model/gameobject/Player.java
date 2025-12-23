@@ -19,8 +19,8 @@ public class Player extends MovingObject
 	private static final int    JUMP_WIDTH       = NORMAL_WIDTH;
 	private static final int    JUMP_HEIGHT      = 1 * RoomMap.TILE_SIZE; 
 	private static final double HORIZONTAL_SPEED = 300f; 
-	private static final double JUMP_INCREASE    = 150f;
-	private static final double VERTICAL_SPEED   = 700f;
+	private static final double JUMP_INCREASE    = 50f;
+	private static final double VERTICAL_SPEED   = 600f;
 	
 	private List<PuzzlePiece> puzzlePiecesObtained;
 	private int robotPasswordsObtained;
@@ -125,13 +125,13 @@ public class Player extends MovingObject
 	
 	public boolean isStandingOnTopOf(Platform obj)
 	{
-	    int playerLeft   = getPosition().getX();
-	    int playerRight  = playerLeft + getWidth();
-	    int playerBottom = getPosition().getY() + getHeight();
+	    double playerLeft   = getPosition().getX();
+	    double playerRight  = playerLeft + getWidth();
+	    double playerBottom = getPosition().getY() + getHeight();
 
-	    int objLeft   = obj.getPosition().getX();
-	    int objRight  = objLeft + obj.getWidth();
-	    int objTop    = obj.getPosition().getY();
+	    double objLeft   = obj.getPosition().getX();
+	    double objRight  = objLeft + obj.getWidth();
+	    double objTop    = obj.getPosition().getY();
 
 	    boolean horizontalOverlap =
 	        playerRight > objLeft && playerLeft < objRight;

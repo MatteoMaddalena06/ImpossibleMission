@@ -2,19 +2,19 @@ package code.model.gameobject;
 
 //data structure modules
 import java.util.List;
+
+import code.model.utils.GameContext;
 import code.model.utils.Point;
 
 public abstract class MovingObject extends GameObject
 {
-	private static final double GRAVITY = 2000f; 
+	private static final double GRAVITY = 1200f; 
 	protected static final int  STANDING_TOLLERANCE = 2; 
 	
 	private transient double horizontalVelocity;
 	private transient double verticalVelocity;
 	
 	private transient boolean onGround;
-	
-	private static double deltaTime;
 	
 	private PhysicsState physicsState;
 	private Direction direction;
@@ -33,24 +33,24 @@ public abstract class MovingObject extends GameObject
 	}
 	
 	protected void addGravity()
-	{ verticalVelocity += GRAVITY * deltaTime; }
+	{ verticalVelocity += GRAVITY * GameContext.getDeltaTime(); }
 	
 	protected void applyHorizontalForce()
 	{ 
 		Point thisPosition = getPosition();
-		thisPosition.setX((int)(thisPosition.getX() + horizontalVelocity * deltaTime)); 
+		thisPosition.setX(thisPosition.getX() + horizontalVelocity * GameContext.getDeltaTime()); 
 	}
 	
 	protected void applyVerticalForce()
 	{ 
 		Point thisPosition = getPosition();
-		thisPosition.setY((int)(thisPosition.getY() + verticalVelocity * deltaTime)); 
+		thisPosition.setY(thisPosition.getY() + verticalVelocity * GameContext.getDeltaTime()); 
 	}
 	
 	protected void resolveHorizontalCollision(List<GameObject> gameObjectList)
 	{
 		Point thisPosition = getPosition();
-	    int correctionX = thisPosition.getX(), minDistance = Integer.MAX_VALUE;
+	    double correctionX = thisPosition.getX(), minDistance = Integer.MAX_VALUE;
 	    GameObject nearest = null;
 
 	    for (GameObject fixed : gameObjectList) 
@@ -58,9 +58,9 @@ public abstract class MovingObject extends GameObject
 	        if(!isColliding(fixed))
 	        	continue;
 
-	        int fixedX = fixed.copyPosition().getX();
-	        int newX = (horizontalVelocity > 0) ? fixedX - getWidth() : fixedX + fixed.getWidth();
-	        int distance = Math.abs(newX - thisPosition.getX());
+	        double fixedX = fixed.copyPosition().getX();
+	        double newX = (horizontalVelocity > 0) ? fixedX - getWidth() : fixedX + fixed.getWidth();
+	        double distance = Math.abs(newX - thisPosition.getX());
 
 	        if(distance < minDistance) 
 	        {
@@ -77,7 +77,7 @@ public abstract class MovingObject extends GameObject
 	protected void resolveVerticalCollision(List<GameObject> gameObjectList)
 	{
 		Point thisPosition = getPosition();
-	    int correctionY = thisPosition.getY(), minDistance = Integer.MAX_VALUE;
+	    double correctionY = thisPosition.getY(), minDistance = Integer.MAX_VALUE;
 		GameObject nearest = null;
 
 	    for (GameObject fixed : gameObjectList)
@@ -85,9 +85,9 @@ public abstract class MovingObject extends GameObject
 	        if(!isColliding(fixed)) 
 	        	continue;
 
-	        int fixedY = fixed.copyPosition().getY();
-	        int newY = (verticalVelocity > 0) ? fixedY - getHeight() : fixedY + fixed.getHeight();
-	        int distance = Math.abs(newY - thisPosition.getY());
+	        double fixedY = fixed.copyPosition().getY();
+	        double newY = (verticalVelocity > 0) ? fixedY - getHeight() : fixedY + fixed.getHeight();
+	        double distance = Math.abs(newY - thisPosition.getY());
 
 	        if(distance < minDistance) 
 	        {
@@ -120,7 +120,7 @@ public abstract class MovingObject extends GameObject
 	protected void setVerticalVelocity(double velocity)
 	{ verticalVelocity = velocity; }
 	
-	protected boolean isOnGround()
+	public boolean isOnGround()
 	{ return onGround; }
 	
 	protected void setPhysicsState(PhysicsState physicsState)
@@ -134,10 +134,4 @@ public abstract class MovingObject extends GameObject
 	
 	public Direction getDirection()
 	{ return direction; }
-	
-	public static void setDeltaTime(double deltaTime)
-	{ MovingObject.deltaTime = deltaTime; } 
-	
-	public double getDeltaTime()
-	{ return deltaTime; }
 }

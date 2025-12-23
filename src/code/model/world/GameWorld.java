@@ -103,7 +103,7 @@ public class GameWorld implements Serializable
 		while(leftRoomCounter + rightRoomCounter + leftRightRoomCounter < PresettedRoom.ROOM_NUMBER)
 		{
 			Point point = pointToUse.remove(0);
-			int x = point.getX(), y = point.getY();
+			int x = (int)point.getX(), y = (int)point.getY();
 		 
 			if(x == 0 && rightRoomCounter < PresettedRoom.RIGHT_ROOM_NUMBER)
 				worldMatrix[y][x] = PresettedRoom.getRoom(Room.ExitLayout.ONRIGHT, rightRoomCounter++);

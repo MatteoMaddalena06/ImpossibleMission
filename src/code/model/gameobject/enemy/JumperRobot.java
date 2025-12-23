@@ -13,23 +13,21 @@ import code.model.utils.Point;
 
 public class JumperRobot extends Enemy
 {
-	private static final double HORIZONTAL_SPEED = 200f;
-	private static final double VERTICAL_SPEED   = 500f;
-	private static final int    FOV_WIDTH        = 6 * RoomMap.TILE_SIZE;
-	private static final int    FOV_HEIGHT       = 5 * RoomMap.TILE_SIZE;
-	private transient final int INITIAL_FOV_X    = getPosition().getX() - (FOV_WIDTH - getWidth())/2;
-	private transient final int INITIAL_FOV_Y    = getPosition().getY() - (FOV_HEIGHT - getHeight()); 
-	private static final double ACTION_DELAY     = 0.1f;
-	private static final double BOUND            = 48f;
-	private static final int    JUMP_INTERVAL    = 30;
+	private static final double    HORIZONTAL_SPEED = 200f;
+	private static final double    VERTICAL_SPEED   = 350f;
+	private static final int       FOV_WIDTH        = 6 * RoomMap.TILE_SIZE;
+	private static final int       FOV_HEIGHT       = 5 * RoomMap.TILE_SIZE;
+	private transient final double INITIAL_FOV_X    = getPosition().getX() - (FOV_WIDTH - getWidth())/2;
+	private transient final double INITIAL_FOV_Y    = getPosition().getY() - (FOV_HEIGHT - getHeight()); 
+	private static final double    JUMP_DELAY       = 0.7f;
 	
-	private int jumpInterval;
+	private double jumpInterval;
 	
 	public JumperRobot(Point point, int width, int height)
 	{ 
-		super(point, width, height, ACTION_DELAY);
+		super(point, width, height);
 		setFov(this.new FieldOfView(new Point(INITIAL_FOV_X, INITIAL_FOV_Y), FOV_WIDTH, FOV_HEIGHT));
-		jumpInterval = JUMP_INTERVAL;
+		jumpInterval = JUMP_DELAY;
 	}
 	
 	@Override
@@ -44,15 +42,15 @@ public class JumperRobot extends Enemy
 		
 		if(thisFov.isColliding(context.getPlayer()))
 		{
-			if(isOnGround() && --jumpInterval <= 0) 
-			{ setVerticalVelocity(-VERTICAL_SPEED); jumpInterval = JUMP_INTERVAL; }
+			if(isOnGround() && (jumpInterval -= GameContext.getDeltaTime()) <= 0) 
+			{ setVerticalVelocity(-VERTICAL_SPEED); jumpInterval = JUMP_DELAY; }
 			
 			addGravity();
 			applyVerticalForce();
 			resolveVerticalCollision(interestingGameObjects);
 			
-			int playerX  = context.getPlayer().copyPosition().getX();
-			int thisX = getPosition().getX();
+			double playerX  = context.getPlayer().copyPosition().getX();
+			double thisX = getPosition().getX();
 			
 			setDirection((thisX > playerX) ? MovingObject.Direction.LEFT : MovingObject.Direction.RIGHT);
 			
@@ -65,10 +63,10 @@ public class JumperRobot extends Enemy
 		else 
 		{
 			jumpInterval = 0;
-			applyGroundMovement(context, HORIZONTAL_SPEED, BOUND);
+			applyGroundMovement(context, HORIZONTAL_SPEED);
 		}
 		
-		int thisX = getPosition().getX(), thisY = getPosition().getY();
+		double thisX = getPosition().getX(), thisY = getPosition().getY();
 
 		thisFov.setX(thisX - (FOV_WIDTH - getWidth())/2); 
 		thisFov.setY(thisY - (FOV_HEIGHT - getHeight()));

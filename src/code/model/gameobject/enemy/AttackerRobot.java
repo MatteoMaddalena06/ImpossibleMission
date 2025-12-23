@@ -19,9 +19,9 @@ public abstract class AttackerRobot extends Enemy
 		}
 	}
 	
-	public AttackerRobot(Point position, int width, int height, double actionDelay)
+	public AttackerRobot(Point position, int width, int height)
 	{ 
-		super(position, width, height, actionDelay);
+		super(position, width, height);
 		isAttacking = false;
 	}
 	

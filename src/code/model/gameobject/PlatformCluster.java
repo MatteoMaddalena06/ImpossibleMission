@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import code.model.gameobject.FixedObject.Type;
+import java.util.Comparator;
 //inproject import
 import code.model.room.Room;
 import code.model.utils.GameContext;
@@ -29,8 +28,8 @@ public class PlatformCluster
 	private PlatformCluster(List<Platform> platforms)
 	{
 		this.platforms = platforms;
-		upperPlatform = platforms.stream().min((p1, p2) -> p1.getPosition().getY() - p2.getPosition().getY()).get();
-		bottomPlatform = platforms.stream().max((p1, p2) -> p1.getPosition().getY() - p2.getPosition().getY()).get();
+		upperPlatform = platforms.stream().min(Comparator.comparingDouble(p -> p.getPosition().getY())).get();
+		bottomPlatform = platforms.stream().max(Comparator.comparingDouble(p -> p.getPosition().getY())).get();
 		width = platforms.getFirst().getWidth();
 		isMoving = false;
 	}
@@ -86,7 +85,7 @@ public class PlatformCluster
 	
 	private boolean canGoUp(List<FixedObject> floorList)
 	{
-		int upperPlatformX = upperPlatform.getPosition().getX(), upperPlatformY = upperPlatform.getPosition().getY();
+		double upperPlatformX = upperPlatform.getPosition().getX(), upperPlatformY = upperPlatform.getPosition().getY();
 		
 		return floorList.stream().anyMatch(f ->
 			f.getPosition().getY() < upperPlatformY && (f.getPosition().getX() == upperPlatformX + width || f.getPosition().getX() + f.getWidth() == upperPlatformX)
@@ -95,7 +94,7 @@ public class PlatformCluster
 	
 	private boolean canGoDown(List<FixedObject> floorList)
 	{
-		int bottomPlatformX = bottomPlatform.getPosition().getX(), bottomPlatformY = bottomPlatform.getPosition().getY();
+		double bottomPlatformX = bottomPlatform.getPosition().getX(), bottomPlatformY = bottomPlatform.getPosition().getY();
 			
 		return floorList.stream().anyMatch(f -> 
 			f.getPosition().getY() > bottomPlatformY && (f.getPosition().getX() == bottomPlatformX + width || f.getPosition().getX() + f.getWidth() == bottomPlatformX)
@@ -105,10 +104,10 @@ public class PlatformCluster
 	private Map<Platform, FixedObject> getDestinations(List<FixedObject> floorList)
 	{
 		return platforms.stream().map(p -> {
-			int platformX = p.getPosition().getX(), platformY = p.getPosition().getY(), platformWidth = p.getWidth();
+			double platformX = p.getPosition().getX(), platformY = p.getPosition().getY(), platformWidth = p.getWidth();
 			
 			FixedObject wantedFloor = floorList.stream().filter(f -> {	
-				int floorX = f.getPosition().getX(), floorY = f.getPosition().getY(), floorWidth = f.getWidth();
+				double floorX = f.getPosition().getX(), floorY = f.getPosition().getY(), floorWidth = f.getWidth();
 				return (floorX + floorWidth == platformX || floorX == platformX + platformWidth) && Math.abs(floorY - platformY) <= BOUND;
 				
 			}).findFirst().orElse(null);
