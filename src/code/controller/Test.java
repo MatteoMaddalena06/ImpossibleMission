@@ -8,6 +8,8 @@ import java.util.Arrays;
 import javax.swing.*;
 
 import code.model.gameobjects.*;
+import code.model.gameobjects.enemy.JumperRobot;
+import code.model.gameobjects.enemy.ThrowerRobot;
 import code.model.room.*;
 import code.model.utils.GameContext;
 import code.model.utils.Point;
@@ -15,6 +17,8 @@ import code.model.world.GameWorld;
 import code.model.room.RoomMap;
 
 import java.util.List;
+
+import code.view.images.Animation;
 import code.view.sprites.*;
 
 public class Test 
@@ -23,16 +27,18 @@ public class Test
 	private static int i = 0;
 	private static List<Room> rooms = Arrays.stream(world.getWorldMatrix()).flatMap(e -> Arrays.stream(e)).filter(r -> r != null).toList();
 	
+	private static Renderer renderer;
 	private static int times = 0;
 	
 	public static void main(String[] args)
 	{
 		GameWorld.randomGeneration();
-		GameContext context = new GameContext(new Player(new Point(1*32, 2*32)), rooms.get(0));
-		
+		GameContext context = new GameContext(new Player(new Point(2*32, 3*32)), rooms.get(0));
 		JFrame frame = new JFrame("Test");
-		Renderer renderer = new Renderer(context, 40*RoomMap.TILE_SIZE, 25*RoomMap.TILE_SIZE);
-        renderer.setSprites(createSpriteList(context.getCurrentRoom().getGameObjectList()));
+		renderer = new Renderer(context, 40*RoomMap.TILE_SIZE, 25*RoomMap.TILE_SIZE);
+		List<Sprite> sprites = createSpriteList(context.getCurrentRoom().getGameObjectList(), context.getCurrentRoom().getColor());
+		sprites.add(SpriteFactory.produce(context.getPlayer()));
+		renderer.setSprites(sprites);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(renderer);
 		frame.pack();
@@ -87,28 +93,34 @@ public class Test
                     case KeyEvent.VK_A     -> context.setUserInput(GameContext.UserInput.A_KEY, pressed);
                     case KeyEvent.VK_B     -> context.setUserInput(GameContext.UserInput.B_KEY, pressed);
                     case KeyEvent.VK_E     -> context.setUserInput(GameContext.UserInput.E_KEY, pressed);
-                    case KeyEvent.VK_N     -> { context.setCurrentRoom(rooms.get(++i % 30)); tester.setSprites(createSpriteList(context.getCurrentRoom().getGameObjectList())); System.out.println(++times);}
+                    case KeyEvent.VK_N     -> { 
+                    	context.setCurrentRoom(rooms.get(++i % 30)); 
+                    	List<Sprite> sprites = createSpriteList(context.getCurrentRoom().getGameObjectList(), context.getCurrentRoom().getColor());
+                		sprites.add(SpriteFactory.produce(context.getPlayer()));
+                		renderer.setSprites(sprites);
+                    	System.out.println(++times);
+                    }
                     case KeyEvent.VK_H     -> context.setUserInput(GameContext.UserInput.H_KEY, pressed);
                 }
             }
         });
 	}
 	
-	private static List<Sprite> createSpriteList(List<GameObject> gameObjectList)
+	private static List<Sprite> createSpriteList(List<GameObject> gameObjectList, Room.Color color)
 	{
 		List<Sprite> result = new ArrayList<Sprite>();
 		
 		for(GameObject g : gameObjectList)
 		{
-			if(g instanceof Platform) result.add(new PlatformSprite((Platform)g));
-			else if(g instanceof FixedObject) 
-				result.add((((FixedObject)g).getType() == FixedObject.Type.WALL) ? new WallSprite((FixedObject)g, Room.Color.PURPLE) : new FloorSprite((FixedObject)g, Room.Color.PURPLE));
-			else if(g instanceof Furniture)
-				result.add(new FurnitureSprite((Furniture)g, Room.Color.PURPLE));
-			else if(g instanceof Terminal)
-				result.add(new TerminalSprite((Terminal)g));
+			if(g instanceof JumperRobot)
+				result.add(null);
 			
-			else result.add(null);
+			else if(g instanceof Furniture || g instanceof FixedObject)
+				result.add(SpriteFactory.produce(g, color));
+				
+			else 
+				result.add(SpriteFactory.produce(g));
+					
 		}
 		
 		return result;

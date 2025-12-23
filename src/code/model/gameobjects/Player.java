@@ -51,7 +51,12 @@ public class Player extends MovingObject
 				currentRoom.getGameObjectList().stream().filter(g -> g instanceof FixedObject || g instanceof Platform).toList();
 	
 		if(isOnPlatform)
-		{ getPosition().setY(usedPlatform.getPosition().getY() - getHeight()); return; }
+		{
+			setPhysicsState(MovingObject.PhysicsState.IDLE);
+			getPosition().setY(usedPlatform.getPosition().getY() - getHeight());
+			expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
+			return; 
+		}
 
 		setHorizontalVelocity(0);
 		

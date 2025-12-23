@@ -30,11 +30,11 @@ public class WallSprite extends Sprite
 		wallBottomLeftImage = StaticImage.getWall(wallColor, StaticImage.Type.BOTTOM_LEFT_WALL).getImage();
 		wallBottomRightImage = StaticImage.getWall(wallColor, StaticImage.Type.BOTTOM_RIGHT_WALL).getImage();
 
-		setImage(computeImage());
+		computeImage();
 	}
 	
 	@Override
-	public BufferedImage computeImage()
+	public void computeImage()
 	{ 
 		FixedObject bindedWall = (FixedObject)getGameObject();
 		Point bindedWallPosition = bindedWall.copyPosition();
@@ -56,6 +56,6 @@ public class WallSprite extends Sprite
 		}
 		
 		graphics.dispose();
-		return resultImage;
+		setImage(resultImage);
 	}
 }

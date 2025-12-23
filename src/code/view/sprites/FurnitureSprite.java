@@ -28,7 +28,7 @@ public class FurnitureSprite extends Sprite
 		else 
 			chosenFurnitureImage = StaticImage.getFurniture(furniture.getType(), color).getImage();
 		
-		setImage(computeImage());
+		computeImage();
 	}
 	
 	private BufferedImage choseBestImage(Furniture furniture, StaticImage[] furnitureImages)
@@ -57,6 +57,6 @@ public class FurnitureSprite extends Sprite
 	}
 	
 	@Override
-	public BufferedImage computeImage()
-	{ return chosenFurnitureImage; }
+	public void computeImage()
+	{ setImage(chosenFurnitureImage); }
 }

@@ -4,8 +4,12 @@ package code.view.images;
 import java.util.Map;
 import static java.util.Map.entry;
 import java.util.List;
-//grphics import
+//graphics import
 import java.awt.image.BufferedImage;
+//model import
+import code.model.gameobjects.MovingObject;
+import code.model.gameobjects.Player;
+import code.model.gameobjects.enemy.AttackerRobot;
 
 public enum Animation
 {
@@ -74,12 +78,45 @@ public enum Animation
 	
 	public enum State
 	{
-		 WALKING_LEFT, WALKING_RIGHT,
-		 JUMPING_LEFT, JUMPING_RIGHT,
-		 FALLING_LEFT, FALLING_RIGHT,
-		 ATTACKING_LEFT, ATTACKING_RIGHT,
-		 IDLE_LEFT, IDLE_RIGHT,
-		 DIE_LEFT, DIE_RIGHT
+		WALKING_LEFT(1), WALKING_RIGHT(-1),
+		JUMPING_LEFT(2), JUMPING_RIGHT(-2),
+		FALLING_LEFT(3), FALLING_RIGHT(-3),
+		ATTACKING_LEFT(4), ATTACKING_RIGHT(-4),
+		IDLE_LEFT(5), IDLE_RIGHT(-5),
+		DIE_LEFT(6), DIE_RIGHT(-6), 
+		SEARCHING();	
+		
+		private int id;
+		
+		private State(int id)
+		{ this.id = id;}
+		
+		private State()
+		{ this(0); }
+	
+		public static State getState(MovingObject movingObject)
+		{			
+			MovingObject.Direction direction = movingObject.getDirection();
+			 
+			if(movingObject instanceof AttackerRobot && ((AttackerRobot)movingObject).isAttacking())
+				return (direction == MovingObject.Direction.LEFT) ? ATTACKING_LEFT : ATTACKING_RIGHT;
+			 
+			else if(movingObject instanceof Player && ((Player)movingObject).isSearching())
+				return SEARCHING;
+			 
+			MovingObject.PhysicsState physicsState = movingObject.getPhysicsState();
+			 
+			return  switch(physicsState) {
+			 	case MovingObject.PhysicsState.WALKING -> (direction == MovingObject.Direction.LEFT) ? WALKING_LEFT : WALKING_RIGHT;
+			 	case MovingObject.PhysicsState.JUMPING -> (direction == MovingObject.Direction.LEFT) ? JUMPING_LEFT : JUMPING_RIGHT;
+			 	case MovingObject.PhysicsState.FALLING -> (direction == MovingObject.Direction.LEFT) ? FALLING_LEFT : FALLING_RIGHT;
+			 	case MovingObject.PhysicsState.IDLE    -> (direction == MovingObject.Direction.LEFT) ? IDLE_LEFT    : IDLE_RIGHT;
+			};
+		}
+		 
+		 
+		public boolean isMirrored(State otherState)
+		{ return otherState != null && this.id == -otherState.id; }
 	}
 	
 	private Animation(Map<State, List<BufferedImage>> animationLists)

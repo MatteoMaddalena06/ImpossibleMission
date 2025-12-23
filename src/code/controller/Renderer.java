@@ -14,9 +14,12 @@ import code.model.utils.Point;
 import code.model.gameobjects.*;
 import code.model.gameobjects.enemy.BlackOrb;
 import code.model.gameobjects.enemy.Enemy;
+import code.model.gameobjects.enemy.JumperRobot;
+import code.model.gameobjects.enemy.ThrowerRobot;
 
 import java.util.List;
 
+import code.view.images.Animation;
 import code.view.sprites.*;
 
 public class Renderer extends JPanel
@@ -71,7 +74,10 @@ public class Renderer extends JPanel
 
         List<GameObject> gameObjectList = context.getCurrentRoom().getGameObjectList();
         
-        for(Sprite s : sprites)
+        List<Sprite> otherSprite = sprites.stream().filter(s -> !(s instanceof AnimatedSprite)).toList();
+        List<Sprite> animatedSprite = sprites.stream().filter(s -> s instanceof AnimatedSprite).toList();
+        
+        for(Sprite s : otherSprite)
         {
         	if(s == null)
         		continue;
@@ -81,87 +87,39 @@ public class Renderer extends JPanel
         	int goX = (int)goPosition.getX(), goY = (int)goPosition.getY();
         	BufferedImage spriteImage = s.getImage();
         	int overflow = spriteImage.getHeight() - go.getHeight();
-
+        	
         	gBuf.drawImage(spriteImage, goX, goY - overflow, null);
         }
-    	
-    	for(GameObject gameObject : gameObjectList)
-    	{
-    		if(gameObject instanceof Platform || gameObject instanceof FixedObject)
-    			continue;
-    		
-    		if(gameObject instanceof Enemy && !(gameObject instanceof BlackOrb))
-    		{
-    			if(gameObject == GameLoop.robot)
-    				gBuf.setColor(Color.PINK);
-    			else
-    				gBuf.setColor(Color.RED);
-    			
-    			GameObject fov = ((Enemy) gameObject).getFOV();
-    			int x = (int)fov.copyPosition().getX(), y = (int)fov.copyPosition().getY();
-    			int w = fov.getWidth(), h = fov.getHeight();
-    			gBuf.drawRect(x, y, w, h);
-    		}
-    		else if(gameObject instanceof Furniture)
-    			gBuf.setColor(Color.BLUE);	
-    		else 
-    			gBuf.setColor(Color.BLUE);
-    		
-    		Point gameObjectPosition = gameObject.copyPosition();
-    		int x = (int)gameObjectPosition.getX(), y = (int)gameObjectPosition.getY();
-    		int w = gameObject.getWidth(), h = gameObject.getHeight();
-    		
-    		if(context.getUserInput(GameContext.UserInput.H_KEY))
-    			gBuf.drawRect(x, y, w, h);
-    	}
-    	
-    	// --- PLAYER SPRITE ---
-    	Player player = context.getPlayer();
-    	Point pos = player.copyPosition();
-
-    	int px = (int)pos.getX();
-    	int py = (int)pos.getY();
-    	int pw = player.getWidth();
-    	int ph = player.getHeight();
-    	
-    	maxW = (pw > maxW) ? px : maxW;
-    	maxH = (ph > maxH) ? py : maxH;
-
-    	// Scala la sprite UNA SOLA VOLTA se necessario
-    	if (playerSpriteScaled == null ||
-    	    playerSpriteScaled.getWidth() != maxW ||
-    	    playerSpriteScaled.getHeight() != maxH)
-    	{
-    	    double scale = Math.max(
-    	        maxW / (double) playerSprite.getWidth(),
-    	        maxH / (double) playerSprite.getHeight()
-    	    );
-
-    	    int sw = (int) Math.round(playerSprite.getWidth() * scale);
-    	    int sh = (int) Math.round(playerSprite.getHeight() * scale);
-
-    	    playerSpriteScaled =
-    	        new BufferedImage(sw, sh, BufferedImage.TYPE_INT_ARGB);
-
-    	    Graphics2D gImg = playerSpriteScaled.createGraphics();
-    	    gImg.setRenderingHint(
-    	        RenderingHints.KEY_INTERPOLATION,
-    	        RenderingHints.VALUE_INTERPOLATION_BILINEAR
-    	    );
-    	    gImg.drawImage(playerSprite, 0, 0, sw, sh, null);
-    	    gImg.dispose();
-    	}
-
-    	// Centra la sprite nella hitbox
-    	int drawX = px + (maxW - playerSpriteScaled.getWidth()) / 2;
-    	int drawY = py + (maxH - playerSpriteScaled.getHeight());
-
-    	// Disegno nel buffer
-    	gBuf.drawImage(playerSpriteScaled, drawX, drawY, null);
-
-    	gBuf.setColor(Color.PINK);
-    	gBuf.drawRect(px, py, pw, ph);
-        // --- Disegno del buffer sul pannello ---
+        
+        for(Sprite s : animatedSprite)
+        {
+        	if(s == null)
+        		continue;
+        	
+        	GameObject go = s.getGameObject();
+        	Point goPosition = go.copyPosition();
+        	int goX = (int)goPosition.getX(), goY = (int)goPosition.getY();
+        	s.computeImage();
+        	BufferedImage spriteImage = s.getImage();
+        	int overflow = spriteImage.getHeight() - go.getHeight();
+        	
+        	gBuf.drawImage(spriteImage, goX, goY - overflow, null);
+        }
+        
+        for(GameObject a : context.getCurrentRoom().getGameObjectList())
+        {
+        	Point aP = a.copyPosition();
+        	
+        	if(context.getUserInput(GameContext.UserInput.H_KEY))
+        		{gBuf.setColor(Color.red); gBuf.drawRect((int)aP.getX(), (int)aP.getY(), a.getWidth(), a.getHeight()); }
+        }
+        
+        Player p = context.getPlayer();
+        Point pP = p.copyPosition();
+        
+        if(context.getUserInput(GameContext.UserInput.H_KEY))
+			{gBuf.setColor(Color.red); gBuf.drawRect((int)pP.getX(), (int)pP.getY(), p.getWidth(), p.getHeight()); }
+        
         g2.drawImage(buffer, 0, 0, null);
 
         g2.dispose();

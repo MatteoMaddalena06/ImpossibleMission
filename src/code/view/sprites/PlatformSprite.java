@@ -19,11 +19,11 @@ public class PlatformSprite extends Sprite
 	public PlatformSprite(Platform platform)
 	{ 
 		super(platform); 
-		setImage(computeImage());
+		computeImage();
 	}
 	
 	@Override
-	public BufferedImage computeImage()
+	public void computeImage()
 	{
 		Platform bindedPlatform = (Platform)getGameObject();
 		int bindedPlatformWidth = bindedPlatform.getWidth();
@@ -41,6 +41,6 @@ public class PlatformSprite extends Sprite
 		graphics.drawImage(platformEndImage, bindedPlatformWidth - SPRITE_WIDTH, 0, null);
 		
 		graphics.dispose();
-		return resultImage;
+		setImage(resultImage);
 	}
 }

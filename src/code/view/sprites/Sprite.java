@@ -13,7 +13,7 @@ public abstract class Sprite
 	public Sprite(GameObject gameObject)
 	{ this.gameObject = gameObject; }
 	
-	public abstract BufferedImage computeImage();
+	public abstract void computeImage();
 	
 	public BufferedImage getImage()
 	{ return image; }

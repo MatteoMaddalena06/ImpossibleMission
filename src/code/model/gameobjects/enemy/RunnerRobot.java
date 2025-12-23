@@ -5,6 +5,7 @@ import java.util.List;
 
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.GameObject;
+import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.Player;
 //inproject import
 import code.model.room.RoomMap;
@@ -59,6 +60,16 @@ public class RunnerRobot extends Enemy
 			
 			applyHorizontalForce();
 			resolveHorizontalCollision(interstingObjects);
+			
+			double currentHorizontalVelocity = getHorizontalVelocity();
+			
+			if(currentHorizontalVelocity != 0)
+			{
+				setPhysicsState(MovingObject.PhysicsState.WALKING);
+				setDirection((currentHorizontalVelocity > 0) ? MovingObject.Direction.RIGHT : MovingObject.Direction.LEFT);
+			}
+			else 
+				setPhysicsState(MovingObject.PhysicsState.IDLE);
 		}	
 		else if(!thisFov.isColliding(player))
 		{ applyGroundMovement(context, HORIZONTAL_SPEED); actionDelay = ACTION_DELAY; }

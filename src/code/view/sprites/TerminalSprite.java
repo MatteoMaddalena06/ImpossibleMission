@@ -14,10 +14,10 @@ public class TerminalSprite extends Sprite
 	public TerminalSprite(Terminal terminal)
 	{
 		super(terminal); 
-		setImage(computeImage());
+		computeImage();
 	}
 	
 	@Override
-	public BufferedImage computeImage()
-	{ return TERMINAL_IMAGE; }
+	public void computeImage()
+	{ setImage(TERMINAL_IMAGE); }
 }

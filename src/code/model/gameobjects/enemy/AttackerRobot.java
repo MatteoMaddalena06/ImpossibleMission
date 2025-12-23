@@ -11,11 +11,17 @@ public abstract class AttackerRobot extends Enemy
 	
 	public abstract class Attack extends MovingObject
 	{	
+		private AttackerRobot attacker;
+		
 		public Attack(Point position, int width, int height)
 		{
 			super(position, width, height);
+			attacker = AttackerRobot.this;
 			setDirection(AttackerRobot.this.getDirection());
 		}
+		
+		public AttackerRobot getAttacker()
+		{ return attacker; }
 	}
 	
 	public AttackerRobot(Point position, int width, int height)

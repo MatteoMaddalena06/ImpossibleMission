@@ -16,10 +16,10 @@ public class FloorSprite extends Sprite
 	{ 
 		super(floor); 
 		pieceOfFloorImage = StaticImage.getFloor(floorColor).getImage();
-		setImage(computeImage());
+		computeImage();
 	}
 	
 	@Override
-	public BufferedImage computeImage()
-	{ return ImageUtils.imageStrip(pieceOfFloorImage, getGameObject().getWidth() / pieceOfFloorImage.getWidth(), ImageUtils.Direction.HORIZONTAL); }
+	public void computeImage()
+	{ setImage(ImageUtils.imageStrip(pieceOfFloorImage, getGameObject().getWidth() / pieceOfFloorImage.getWidth(), ImageUtils.Direction.HORIZONTAL)); }
 }
