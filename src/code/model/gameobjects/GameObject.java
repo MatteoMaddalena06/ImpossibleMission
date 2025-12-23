@@ -1,4 +1,4 @@
-package code.model.gameobject;
+package code.model.gameobjects;
 
 //IO modules
 import java.io.Serializable;

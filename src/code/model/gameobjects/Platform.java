@@ -1,4 +1,4 @@
-package code.model.gameobject;
+package code.model.gameobjects;
 
 //inproejct import
 import code.model.utils.GameContext;

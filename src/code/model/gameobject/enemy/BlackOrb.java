@@ -5,11 +5,11 @@ import java.util.List;
 
 //inproject import
 import code.model.utils.Point;
-import code.model.gameobject.FixedObject;
-import code.model.gameobject.GameObject;
-import code.model.gameobject.MovingObject;
-import code.model.gameobject.Platform;
-import code.model.gameobject.Player;
+import code.model.gameobjects.FixedObject;
+import code.model.gameobjects.GameObject;
+import code.model.gameobjects.MovingObject;
+import code.model.gameobjects.Platform;
+import code.model.gameobjects.Player;
 import code.model.utils.GameContext;
 
 public class BlackOrb extends Enemy

@@ -6,9 +6,10 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 //graphics import
 import java.awt.image.BufferedImage;
+
+import code.model.gameobjects.Furniture;
 //model import
 import code.model.room.Room;
-import code.model.gameobject.Furniture;
 
 public enum StaticImage 
 {

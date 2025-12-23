@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import javax.swing.*;
 
-import code.model.gameobject.*;
+import code.model.gameobjects.*;
 import code.model.room.*;
 import code.model.utils.GameContext;
 import code.model.utils.Point;

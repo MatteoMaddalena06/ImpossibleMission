@@ -1,7 +1,6 @@
 package code.model.gameobject.enemy;
 
-//inproject import
-import code.model.gameobject.MovingObject;
+import code.model.gameobjects.MovingObject;
 import code.model.utils.Point;
 
 public abstract class AttackerRobot extends Enemy

@@ -22,9 +22,9 @@ import java.nio.file.Path;
 import code.model.room.Room;
 import code.model.utils.Point;
 import code.model.room.PresettedRoom;
+import code.model.gameobjects.Furniture;
 import code.model.puzzle.PresettedPassword;
 import code.model.puzzle.PuzzlePiece;
-import code.model.gameobject.Furniture;
 
 public class GameWorld implements Serializable
 {

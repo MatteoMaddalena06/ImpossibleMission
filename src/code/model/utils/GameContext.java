@@ -1,8 +1,8 @@
 package code.model.utils;
 
+import code.model.gameobjects.Player;
 //inproject import
 import code.model.room.Room;
-import code.model.gameobject.Player;
 
 public class GameContext
 {

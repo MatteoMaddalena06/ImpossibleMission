@@ -4,7 +4,7 @@ package code.view.sprites;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 
-import code.model.gameobject.Platform;
+import code.model.gameobjects.Platform;
 import code.view.images.ImageUtils;
 import code.view.images.StaticImage;
 

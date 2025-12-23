@@ -1,4 +1,4 @@
-package code.model.gameobject;
+package code.model.gameobjects;
 
 //data strucutre modeules
 import java.util.Arrays;

@@ -3,7 +3,7 @@ package code.view.sprites;
 //graphics import
 import java.awt.image.BufferedImage;
 
-import code.model.gameobject.FixedObject;
+import code.model.gameobjects.FixedObject;
 import code.model.room.Room;
 import code.view.images.ImageUtils;
 import code.view.images.StaticImage;

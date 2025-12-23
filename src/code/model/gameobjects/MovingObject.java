@@ -1,4 +1,4 @@
-package code.model.gameobject;
+package code.model.gameobjects;
 
 //data structure modules
 import java.util.List;

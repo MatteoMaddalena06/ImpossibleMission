@@ -2,13 +2,14 @@ package code.model.gameobject.enemy;
 
 //data structure import
 import java.util.List;
+
+import code.model.gameobjects.FixedObject;
+import code.model.gameobjects.GameObject;
+import code.model.gameobjects.Player;
 //inproject import
 import code.model.room.RoomMap;
 import code.model.utils.GameContext;
 import code.model.utils.Point;
-import code.model.gameobject.FixedObject;
-import code.model.gameobject.GameObject;
-import code.model.gameobject.Player;
 
 public class RunnerRobot extends Enemy
 {	

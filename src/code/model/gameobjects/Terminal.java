@@ -1,4 +1,4 @@
-package code.model.gameobject;
+package code.model.gameobjects;
 
 //inproject import
 import code.model.utils.Point;

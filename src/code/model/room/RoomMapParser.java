@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Stack;
 import java.util.LinkedList;
 
-//inproject import
-import code.model.gameobject.GameObject;
-import code.model.gameobject.GameObjectFactory;
+import code.model.gameobjects.GameObject;
+import code.model.gameobjects.GameObjectFactory;
 import code.model.utils.Point;
 
 abstract class RoomMapParser

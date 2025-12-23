@@ -8,12 +8,11 @@ import java.util.ArrayList;
 //IO modules
 import java.io.Serializable;
 
-//inproject import
-import code.model.gameobject.Furniture;
-import code.model.gameobject.GameObject;
-import code.model.gameobject.Platform;
 import code.model.gameobject.enemy.Enemy;
-import code.model.gameobject.FixedObject;
+import code.model.gameobjects.FixedObject;
+import code.model.gameobjects.Furniture;
+import code.model.gameobjects.GameObject;
+import code.model.gameobjects.Platform;
 import code.model.gameobject.enemy.AttackerRobot;
 
 public class Room implements Serializable

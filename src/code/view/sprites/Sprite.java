@@ -2,8 +2,8 @@ package code.view.sprites;
 
 //graphics import
 import java.awt.image.BufferedImage;
-//model import
-import code.model.gameobject.GameObject;
+
+import code.model.gameobjects.GameObject;
 
 public abstract class Sprite 
 {

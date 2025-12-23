@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Collections;
 //graphics import
 import java.awt.image.BufferedImage;
-//model import
-import code.model.gameobject.Furniture;
+
+import code.model.gameobjects.Furniture;
 import code.model.room.Room;
 import code.view.images.StaticImage;
 

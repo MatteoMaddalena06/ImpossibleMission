@@ -1,7 +1,6 @@
 package code.view.sprites;
 
-//model import
-import code.model.gameobject.GameObject;
+import code.model.gameobjects.GameObject;
 import code.view.images.Animation;
 
 public abstract class AnimatedSprite extends Sprite 

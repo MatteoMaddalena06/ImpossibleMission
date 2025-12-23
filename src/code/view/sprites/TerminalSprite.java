@@ -2,8 +2,8 @@ package code.view.sprites;
 
 //graphics import
 import java.awt.image.BufferedImage;
-//model import
-import code.model.gameobject.Terminal;
+
+import code.model.gameobjects.Terminal;
 //image import
 import code.view.images.StaticImage;
 

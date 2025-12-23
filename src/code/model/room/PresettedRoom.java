@@ -5,9 +5,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-//inproject import
-import code.model.gameobject.Furniture;
-import code.model.gameobject.GameObject;
+import code.model.gameobjects.Furniture;
+import code.model.gameobjects.GameObject;
 
 public enum PresettedRoom 
 {

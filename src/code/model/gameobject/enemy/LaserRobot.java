@@ -1,10 +1,10 @@
 package code.model.gameobject.enemy;
 
+import code.model.gameobjects.MovingObject;
 //inproject import
 import code.model.room.RoomMap;
 import code.model.utils.GameContext;
 import code.model.utils.Point;
-import code.model.gameobject.MovingObject;
 
 public class LaserRobot extends AttackerRobot
 {

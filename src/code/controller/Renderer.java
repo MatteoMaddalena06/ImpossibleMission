@@ -9,11 +9,11 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import code.model.gameobject.*;
 import code.model.utils.GameContext;
 import code.model.utils.Point;
 import code.model.gameobject.enemy.BlackOrb;
 import code.model.gameobject.enemy.Enemy;
+import code.model.gameobjects.*;
 
 import java.util.List;
 
