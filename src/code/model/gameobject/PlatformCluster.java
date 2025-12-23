@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import code.model.gameobject.FixedObject.Type;
 //inproject import
 import code.model.room.Room;
 import code.model.utils.GameContext;

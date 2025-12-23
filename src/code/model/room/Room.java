@@ -31,7 +31,7 @@ public class Room implements Serializable
 	private ExitLayout layout;
 
 	public enum Color 
-	{ CYAN, YELLOW, GREEN };
+	{ RED, PURPLE, GREEN };
 	
 	public enum ExitLayout
 	{ ONLEFT, ONRIGHT, ONLEFTANDRIGHT }

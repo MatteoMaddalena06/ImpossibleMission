@@ -2,6 +2,7 @@ package code.model.room;
 
 //data structure modules
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 //inproject import
@@ -10,36 +11,36 @@ import code.model.gameobject.GameObject;
 
 public enum PresettedRoom 
 {
-	ROOM3 (RoomMapParser.parse(RoomMap.ROOM3),  Room.Color.YELLOW, Room.ExitLayout.ONLEFT),
-	ROOM4 (RoomMapParser.parse(RoomMap.ROOM4),  Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM3 (RoomMapParser.parse(RoomMap.ROOM3),  Room.Color.PURPLE, Room.ExitLayout.ONLEFT),
+	ROOM4 (RoomMapParser.parse(RoomMap.ROOM4),  Room.Color.PURPLE, Room.ExitLayout.ONLEFTANDRIGHT),
 	ROOM5 (RoomMapParser.parse(RoomMap.ROOM5),	Room.Color.GREEN,  Room.ExitLayout.ONRIGHT),
-	ROOM6 (RoomMapParser.parse(RoomMap.ROOM6),  Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM6 (RoomMapParser.parse(RoomMap.ROOM6),  Room.Color.PURPLE, Room.ExitLayout.ONLEFTANDRIGHT),
 	ROOM7 (RoomMapParser.parse(RoomMap.ROOM7),  Room.Color.GREEN,  Room.ExitLayout.ONLEFTANDRIGHT),
 	ROOM8 (RoomMapParser.parse(RoomMap.ROOM8),  Room.Color.GREEN,  Room.ExitLayout.ONRIGHT),
-	ROOM9 (RoomMapParser.parse(RoomMap.ROOM9),  Room.Color.CYAN,   Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM10(RoomMapParser.parse(RoomMap.ROOM10), Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM11(RoomMapParser.parse(RoomMap.ROOM11), Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM9 (RoomMapParser.parse(RoomMap.ROOM9),  Room.Color.RED,    Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM10(RoomMapParser.parse(RoomMap.ROOM10), Room.Color.PURPLE, Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM11(RoomMapParser.parse(RoomMap.ROOM11), Room.Color.PURPLE, Room.ExitLayout.ONLEFTANDRIGHT),
 	ROOM12(RoomMapParser.parse(RoomMap.ROOM12), Room.Color.GREEN,  Room.ExitLayout.ONRIGHT),
-	ROOM13(RoomMapParser.parse(RoomMap.ROOM13), Room.Color.CYAN,   Room.ExitLayout.ONLEFT),
+	ROOM13(RoomMapParser.parse(RoomMap.ROOM13), Room.Color.RED,    Room.ExitLayout.ONLEFT),
 	ROOM14(RoomMapParser.parse(RoomMap.ROOM14), Room.Color.GREEN,  Room.ExitLayout.ONLEFT),
-	ROOM15(RoomMapParser.parse(RoomMap.ROOM15), Room.Color.CYAN,   Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM16(RoomMapParser.parse(RoomMap.ROOM16), Room.Color.CYAN,   Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM17(RoomMapParser.parse(RoomMap.ROOM17), Room.Color.CYAN,   Room.ExitLayout.ONLEFT),
-	ROOM18(RoomMapParser.parse(RoomMap.ROOM18), Room.Color.CYAN,   Room.ExitLayout.ONLEFT),
-	ROOM19(RoomMapParser.parse(RoomMap.ROOM19), Room.Color.CYAN,   Room.ExitLayout.ONRIGHT),
-	ROOM20(RoomMapParser.parse(RoomMap.ROOM20), Room.Color.CYAN,   Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM15(RoomMapParser.parse(RoomMap.ROOM15), Room.Color.RED,    Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM16(RoomMapParser.parse(RoomMap.ROOM16), Room.Color.RED,    Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM17(RoomMapParser.parse(RoomMap.ROOM17), Room.Color.RED,    Room.ExitLayout.ONLEFT),
+	ROOM18(RoomMapParser.parse(RoomMap.ROOM18), Room.Color.RED,    Room.ExitLayout.ONLEFT),
+	ROOM19(RoomMapParser.parse(RoomMap.ROOM19), Room.Color.RED,    Room.ExitLayout.ONRIGHT),
+	ROOM20(RoomMapParser.parse(RoomMap.ROOM20), Room.Color.RED,    Room.ExitLayout.ONLEFTANDRIGHT),
 	ROOM21(RoomMapParser.parse(RoomMap.ROOM21), Room.Color.GREEN,  Room.ExitLayout.ONLEFTANDRIGHT),
 	ROOM22(RoomMapParser.parse(RoomMap.ROOM22), Room.Color.GREEN,  Room.ExitLayout.ONRIGHT),
 	ROOM23(RoomMapParser.parse(RoomMap.ROOM23), Room.Color.GREEN,  Room.ExitLayout.ONLEFT),
-	ROOM24(RoomMapParser.parse(RoomMap.ROOM24), Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM25(RoomMapParser.parse(RoomMap.ROOM25), Room.Color.CYAN,   Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM26(RoomMapParser.parse(RoomMap.ROOM26), Room.Color.CYAN,   Room.ExitLayout.ONRIGHT),
-	ROOM27(RoomMapParser.parse(RoomMap.ROOM27), Room.Color.CYAN,   Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM28(RoomMapParser.parse(RoomMap.ROOM28), Room.Color.CYAN,   Room.ExitLayout.ONLEFT),
+	ROOM24(RoomMapParser.parse(RoomMap.ROOM24), Room.Color.PURPLE, Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM25(RoomMapParser.parse(RoomMap.ROOM25), Room.Color.RED,    Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM26(RoomMapParser.parse(RoomMap.ROOM26), Room.Color.RED,    Room.ExitLayout.ONRIGHT),
+	ROOM27(RoomMapParser.parse(RoomMap.ROOM27), Room.Color.RED,    Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM28(RoomMapParser.parse(RoomMap.ROOM28), Room.Color.RED,    Room.ExitLayout.ONLEFT),
 	ROOM29(RoomMapParser.parse(RoomMap.ROOM29), Room.Color.GREEN,  Room.ExitLayout.ONLEFT),
-	ROOM30(RoomMapParser.parse(RoomMap.ROOM30), Room.Color.YELLOW, Room.ExitLayout.ONLEFTANDRIGHT),
+	ROOM30(RoomMapParser.parse(RoomMap.ROOM30), Room.Color.PURPLE, Room.ExitLayout.ONLEFTANDRIGHT),
 	ROOM31(RoomMapParser.parse(RoomMap.ROOM31), Room.Color.GREEN,  Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM32(RoomMapParser.parse(RoomMap.ROOM32), Room.Color.YELLOW, Room.ExitLayout.ONRIGHT);
+	ROOM32(RoomMapParser.parse(RoomMap.ROOM32), Room.Color.PURPLE, Room.ExitLayout.ONRIGHT);
 	
 	private static final PresettedRoom[] leftRoom          = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONLEFT).toArray(PresettedRoom[]::new);
 	private static final PresettedRoom[] rightRoom         = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONRIGHT).toArray(PresettedRoom[]::new);
@@ -50,9 +51,9 @@ public enum PresettedRoom
 	public static final int LEFT_RIGHT_ROOM_NUMBER = leftAndRightRoom.length;
 	public static final int ROOM_NUMBER            = LEFT_ROOM_NUMBER + RIGHT_ROOM_NUMBER + LEFT_RIGHT_ROOM_NUMBER;
 	
-	List<GameObject> gameObjectList;
-	Room.Color color;
-	Room.ExitLayout exitLayout;
+	private List<GameObject> gameObjectList;
+	private Room.Color color;
+	private Room.ExitLayout exitLayout;
 	
 	private PresettedRoom(List<GameObject> gameObjectList, Room.Color color, Room.ExitLayout exitLayout)
 	{ 
