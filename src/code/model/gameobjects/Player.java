@@ -4,17 +4,18 @@ package code.model.gameobjects;
 import java.util.List;
 import java.util.ArrayList;
 
-import code.model.gameobjects.enemy.AttackerRobot;
 //inproject import
 import code.model.puzzle.PuzzlePiece;
 import code.model.room.Room;
 import code.model.room.RoomMap;
-import code.model.utils.GameContext;
-import code.model.utils.Point;
+import code.model.Point;
+import code.model.context.GameContext;
+import code.model.context.PlayerDied;
+import code.model.gameobjects.enemy.AttackerRobot;
 
 public class Player extends MovingObject
 {	
-	private static final int    NORMAL_WIDTH     = 1 * RoomMap.TILE_SIZE;
+	private static final int    NORMAL_WIDTH     = 2 * RoomMap.TILE_SIZE;
 	private static final int    NORMAL_HEIGHT    = 3 * RoomMap.TILE_SIZE; 
 	private static final int    JUMP_WIDTH       = NORMAL_WIDTH;
 	private static final int    JUMP_HEIGHT      = 1 * RoomMap.TILE_SIZE; 
@@ -102,8 +103,8 @@ public class Player extends MovingObject
 		boolean isCollidingWithEnemy = currentRoom.getEnemiesList().stream().anyMatch(g -> isColliding(g));
 		boolean isCollidingWithAttack = currentRoom.getGameObjectList().stream().filter(g -> g instanceof AttackerRobot.Attack).anyMatch(a -> isColliding(a));
 		
-		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE) 
-		{ }
+		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
+			context.getListener().notifyEvent(new PlayerDied(this));
 	}
 	
 	private void shrinkHitbox(int newWidth, int newHeight) 

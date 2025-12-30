@@ -1,7 +1,6 @@
 package code.model.gameobjects.enemy;
 
-//inproject import
-import code.model.utils.Point;
+import code.model.Point;
 
 public abstract class EnemyFactory 
 {

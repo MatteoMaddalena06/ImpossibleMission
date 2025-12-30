@@ -10,6 +10,6 @@ public class BlackOrbSprite extends AnimatedSprite
 	private static final Animation BLACK_ORB_ANIMATION = Animation.BLACKORB;
 	private static final double    IMAGE_DURATION   = 0.12f; 
 	
-	public BlackOrbSprite(BlackOrb player)
-	{ super(player, BLACK_ORB_ANIMATION, IMAGE_DURATION); }
+	public BlackOrbSprite(BlackOrb blackOrb)
+	{ super(blackOrb, BLACK_ORB_ANIMATION, IMAGE_DURATION); }
 }

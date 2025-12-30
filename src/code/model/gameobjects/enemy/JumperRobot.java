@@ -2,13 +2,13 @@ package code.model.gameobjects.enemy;
 
 import java.util.List;
 
+import code.model.Point;
+import code.model.context.GameContext;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.Platform;
 import code.model.room.RoomMap;
-import code.model.utils.GameContext;
-import code.model.utils.Point;
 
 public class JumperRobot extends Enemy
 {

@@ -54,7 +54,8 @@ public enum Animation
 			entry(State.ATTACKING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/LaserRobot/Robot/Attacking/DIO_0-%d.png", 146, 149))
 	)),
 	LASER_ROBOT_ATTACK(Map.ofEntries(
-			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/LaserRobot/Attack/TheWorld_0-%d.png", 240, 252))
+			entry(State.ATTACK_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/LaserRobot/Attack/TheWorld_0-%d.png", 240, 252)),
+			entry(State.ATTACK_LEFT, ImageUtils.loadFlippedAnimation("/resoruces/Enemies/LaserRobot/Attack/TheWorld_0-%d.png", 240, 252))
 	)),
 	RUNNER_ROBOT(Map.ofEntries(
 			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/RunnerRobot/Walking/Hol_0-%d.png", 35, 40)),
@@ -71,7 +72,8 @@ public enum Animation
 			entry(State.ATTACKING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/ThrowerRobot/Robot/Attacking/Pol_0-%d.png", 402, 407))
 	)),
 	THROWER_ROBOT_ATTACK(Map.ofEntries(
-			entry(State.WALKING_RIGHT,   ImageUtils.loadAnimation("/resoruces/Enemies/ThrowerRobot/Attack/VIce_0-%d.png", 882, 893))
+			entry(State.ATTACK_RIGHT,   ImageUtils.loadAnimation("/resoruces/Enemies/ThrowerRobot/Attack/VIce_0-%d.png", 882, 893)),
+			entry(State.ATTACK_LEFT,   ImageUtils.loadFlippedAnimation("/resoruces/Enemies/ThrowerRobot/Attack/VIce_0-%d.png", 882, 893))
 	));
 	
 	private Map<State, List<BufferedImage>> animationLists;
@@ -84,6 +86,7 @@ public enum Animation
 		ATTACKING_LEFT(4), ATTACKING_RIGHT(-4),
 		IDLE_LEFT(5), IDLE_RIGHT(-5),
 		DIE_LEFT(6), DIE_RIGHT(-6), 
+		ATTACK_LEFT(7), ATTACK_RIGHT(-7),
 		SEARCHING();	
 		
 		private int id;
@@ -97,11 +100,14 @@ public enum Animation
 		public static State getState(MovingObject movingObject)
 		{			
 			MovingObject.Direction direction = movingObject.getDirection();
+			
+			if(movingObject instanceof AttackerRobot.Attack)
+				return (direction == MovingObject.Direction.LEFT) ? ATTACK_LEFT : ATTACK_RIGHT;
 			 
 			if(movingObject instanceof AttackerRobot && ((AttackerRobot)movingObject).isAttacking())
 				return (direction == MovingObject.Direction.LEFT) ? ATTACKING_LEFT : ATTACKING_RIGHT;
 			 
-			else if(movingObject instanceof Player && ((Player)movingObject).isSearching())
+			if(movingObject instanceof Player && ((Player)movingObject).isSearching())
 				return SEARCHING;
 			 
 			MovingObject.PhysicsState physicsState = movingObject.getPhysicsState();

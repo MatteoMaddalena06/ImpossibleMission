@@ -7,6 +7,7 @@ import code.model.gameobjects.Player;
 import code.model.gameobjects.Terminal;
 import code.model.gameobjects.enemy.AttackerRobot;
 import code.model.gameobjects.enemy.BlackOrb;
+import code.model.gameobjects.enemy.JumperRobot;
 import code.model.gameobjects.enemy.LaserRobot;
 import code.model.gameobjects.enemy.RunnerRobot;
 import code.model.gameobjects.enemy.ThrowerRobot;
@@ -29,6 +30,7 @@ public abstract class SpriteFactory
 		if(gameObject instanceof Terminal)     return new TerminalSprite((Terminal)gameObject);
 		if(gameObject instanceof ThrowerRobot) return new ThrowerRobotSprite((ThrowerRobot)gameObject);
 		if(gameObject instanceof LaserRobot)   return new LaserRobotSprite((LaserRobot)gameObject);
+		if(gameObject instanceof JumperRobot)  return new JumperRobotSprite((JumperRobot)gameObject);
 		if(gameObject instanceof BlackOrb)     return new BlackOrbSprite((BlackOrb)gameObject);
 		if(gameObject instanceof Platform)     return new PlatformSprite((Platform)gameObject);
 		

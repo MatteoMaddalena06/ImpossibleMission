@@ -6,9 +6,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.Comparator;
+
+import code.model.context.GameContext;
 //inproject import
 import code.model.room.Room;
-import code.model.utils.GameContext;
 
 public class PlatformCluster 
 {
@@ -74,11 +75,11 @@ public class PlatformCluster
 		}
 		else
 		{
-			boolean canGoUp = canGoDown(floorList);
-			isMoving = canGoUp && (!reachedDestination || playerPressedDown);
+			boolean canGoDown = canGoDown(floorList);
+			isMoving = canGoDown && (!reachedDestination || playerPressedDown);
 			platforms.forEach(p -> p.setVerticalVelocity((isMoving) ? VERTICAL_SPEED : 0));
 		}
-		
+
 		if(!reachedDestination || isMoving) platforms.forEach(p -> p.applyVerticalForce());
 		else destinationFloors.forEach((p, f) -> p.getPosition().setY(f.getPosition().getY()));
 	}

@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
 
+import code.model.Point;
 import code.model.gameobjects.enemy.EnemyFactory;
 //inproject import
 import code.model.room.RoomMap;
-import code.model.utils.Point;
 
 public abstract class GameObjectFactory 
 {	

@@ -1,7 +1,7 @@
 package code.model.gameobjects;
 
-import code.model.utils.GameContext;
-import code.model.utils.Point;
+import code.model.Point;
+import code.model.context.GameContext;
 
 public class FixedObject extends GameObject
 {

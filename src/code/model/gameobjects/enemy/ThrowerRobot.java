@@ -4,8 +4,10 @@ package code.model.gameobjects.enemy;
 import java.util.List;
 
 //inproject import
-import code.model.utils.Point;
-import code.model.utils.GameContext;
+import code.model.Point;
+import code.model.context.AttackEnded;
+import code.model.context.AttackLaunched;
+import code.model.context.GameContext;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.MovingObject;
@@ -20,7 +22,6 @@ public class ThrowerRobot extends AttackerRobot
 	private static final int    FOV_HEIGHT              = 5 * RoomMap.TILE_SIZE;
 	private final  double       INITIAL_FOV_X           = getPosition().getX();
 	private final  double       INITIAL_FOV_Y           = getPosition().getY() - (FOV_HEIGHT - getHeight());
-	private static final double ATTACK_PROBABILITY      = 0.5f;
  	private static final int    ATTACK_WIDTH      	    = 1 * RoomMap.TILE_SIZE;
 	private static final int    ATTACK_HEIGHT     	    = 1 * RoomMap.TILE_SIZE;
 	private static final double ATTACK_HORIZONTAL_SPEED = 600f;
@@ -43,11 +44,11 @@ public class ThrowerRobot extends AttackerRobot
 
 		Enemy.FieldOfView thisFov = getFov();
 		
-		double pThisFrame = 1.0 - Math.pow(1.0 - ATTACK_PROBABILITY, GameContext.getDeltaTime());
-		
-		if(thisFov.isColliding(context.getPlayer()) && Math.random() < pThisFrame)
+		if(thisFov.isColliding(context.getPlayer()))
 		{
-			context.getCurrentRoom().addEnemyAttack(produceAttack());
+			Attack attack = produceAttack();
+			context.getCurrentRoom().addEnemyAttack(attack);
+			context.getListener().notifyEvent(new AttackLaunched(attack));
 			setAttackingState(true);
 			return;
 		}
@@ -87,12 +88,13 @@ public class ThrowerRobot extends AttackerRobot
 				if((attackCounter != 0 && isOnGround()) || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
 				{
 					currentRoom.removeEnemyAttack(this);
+					context.getListener().notifyEvent(new AttackEnded(this));
 					setAttackingState(false); attackCounter = 0;
 					return;
 				}
 				
 				List<GameObject> interestingObjects = 
-						currentRoom.getGameObjectList().stream().filter(g -> g instanceof FixedObject || g instanceof Platform).toList();
+						currentRoom.getGameObjectList().stream().filter(g -> g instanceof FixedObject).toList();
 				
 				setHorizontalVelocity((getDirection() == MovingObject.Direction.RIGHT) ? ATTACK_HORIZONTAL_SPEED : -ATTACK_HORIZONTAL_SPEED);
 				if(attackCounter == 0) setVerticalVelocity(-ATTACK_VERTICAL_SPEED);

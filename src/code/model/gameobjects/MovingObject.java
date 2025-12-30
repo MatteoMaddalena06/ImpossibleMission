@@ -3,8 +3,8 @@ package code.model.gameobjects;
 //data structure modules
 import java.util.List;
 
-import code.model.utils.GameContext;
-import code.model.utils.Point;
+import code.model.Point;
+import code.model.context.GameContext;
 
 public abstract class MovingObject extends GameObject
 {
@@ -30,6 +30,8 @@ public abstract class MovingObject extends GameObject
 		super(position, width, height);
 		horizontalVelocity = verticalVelocity = 0;
 		onGround = true;
+		physicsState = PhysicsState.IDLE;
+		direction = Direction.RIGHT;
 	}
 	
 	protected void addGravity()

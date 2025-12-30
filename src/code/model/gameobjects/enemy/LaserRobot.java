@@ -1,10 +1,12 @@
 package code.model.gameobjects.enemy;
 
-import code.model.gameobjects.MovingObject;
 //inproject import
 import code.model.room.RoomMap;
-import code.model.utils.GameContext;
-import code.model.utils.Point;
+import code.model.Point;
+import code.model.context.AttackEnded;
+import code.model.context.AttackLaunched;
+import code.model.context.GameContext;
+import code.model.gameobjects.MovingObject;
 
 public class LaserRobot extends AttackerRobot
 {
@@ -15,8 +17,7 @@ public class LaserRobot extends AttackerRobot
 	private static final int    FOV_HEIGHT         = 3 * RoomMap.TILE_SIZE;
 	private static final int    ATTACK_WIDTH       = FOV_WIDTH;
 	private static final int    ATTACK_HEIGHT      = FOV_HEIGHT;
-	private static final double ATTACK_DURATION    = 1f; 
-	private static final double ATTACK_PROBABILITY = 0.50;
+	private static final double ATTACK_DURATION    = 2f; 
 	
 	private double attackDuration;
 	
@@ -35,11 +36,11 @@ public class LaserRobot extends AttackerRobot
 
 		Enemy.FieldOfView thisFov = getFov();
 		
-		double pThisFrame = 1.0 - Math.pow(1.0 - ATTACK_PROBABILITY, GameContext.getDeltaTime());
-		
-		if(thisFov.isColliding(context.getPlayer()) && Math.random() < pThisFrame)
+		if(thisFov.isColliding(context.getPlayer()))
 		{
-			context.getCurrentRoom().addEnemyAttack(produceAttack());
+			Attack attack = produceAttack();
+			context.getCurrentRoom().addEnemyAttack(attack);
+			context.getListener().notifyEvent(new AttackLaunched(attack));
 			setAttackingState(true);
 			return;
 		}
@@ -80,6 +81,7 @@ public class LaserRobot extends AttackerRobot
 				setAttackingState(false);
 				attackDuration = ATTACK_DURATION;
 				context.getCurrentRoom().removeEnemyAttack(this);
+				context.getListener().notifyEvent(new AttackEnded(this));
 			} 
 		};
 	}

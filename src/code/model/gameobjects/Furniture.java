@@ -3,8 +3,11 @@ package code.model.gameobjects;
 //inproject import
 import code.model.puzzle.PuzzlePiece;
 import code.model.room.RoomMap;
-import code.model.utils.GameContext;
-import code.model.utils.Point;
+import code.model.Point;
+import code.model.context.FurnitureSearchEnded;
+import code.model.context.GameContext;
+import code.model.context.PlayerFoundSomething;
+import code.model.context.PlayerIsSearching;
 
 public class Furniture extends GameObject
 {
@@ -50,6 +53,10 @@ public class Furniture extends GameObject
 
 		player.setUsedFurniture(this);
 		player.setSearchingState(true);	
+		
+		GameContext.Listener eventListener = context.getListener();
+		
+		eventListener.notifyEvent(new PlayerIsSearching(this));
 
 		if((remainingTimeForSearch -= GameContext.getDeltaTime()) > 0)
 			return;
@@ -61,6 +68,9 @@ public class Furniture extends GameObject
 			case LootType.PLATFORM_PASSWORD -> player.givePlatformPassword(); 
 			case LootType.EMPTY             -> { /*do nothing */ }
 		}
+		
+		eventListener.notifyEvent(new PlayerFoundSomething(this));
+		eventListener.notifyEvent(new FurnitureSearchEnded(this));
 		
 		player.setSearchingState(false);
 		context.getCurrentRoom().removeForniture(this);

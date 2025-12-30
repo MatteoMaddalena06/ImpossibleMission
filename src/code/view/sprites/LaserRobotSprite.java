@@ -1,7 +1,7 @@
 package code.view.sprites;
 
-import code.model.gameobjects.enemy.AttackerRobot;
 //model import
+import code.model.gameobjects.enemy.AttackerRobot;
 import code.model.gameobjects.enemy.LaserRobot;
 //images import
 import code.view.images.Animation;
@@ -20,6 +20,6 @@ public class LaserRobotSprite extends AnimatedSprite
 		{ super(attack, LASER_ROBOT_ATTACK_ANIMATION, IMAGE_DURATION); }
 	}
 	
-	public LaserRobotSprite(LaserRobot player)
-	{ super(player, LASER_ROBOT_ANIMATION , IMAGE_DURATION); }
+	public LaserRobotSprite(LaserRobot laserRobot)
+	{ super(laserRobot, LASER_ROBOT_ANIMATION , IMAGE_DURATION); }
 }

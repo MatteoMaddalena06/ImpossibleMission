@@ -4,9 +4,9 @@ package code.view.sprites;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 
+import code.model.Point;
 import code.model.gameobjects.FixedObject;
 import code.model.room.Room;
-import code.model.utils.Point;
 import code.view.images.ImageUtils;
 import code.view.images.StaticImage;
 

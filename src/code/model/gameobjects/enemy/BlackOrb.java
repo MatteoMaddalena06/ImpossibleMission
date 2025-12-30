@@ -3,14 +3,13 @@ package code.model.gameobjects.enemy;
 //data structure modules
 import java.util.List;
 
-//inproject import
-import code.model.utils.Point;
+import code.model.Point;
+import code.model.context.GameContext;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.Platform;
 import code.model.gameobjects.Player;
-import code.model.utils.GameContext;
 
 public class BlackOrb extends Enemy
 {

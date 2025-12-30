@@ -142,6 +142,8 @@ public enum StaticImage
 	
 	TERMINAL(ImageUtils.loadFlipped("/resoruces/Terminal.png"), Type.TERMINAL);
 	
+	//BACKGROUND(ImageUtils.loadImage("/resoruces/Background.png"), Type.BACKGROUND);
+	
 	private static final Map<Room.Color, Map<Furniture.Type, StaticImage>> furnitureMap =  
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.FURNITURE).collect(Collectors.groupingBy(i -> i.color, Collectors.toMap(i -> i.furnitureType, i -> i)));
 	
@@ -170,7 +172,8 @@ public enum StaticImage
 	public enum Type 
 	{ 
 		TERMINAL, MIDDLE_WALL_RIGHT, MIDDLE_WALL_LEFT, UPPER_LEFT_WALL, 
-		UPPER_RIGHT_WALL, BOTTOM_LEFT_WALL, BOTTOM_RIGHT_WALL, FURNITURE, FLOOR, PLATFORM 
+		UPPER_RIGHT_WALL, BOTTOM_LEFT_WALL, BOTTOM_RIGHT_WALL, FURNITURE, FLOOR, PLATFORM,
+		BACKGROUND
 	}
 		
 	private StaticImage(BufferedImage image, Room.Color color, Type type, Furniture.Type furnitureType)

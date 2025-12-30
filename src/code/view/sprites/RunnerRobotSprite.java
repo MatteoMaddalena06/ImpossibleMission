@@ -10,6 +10,6 @@ public class RunnerRobotSprite extends AnimatedSprite
 	private static final Animation RUNNER_ROBOT_ANIMATION = Animation.RUNNER_ROBOT;
 	private static final double    IMAGE_DURATION   = 0.1f; 
 	
-	public RunnerRobotSprite(RunnerRobot player)
-	{ super(player, RUNNER_ROBOT_ANIMATION, IMAGE_DURATION); }
+	public RunnerRobotSprite(RunnerRobot runnerRobot)
+	{ super(runnerRobot, RUNNER_ROBOT_ANIMATION, IMAGE_DURATION); }
 }

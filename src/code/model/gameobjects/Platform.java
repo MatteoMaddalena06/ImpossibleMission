@@ -1,8 +1,7 @@
 package code.model.gameobjects;
 
-//inproejct import
-import code.model.utils.GameContext;
-import code.model.utils.Point;
+import code.model.Point;
+import code.model.context.GameContext;
 
 public class Platform extends MovingObject
 {

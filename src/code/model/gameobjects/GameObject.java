@@ -3,8 +3,8 @@ package code.model.gameobjects;
 //IO modules
 import java.io.Serializable;
 
-import code.model.utils.GameContext;
-import code.model.utils.Point;
+import code.model.Point;
+import code.model.context.GameContext;
 
 public abstract class GameObject implements Serializable
 {

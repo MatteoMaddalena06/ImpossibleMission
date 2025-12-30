@@ -1,83 +1,71 @@
 package code.controller;
 
-import java.util.ArrayList;
+//data structures import
 import java.util.List;
-
+//graphics import
 import javax.swing.SwingUtilities;
-
-import code.model.gameobjects.FixedObject;
-import code.model.gameobjects.Furniture;
+//model import
+import code.model.context.GameContext;
 import code.model.gameobjects.GameObject;
-import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.PlatformCluster;
-import code.model.gameobjects.enemy.Enemy;
-import code.model.gameobjects.enemy.JumperRobot;
-import code.model.gameobjects.enemy.LaserRobot;
-import code.model.gameobjects.enemy.RunnerRobot;
+import code.model.gameobjects.Player;
 import code.model.room.Room;
-import code.model.room.RoomMap;
-import code.model.utils.GameContext;
+//view import
+import code.view.Renderer;
 import code.view.sprites.AnimatedSprite;
-import code.view.sprites.Sprite;
-import code.view.sprites.SpriteFactory;
 
-public class GameLoop implements Runnable 
+public class GameLoop extends Thread
 {
-    private static final double FPS = 60.0;
-    private static final double FRAME_TIME = 1.0 / FPS;
+	private Renderer renderer;
+	private GameContext context;
+	
+	public GameLoop(GameContext context, Renderer renderer)
+	{ 
+		this.renderer = renderer;
+		this.context = context; 
+	}
+	
+	@Override 
+	public void run()
+	{	
+		long previousTime, currentTime;
+		
+		previousTime = currentTime = System.nanoTime();
+		
+		Room previousRoom = null;
+		List<GameObject> gameObjectList = null;
+		List<PlatformCluster> platformClusterList = null;
+		Player player = context.getPlayer();
+			
+		while(true)
+		{
+			double deltaTime = (currentTime - previousTime) / 1.e9f;
 
-    private GameContext context;
-    private Renderer renderer;
-    
-    public static Enemy robot;
-
-    public GameLoop(GameContext context, Renderer renderer)
-    {
-        this.context = context;
-        this.renderer = renderer;
-    }
-
-    @Override
-    public void run()
-    {
-        double lastTime = System.nanoTime() / 1e9;
-       
-    	context.enableRobots();
-    	
-    	Room prevRoom = null;
-    	List<PlatformCluster> platformClusters = null;
-    	
-        while (true)
-        {
-            double now = System.nanoTime() / 1e9;
-            double delta = now - lastTime;
-            lastTime = now;
-            
-            System.out.println("FPS: " + 1/delta);
-            
-            GameContext.setDeltaTime(delta);
-            
-            renderer.sprites.stream().filter(s -> s instanceof AnimatedSprite).forEach(s -> ((AnimatedSprite)s).updateElapsedTime(delta));
-
-            robot = context.getCurrentRoom().getEnemiesList().get(0);
-            
-            if(context.getCurrentRoom() != prevRoom)
-            {
-            	platformClusters = PlatformCluster.getPlatformClusters(context.getCurrentRoom());
-            	prevRoom = context.getCurrentRoom();
-            }
-            
-            for(int i = context.getCurrentRoom().getGameObjectList().size() - 1; i >= 0; i--)
-            	context.getCurrentRoom().getGameObjectList().get(i).update(context);
-	 
-        	platformClusters.forEach(c -> c.update(context));
-        	
-            context.getPlayer().update(context);
-            
-            // render
-            SwingUtilities.invokeLater(() -> renderer.repaint());
-            
-            try { Thread.sleep(1); } catch (Exception e) {}
-        }
-    }
+			GameContext.setDeltaTime(deltaTime);
+			renderer.getCurrentSpritesList().stream().filter(s -> s instanceof AnimatedSprite).forEach(s -> ((AnimatedSprite)s).updateElapsedTime(deltaTime));
+			
+			Room currentRoom = context.getCurrentRoom();
+			gameObjectList = currentRoom.getGameObjectList();
+			
+			if(previousRoom != currentRoom)
+			{
+				renderer.setCurrentSpritesList(player, currentRoom);
+				platformClusterList = PlatformCluster.getPlatformClusters(currentRoom);
+				previousRoom = currentRoom;
+			}
+			
+			for(int i = gameObjectList.size() - 1; i >= 0; i--)
+				gameObjectList.get(i).update(context);
+			
+			platformClusterList.forEach(c -> c.update(context));
+			player.update(context);
+			
+			SwingUtilities.invokeLater(() -> renderer.repaint());
+			
+			try { Thread.sleep(1); } catch (Exception e) {}
+			
+			previousTime = currentTime;
+			currentTime = System.nanoTime();
+		}
+	}
 }

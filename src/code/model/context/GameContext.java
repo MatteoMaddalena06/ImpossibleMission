@@ -1,8 +1,8 @@
-package code.model.utils;
+package code.model.context;
 
-import code.model.gameobjects.Player;
 //inproject import
 import code.model.room.Room;
+import code.model.gameobjects.Player;
 
 public class GameContext
 {
@@ -13,6 +13,11 @@ public class GameContext
 	private int platformsToReset;
 	
 	private static double deltaTime;
+	
+	private Listener gameContextListener;
+	
+	public interface Listener 
+	{ public void notifyEvent(GameEvent event); }
 	
 	public enum UserInput 
 	{ 
@@ -36,15 +41,21 @@ public class GameContext
 		isRobotsDisabled = false;
 		platformsToReset = 0;
 	}
-	
-	public void setPlayer(Player player)
-	{ this.player = player; }
+
+	public Player getPlayer()
+	{ return player; }
 	
 	public void setCurrentRoom(Room currentRoom)
 	{ this.currentRoom = currentRoom; }
 	
+	public Room getCurrentRoom()
+	{ return currentRoom; }
+	
 	public void setUserInput(UserInput userInput, boolean state)
 	{ this.userInput[userInput.getInput()] = state; }
+	
+	public boolean getUserInput(UserInput userInput)
+	{ return this.userInput[userInput.getInput()]; }
 	
 	public void disableRobots()
 	{ isRobotsDisabled = true; }
@@ -52,23 +63,14 @@ public class GameContext
 	public void enableRobots()
 	{ isRobotsDisabled = false; }
 	
+	public boolean isRobotsDisabled()
+	{ return isRobotsDisabled; }
+	
 	public void resetPlatform()
 	{ platformsToReset = currentRoom.getPlatformsNumber(); }
 	
 	public void resetOnePlatform()
 	{ platformsToReset--; }
-	
-	public Player getPlayer()
-	{ return player; }
-	
-	public Room getCurrentRoom()
-	{ return currentRoom; }
-	
-	public boolean getUserInput(UserInput userInput)
-	{ return this.userInput[userInput.getInput()]; }
-	
-	public boolean isRobotsDisabled()
-	{ return isRobotsDisabled; }
 	
 	public int getPlatformsToReset()
 	{ return platformsToReset; }
@@ -78,4 +80,10 @@ public class GameContext
 	
 	public static void setDeltaTime(double deltaTime)
 	{ GameContext.deltaTime = deltaTime; }
+	
+	public void setListener(Listener listener)
+	{ gameContextListener = listener; }
+	
+	public Listener getListener()
+	{ return gameContextListener; }
 }

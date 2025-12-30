@@ -1,8 +1,12 @@
 package code.view.sprites;
 
-import code.model.gameobjects.enemy.AttackerRobot;
+//data strucutre import
+import java.util.List;
+//graphics import
+import java.awt.image.BufferedImage;
 //model import
 import code.model.gameobjects.enemy.ThrowerRobot;
+import code.model.gameobjects.enemy.AttackerRobot;
 //images import
 import code.view.images.Animation;
 
@@ -18,8 +22,12 @@ public class ThrowerRobotSprite extends AnimatedSprite
 		
 		public AttackSprite (AttackerRobot.Attack attack)
 		{ super(attack, THROWER_ROBOT_ATTACK_ANIMATION, IMAGE_DURATION); }
+		
+		@Override
+		protected int nextImageIndex(List<BufferedImage> animationList)
+		{ return (getImageIndex() + 1 == animationList.size()) ? 4 : getImageIndex() + 1; }
 	}
 	
-	public ThrowerRobotSprite(ThrowerRobot player)
-	{ super(player, THROWER_ROBOT_ANIMATION, IMAGE_DURATION); }
+	public ThrowerRobotSprite(ThrowerRobot throwerRobot)
+	{ super(throwerRobot, THROWER_ROBOT_ANIMATION, IMAGE_DURATION); }
 }
