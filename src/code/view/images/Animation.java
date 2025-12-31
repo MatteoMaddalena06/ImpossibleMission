@@ -14,66 +14,70 @@ import code.model.gameobjects.enemy.AttackerRobot;
 public enum Animation
 {
 	PLAYER(Map.ofEntries(
-			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resoruces/Player/Walking/Jot_0-%d.png", 38, 52)),
-			entry(State.WALKING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Player/Walking/Jot_0-%d.png", 38, 52)),
-			entry(State.JUMPING_RIGHT, ImageUtils.loadAnimation("/resoruces/Player/Jumping/Jot_0-%d.png", 86, 89)),
-			entry(State.JUMPING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Player/Jumping/Jot_0-%d.png", 86, 89)),
-			entry(State.FALLING_RIGHT, ImageUtils.loadAnimation("/resoruces/Player/Falling/Jot_0-%d.png", 90, 95)),
-			entry(State.FALLING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Player/Falling/Jot_0-%d.png", 90, 95)),
-			entry(State.IDLE_RIGHT,    ImageUtils.loadAnimation("/resoruces/Player/Idle/Jot_0-%d.png", 0, 9)), 
-			entry(State.IDLE_LEFT,     ImageUtils.loadFlippedAnimation("/resoruces/Player/Idle/Jot_0-%d.png", 0, 9)), 
-			entry(State.DIE_RIGHT,     ImageUtils.loadAnimation("/resoruces/Player/Die/Jot_0-%d.png", 437, 448)),
-			entry(State.DIE_LEFT,      ImageUtils.loadFlippedAnimation("/resoruces/Player/Die/Jot_0-%d.png", 437, 448))
+			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resources/Player/Walking/Jot_0-%d.png", 38, 52)),
+			entry(State.WALKING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Player/Walking/Jot_0-%d.png", 38, 52)),
+			entry(State.JUMPING_RIGHT, ImageUtils.loadAnimation("/resources/Player/Jumping/Jot_0-%d.png", 86, 89)),
+			entry(State.JUMPING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Player/Jumping/Jot_0-%d.png", 86, 89)),
+			entry(State.FALLING_RIGHT, ImageUtils.loadAnimation("/resources/Player/Falling/Jot_0-%d.png", 90, 95)),
+			entry(State.FALLING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Player/Falling/Jot_0-%d.png", 90, 95)),
+			entry(State.IDLE_RIGHT,    ImageUtils.loadAnimation("/resources/Player/Idle/Jot_0-%d.png", 0, 9)), 
+			entry(State.IDLE_LEFT,     ImageUtils.loadFlippedAnimation("/resources/Player/Idle/Jot_0-%d.png", 0, 9)), 
+			entry(State.DIE_RIGHT,     ImageUtils.loadAnimation("/resources/Player/Die/Jot_0-%d.png", 437, 448)),
+			entry(State.DIE_LEFT,      ImageUtils.loadFlippedAnimation("/resources/Player/Die/Jot_0-%d.png", 437, 448)),
+			entry(State.SEARCHING,     ImageUtils.loadAnimation("/resources/Player/Searching/Jot_0-%d.png", 568, 578))
 	)),
 	BLACKORB(Map.ofEntries(
-			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/BlackOrb/Walking/PS_0-%d.png", 0, 4)),
-			entry(State.WALKING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/BlackOrb/Walking/PS_0-%d.png", 0, 4)),
-			entry(State.JUMPING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/BlackOrb/Jumping/PS_0-%d.png", 158, 165)),
-			entry(State.JUMPING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/BlackOrb/Jumping/PS_0-%d.png", 158, 165)),
-			entry(State.FALLING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/BlackOrb/Falling/PS_0-%d.png", 158, 165)),
-			entry(State.FALLING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/BlackOrb/Falling/PS_0-%d.png", 158, 165)),
-			entry(State.IDLE_RIGHT,    ImageUtils.loadAnimation("/resoruces/Enemies/BlackOrb/Idle/PS_0-%d.png", 35, 39)), 
-			entry(State.IDLE_LEFT,     ImageUtils.loadFlippedAnimation("/resoruces/Enemies/BlackOrb/Idle/PS_0-%d.png", 35, 39))
+			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/BlackOrb/Walking/PS_0-%d.png", 0, 4)),
+			entry(State.WALKING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/BlackOrb/Walking/PS_0-%d.png", 0, 4)),
+			entry(State.JUMPING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/BlackOrb/Jumping/PS_0-%d.png", 158, 165)),
+			entry(State.JUMPING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/BlackOrb/Jumping/PS_0-%d.png", 158, 165)),
+			entry(State.FALLING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/BlackOrb/Falling/PS_0-%d.png", 158, 165)),
+			entry(State.FALLING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/BlackOrb/Falling/PS_0-%d.png", 158, 165)),
+			entry(State.IDLE_RIGHT,    ImageUtils.loadAnimation("/resources/Enemies/BlackOrb/Idle/PS_0-%d.png", 35, 39)), 
+			entry(State.IDLE_LEFT,     ImageUtils.loadFlippedAnimation("/resources/Enemies/BlackOrb/Idle/PS_0-%d.png", 35, 39))
 	)),
 	JUMPER_ROBOT(Map.ofEntries(
-			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/JumperRobot/Walking/Khan_0-%d.png", 29, 54)),
-			entry(State.WALKING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/JumperRobot/Walking/Khan_0-%d.png", 29, 54)),
-			entry(State.JUMPING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/JumperRobot/Jumping/Khan_0-%d.png", 60, 67)),
-			entry(State.JUMPING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/JumperRobot/Jumping/Khan_0-%d.png", 60, 67)),
-			entry(State.FALLING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/JumperRobot/Falling/Khan_0-%d.png", 68, 71)),
-			entry(State.FALLING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/JumperRobot/Falling/Khan_0-%d.png", 68, 71)),
-			entry(State.IDLE_RIGHT,    ImageUtils.loadAnimation("/resoruces/Enemies/JumperRobot/Idle/Khan_0-%d.png", 0, 9)), 
-			entry(State.IDLE_LEFT,     ImageUtils.loadFlippedAnimation("/resoruces/Enemies/JumperRobot/Idle/Khan_0-%d.png", 0, 9))
+			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/JumperRobot/Walking/Khan_0-%d.png", 29, 54)),
+			entry(State.WALKING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/JumperRobot/Walking/Khan_0-%d.png", 29, 54)),
+			entry(State.JUMPING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/JumperRobot/Jumping/Khan_0-%d.png", 60, 67)),
+			entry(State.JUMPING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/JumperRobot/Jumping/Khan_0-%d.png", 60, 67)),
+			entry(State.FALLING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/JumperRobot/Falling/Khan_0-%d.png", 68, 71)),
+			entry(State.FALLING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/JumperRobot/Falling/Khan_0-%d.png", 68, 71)),
+			entry(State.IDLE_RIGHT,    ImageUtils.loadAnimation("/resources/Enemies/JumperRobot/Idle/Khan_0-%d.png", 0, 9)), 
+			entry(State.IDLE_LEFT,     ImageUtils.loadFlippedAnimation("/resources/Enemies/JumperRobot/Idle/Khan_0-%d.png", 0, 9))
 	)),
 	LASER_ROBOT(Map.ofEntries(
-			entry(State.WALKING_RIGHT,   ImageUtils.loadAnimation("/resoruces/Enemies/LaserRobot/Robot/Walking/DIO_0-%d.png", 54, 69)),
-			entry(State.WALKING_LEFT,    ImageUtils.loadFlippedAnimation("/resoruces/Enemies/LaserRobot/Robot/Walking/DIO_0-%d.png", 54, 69)),
-			entry(State.IDLE_RIGHT,      ImageUtils.loadAnimation("/resoruces/Enemies/LaserRobot/Robot/Idle/DIO_0-%d.png", 0, 37)), 
-			entry(State.IDLE_LEFT,       ImageUtils.loadFlippedAnimation("/resoruces/Enemies/LaserRobot/Robot/Idle/DIO_0-%d.png", 0, 37)),
-			entry(State.ATTACKING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/LaserRobot/Robot/Attacking/DIO_0-%d.png", 146, 149)), 
-			entry(State.ATTACKING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/LaserRobot/Robot/Attacking/DIO_0-%d.png", 146, 149))
+			entry(State.WALKING_RIGHT,   ImageUtils.loadAnimation("/resources/Enemies/LaserRobot/Robot/Walking/DIO_0-%d.png", 54, 69)),
+			entry(State.WALKING_LEFT,    ImageUtils.loadFlippedAnimation("/resources/Enemies/LaserRobot/Robot/Walking/DIO_0-%d.png", 54, 69)),
+			entry(State.IDLE_RIGHT,      ImageUtils.loadAnimation("/resources/Enemies/LaserRobot/Robot/Idle/DIO_0-%d.png", 0, 37)), 
+			entry(State.IDLE_LEFT,       ImageUtils.loadFlippedAnimation("/resources/Enemies/LaserRobot/Robot/Idle/DIO_0-%d.png", 0, 37)),
+			entry(State.ATTACKING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/LaserRobot/Robot/Attacking/DIO_0-%d.png", 146, 149)), 
+			entry(State.ATTACKING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/LaserRobot/Robot/Attacking/DIO_0-%d.png", 146, 149))
 	)),
 	LASER_ROBOT_ATTACK(Map.ofEntries(
-			entry(State.ATTACK_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/LaserRobot/Attack/TheWorld_0-%d.png", 240, 252)),
-			entry(State.ATTACK_LEFT, ImageUtils.loadFlippedAnimation("/resoruces/Enemies/LaserRobot/Attack/TheWorld_0-%d.png", 240, 252))
+			entry(State.ATTACK_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/LaserRobot/Attack/TheWorld_0-%d.png", 240, 252)),
+			entry(State.ATTACK_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/LaserRobot/Attack/TheWorld_0-%d.png", 240, 252))
 	)),
 	RUNNER_ROBOT(Map.ofEntries(
-			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/RunnerRobot/Walking/Hol_0-%d.png", 35, 40)),
-			entry(State.WALKING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/RunnerRobot/Walking/Hol_0-%d.png", 35, 40)),
-			entry(State.IDLE_RIGHT,    ImageUtils.loadAnimation("/resoruces/Enemies/RunnerRobot/Idle/Hol_0-%d.png", 0, 9)), 
-			entry(State.IDLE_LEFT,     ImageUtils.loadFlippedAnimation("/resoruces/Enemies/RunnerRobot/Idle/Hol_0-%d.png", 0, 9))
+			entry(State.WALKING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/RunnerRobot/Walking/Hol_0-%d.png", 35, 40)),
+			entry(State.WALKING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/RunnerRobot/Walking/Hol_0-%d.png", 35, 40)),
+			entry(State.IDLE_RIGHT,    ImageUtils.loadAnimation("/resources/Enemies/RunnerRobot/Idle/Hol_0-%d.png", 0, 9)), 
+			entry(State.IDLE_LEFT,     ImageUtils.loadFlippedAnimation("/resources/Enemies/RunnerRobot/Idle/Hol_0-%d.png", 0, 9))
 	)),
 	THROWER_ROBOT(Map.ofEntries(
-			entry(State.WALKING_RIGHT,   ImageUtils.loadAnimation("/resoruces/Enemies/ThrowerRobot/Robot/Walking/Pol_0-%d.png", 32, 42)),
-			entry(State.WALKING_LEFT,    ImageUtils.loadFlippedAnimation("/resoruces/Enemies/ThrowerRobot/Robot/Walking/Pol_0-%d.png", 32, 42)),
-			entry(State.IDLE_RIGHT,      ImageUtils.loadAnimation("/resoruces/Enemies/ThrowerRobot/Robot/Idle/Pol_0-%d.png", 0, 9)), 
-			entry(State.IDLE_LEFT,       ImageUtils.loadFlippedAnimation("/resoruces/Enemies/ThrowerRobot/Robot/Idle/Pol_0-%d.png", 0, 9)),
-			entry(State.ATTACKING_RIGHT, ImageUtils.loadAnimation("/resoruces/Enemies/ThrowerRobot/Robot/Attacking/Pol_0-%d.png", 402, 407)), 
-			entry(State.ATTACKING_LEFT,  ImageUtils.loadFlippedAnimation("/resoruces/Enemies/ThrowerRobot/Robot/Attacking/Pol_0-%d.png", 402, 407))
+			entry(State.WALKING_RIGHT,   ImageUtils.loadAnimation("/resources/Enemies/ThrowerRobot/Robot/Walking/Pol_0-%d.png", 32, 42)),
+			entry(State.WALKING_LEFT,    ImageUtils.loadFlippedAnimation("/resources/Enemies/ThrowerRobot/Robot/Walking/Pol_0-%d.png", 32, 42)),
+			entry(State.IDLE_RIGHT,      ImageUtils.loadAnimation("/resources/Enemies/ThrowerRobot/Robot/Idle/Pol_0-%d.png", 0, 9)), 
+			entry(State.IDLE_LEFT,       ImageUtils.loadFlippedAnimation("/resources/Enemies/ThrowerRobot/Robot/Idle/Pol_0-%d.png", 0, 9)),
+			entry(State.ATTACKING_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/ThrowerRobot/Robot/Attacking/Pol_0-%d.png", 402, 407)), 
+			entry(State.ATTACKING_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/ThrowerRobot/Robot/Attacking/Pol_0-%d.png", 402, 407))
 	)),
 	THROWER_ROBOT_ATTACK(Map.ofEntries(
-			entry(State.ATTACK_RIGHT,   ImageUtils.loadAnimation("/resoruces/Enemies/ThrowerRobot/Attack/VIce_0-%d.png", 882, 893)),
-			entry(State.ATTACK_LEFT,   ImageUtils.loadFlippedAnimation("/resoruces/Enemies/ThrowerRobot/Attack/VIce_0-%d.png", 882, 893))
+			entry(State.ATTACK_RIGHT, ImageUtils.loadAnimation("/resources/Enemies/ThrowerRobot/Attack/VIce_0-%d.png", 882, 893)),
+			entry(State.ATTACK_LEFT,  ImageUtils.loadFlippedAnimation("/resources/Enemies/ThrowerRobot/Attack/VIce_0-%d.png", 882, 893))
+	)),
+	SEARCHING_WINDOW(Map.ofEntries(
+			entry(State.SEARCHING, ImageUtils.loadAnimation("/resources/SearchingWindows/SearchingWindow%d.png", 1, 11))
 	));
 	
 	private Map<State, List<BufferedImage>> animationLists;

@@ -13,11 +13,11 @@ public class LaserRobot extends AttackerRobot
 	private static final long serialVersionUID = 1L;
 	
 	private static final double HORIZONTAL_SPEED   = 150f;
-	private static final int    FOV_WIDTH          = 6 * RoomMap.TILE_SIZE;
+	private static final int    FOV_WIDTH          = 4 * RoomMap.TILE_SIZE;
 	private static final int    FOV_HEIGHT         = 3 * RoomMap.TILE_SIZE;
 	private static final int    ATTACK_WIDTH       = FOV_WIDTH;
 	private static final int    ATTACK_HEIGHT      = FOV_HEIGHT;
-	private static final double ATTACK_DURATION    = 2f; 
+	private static final double ATTACK_DURATION    = 3f; 
 	
 	private double attackDuration;
 	
@@ -40,7 +40,7 @@ public class LaserRobot extends AttackerRobot
 		{
 			Attack attack = produceAttack();
 			context.getCurrentRoom().addEnemyAttack(attack);
-			context.getListener().notifyEvent(new AttackLaunched(attack));
+			context.getEventListener().notifyEvent(new AttackLaunched(attack));
 			setAttackingState(true);
 			return;
 		}
@@ -81,7 +81,7 @@ public class LaserRobot extends AttackerRobot
 				setAttackingState(false);
 				attackDuration = ATTACK_DURATION;
 				context.getCurrentRoom().removeEnemyAttack(this);
-				context.getListener().notifyEvent(new AttackEnded(this));
+				context.getEventListener().notifyEvent(new AttackEnded(this));
 			} 
 		};
 	}

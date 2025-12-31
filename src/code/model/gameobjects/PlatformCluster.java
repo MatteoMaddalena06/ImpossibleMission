@@ -13,7 +13,7 @@ import code.model.room.Room;
 
 public class PlatformCluster 
 {
-	private static final double VERTICAL_SPEED = 130f;;
+	private static final double VERTICAL_SPEED = 300f;;
 	private static final int 	BOUND = 4;
 	
 	private List<Platform> platforms;

@@ -22,6 +22,7 @@ public class Player extends MovingObject
 	private static final double HORIZONTAL_SPEED = 300f; 
 	private static final double JUMP_INCREASE    = 50f;
 	private static final double VERTICAL_SPEED   = 600f;
+	protected static final int  STANDING_TOLLERANCE = 2; 
 	
 	private List<PuzzlePiece> puzzlePiecesObtained;
 	private int robotPasswordsObtained;
@@ -104,7 +105,7 @@ public class Player extends MovingObject
 		boolean isCollidingWithAttack = currentRoom.getGameObjectList().stream().filter(g -> g instanceof AttackerRobot.Attack).anyMatch(a -> isColliding(a));
 		
 		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
-			context.getListener().notifyEvent(new PlayerDied(this));
+			context.getEventListener().notifyEvent(new PlayerDied(this));
 	}
 	
 	private void shrinkHitbox(int newWidth, int newHeight) 

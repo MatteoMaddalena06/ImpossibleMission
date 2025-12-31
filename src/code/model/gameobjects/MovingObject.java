@@ -8,8 +8,7 @@ import code.model.context.GameContext;
 
 public abstract class MovingObject extends GameObject
 {
-	private static final double GRAVITY = 1200f; 
-	protected static final int  STANDING_TOLLERANCE = 2; 
+	private static final double GRAVITY = 1000f; 
 	
 	private transient double horizontalVelocity;
 	private transient double verticalVelocity;

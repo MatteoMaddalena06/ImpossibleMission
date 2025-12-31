@@ -48,7 +48,7 @@ public class ThrowerRobot extends AttackerRobot
 		{
 			Attack attack = produceAttack();
 			context.getCurrentRoom().addEnemyAttack(attack);
-			context.getListener().notifyEvent(new AttackLaunched(attack));
+			context.getEventListener().notifyEvent(new AttackLaunched(attack));
 			setAttackingState(true);
 			return;
 		}
@@ -88,7 +88,7 @@ public class ThrowerRobot extends AttackerRobot
 				if((attackCounter != 0 && isOnGround()) || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
 				{
 					currentRoom.removeEnemyAttack(this);
-					context.getListener().notifyEvent(new AttackEnded(this));
+					context.getEventListener().notifyEvent(new AttackEnded(this));
 					setAttackingState(false); attackCounter = 0;
 					return;
 				}

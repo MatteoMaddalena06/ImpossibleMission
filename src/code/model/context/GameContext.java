@@ -14,10 +14,14 @@ public class GameContext
 	
 	private static double deltaTime;
 	
-	private Listener gameContextListener;
+	private EventListener eventListener;
+	private StateListener stateListener;
 	
-	public interface Listener 
+	public interface EventListener 
 	{ public void notifyEvent(GameEvent event); }
+	
+	public interface StateListener 
+	{ public void notifyState(GameState event); }
 	
 	public enum UserInput 
 	{ 
@@ -81,9 +85,15 @@ public class GameContext
 	public static void setDeltaTime(double deltaTime)
 	{ GameContext.deltaTime = deltaTime; }
 	
-	public void setListener(Listener listener)
-	{ gameContextListener = listener; }
+	public void setEventListener(EventListener listener)
+	{ eventListener = listener; }
 	
-	public Listener getListener()
-	{ return gameContextListener; }
+	public EventListener getEventListener()
+	{ return eventListener; }
+	
+	public void setStateListener(StateListener listener)
+	{ stateListener = listener; }
+	
+	public StateListener getStatetListener()
+	{ return stateListener; }
 }

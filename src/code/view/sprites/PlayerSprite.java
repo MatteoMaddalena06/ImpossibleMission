@@ -27,7 +27,7 @@ public class PlayerSprite extends AnimatedSprite
 		int animationSize = animationList.size();
 		int nextIndex = getImageIndex() + 1;
 		
-		if(state == MovingObject.PhysicsState.JUMPING && nextIndex == animationSize)
+		if((state == MovingObject.PhysicsState.JUMPING || bindedPlayer.isSearching()) && nextIndex == animationSize)
 			nextIndex--;
 		
 		else if(state == MovingObject.PhysicsState.FALLING && nextIndex == animationSize)

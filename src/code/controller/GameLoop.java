@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 //model import
 import code.model.context.GameContext;
+import code.model.context.GameState;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.PlatformCluster;
 import code.model.gameobjects.Player;
@@ -13,8 +14,10 @@ import code.model.room.Room;
 //view import
 import code.view.Renderer;
 import code.view.sprites.AnimatedSprite;
+//model state import
+import code.model.context.StopSimulation;
 
-public class GameLoop extends Thread
+public class GameLoop extends Thread implements GameContext.StateListener
 {
 	private Renderer renderer;
 	private GameContext context;
@@ -28,9 +31,7 @@ public class GameLoop extends Thread
 	@Override 
 	public void run()
 	{	
-		long previousTime, currentTime;
-		
-		previousTime = currentTime = System.nanoTime();
+		long previousTime = System.nanoTime();
 		
 		Room previousRoom = null;
 		List<GameObject> gameObjectList = null;
@@ -39,10 +40,14 @@ public class GameLoop extends Thread
 			
 		while(true)
 		{
-			double deltaTime = (currentTime - previousTime) / 1.e9f;
-
-			GameContext.setDeltaTime(deltaTime);
-			renderer.getCurrentSpritesList().stream().filter(s -> s instanceof AnimatedSprite).forEach(s -> ((AnimatedSprite)s).updateElapsedTime(deltaTime));
+			long currentTime = System.nanoTime();
+		    double deltaTime = (currentTime - previousTime) / 1e9;
+		    previousTime = currentTime;
+		    
+		    double dt = Math.min(deltaTime, 0.005f);
+		    
+			GameContext.setDeltaTime(dt);
+			renderer.getCurrentSpritesList().stream().filter(s -> s instanceof AnimatedSprite).forEach(s -> ((AnimatedSprite)s).updateElapsedTime(dt));
 			
 			Room currentRoom = context.getCurrentRoom();
 			gameObjectList = currentRoom.getGameObjectList();
@@ -63,9 +68,10 @@ public class GameLoop extends Thread
 			SwingUtilities.invokeLater(() -> renderer.repaint());
 			
 			try { Thread.sleep(1); } catch (Exception e) {}
-			
-			previousTime = currentTime;
-			currentTime = System.nanoTime();
 		}
 	}
+
+	@Override
+	public void notifyState(GameState state)
+	{ }
 }

@@ -21,7 +21,7 @@ import code.model.Point;
 //view import
 import code.view.Renderer;
 
-public class JImpossibleMission 
+public class JImpossibleMission
 {
 	private static String WINDOW_TITLE = "Impossible mission";
 	
@@ -31,7 +31,8 @@ public class JImpossibleMission
 		
 		Player player = new Player(new Point(64, 64));
 		Renderer renderer = new Renderer();
-		GameContext context = new GameContext(player, PresettedRoom.getRoom(Room.ExitLayout.ONLEFTANDRIGHT, 1));
+		GameContext context = new GameContext(player, PresettedRoom.getRoom(Room.ExitLayout.ONLEFTANDRIGHT, 6));
+		GameLoop gameLoop = new GameLoop(context, renderer);
 		
 		bindAllKey(renderer, context);
 		
@@ -42,8 +43,9 @@ public class JImpossibleMission
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
-		context.setListener(renderer);
-		new GameLoop(context, renderer).start();
+		context.setEventListener(renderer);
+		context.setStateListener(gameLoop);
+		gameLoop.start();
 	}
 	
 	private static void bindAllKey(Renderer renderer, GameContext context)

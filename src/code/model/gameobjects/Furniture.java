@@ -8,14 +8,18 @@ import code.model.context.FurnitureSearchEnded;
 import code.model.context.GameContext;
 import code.model.context.PlayerFoundSomething;
 import code.model.context.PlayerIsSearching;
+import code.model.context.StopSimulation;
 
 public class Furniture extends GameObject
 {
     private static final long serialVersionUID = 1L;
+    
+    private static final double LOOT_WAITING = 1.5f;
    
     private LootType content;
     private Type type;
 	private PuzzlePiece puzzlePiece;
+	private double timeForSearch;
     private double remainingTimeForSearch;
     
     public enum LootType
@@ -37,7 +41,7 @@ public class Furniture extends GameObject
     	super(position, width, height);
     	this.content = LootType.EMPTY;
     	this.type = type;
-    	this.remainingTimeForSearch = (width * height) / (2*(RoomMap.TILE_SIZE*RoomMap.TILE_SIZE));
+    	this.remainingTimeForSearch = this.timeForSearch = (width * height) / (2*(RoomMap.TILE_SIZE*RoomMap.TILE_SIZE));
     }
     
 	@Override
@@ -54,12 +58,10 @@ public class Furniture extends GameObject
 		player.setUsedFurniture(this);
 		player.setSearchingState(true);	
 		
-		GameContext.Listener eventListener = context.getListener();
-		
-		eventListener.notifyEvent(new PlayerIsSearching(this));
+		GameContext.EventListener eventListener = context.getEventListener();
 
 		if((remainingTimeForSearch -= GameContext.getDeltaTime()) > 0)
-			return;
+		{ eventListener.notifyEvent(new PlayerIsSearching(this)); return; }
 
 		switch(content)
 		{
@@ -71,6 +73,7 @@ public class Furniture extends GameObject
 		
 		eventListener.notifyEvent(new PlayerFoundSomething(this));
 		eventListener.notifyEvent(new FurnitureSearchEnded(this));
+		context.getStatetListener().notifyState(new StopSimulation(LOOT_WAITING));
 		
 		player.setSearchingState(false);
 		context.getCurrentRoom().removeForniture(this);
@@ -79,9 +82,21 @@ public class Furniture extends GameObject
 	public void setContent(LootType content)
 	{ this.content = content; }
 	
+	public LootType getContent()
+	{ return content; }
+	
 	public Type getType()
 	{ return type; }
 	
 	public void setPuzzlePiece(PuzzlePiece puzzlePiece)
 	{ this.puzzlePiece = puzzlePiece; }	
+	
+	public PuzzlePiece getPuzzlePiece()
+	{ return puzzlePiece; }
+	
+	public double getTimeForSearch()
+	{ return timeForSearch; }
+	
+	public double getRemainingTimeForSearch()
+	{ return remainingTimeForSearch; }
 }

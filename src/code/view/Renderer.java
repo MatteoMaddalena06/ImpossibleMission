@@ -8,16 +8,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 //graphics import
 import javax.swing.JPanel;
-
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.Color;
 //view import
 import code.view.sprites.Sprite;
 import code.view.sprites.SpriteFactory;
 import code.view.images.StaticImage;
 import code.view.sprites.PlayerSprite;
+import code.view.sprites.SearchingWindow;
 //model import
 import code.model.context.GameContext;
 import code.model.gameobjects.FixedObject;
@@ -40,16 +40,21 @@ import code.model.context.PlayerDied;
 import code.model.context.PlayerFoundSomething;
 import code.model.context.PlayerIsSearching;
 
-public class Renderer extends JPanel implements GameContext.Listener
+public class Renderer extends JPanel implements GameContext.EventListener
 {
 	private Room currentRoom;
 	private List<Sprite> currentSpritesList; 
 	private Map<Room, List<Sprite>> spritesListsCache;
 	
+	private boolean printSearchingState;
+	private boolean printFurnitureLoot;
+	private Furniture interestingFurniture;
+	
 	public Renderer()
 	{
 		currentSpritesList = new LinkedList<Sprite>();
 		spritesListsCache = new HashMap<Room, List<Sprite>>();
+		printSearchingState = printFurnitureLoot = false;
 	}
 	
 	@Override
@@ -74,6 +79,22 @@ public class Renderer extends JPanel implements GameContext.Listener
     		paintImage(s.getGameObject(), s.getImage(), g)
     	;});
     	
+    	if(printSearchingState)
+    	{ paintFurnitureInfo(interestingFurniture, SearchingWindow.getSearchingWindow(interestingFurniture), g); printSearchingState = false; }
+    	
+    	if(printFurnitureLoot)
+    	{ 
+    		Furniture.LootType furnitureLootType = interestingFurniture.getContent();
+    		
+    		if(furnitureLootType == Furniture.LootType.PUZZLE_PIECE) 
+    			paintFurnitureInfo(interestingFurniture, StaticImage.getPuzzlePiece(interestingFurniture.getPuzzlePiece()).getImage(), g);
+    		
+    		else 
+    			paintFurnitureInfo(interestingFurniture, StaticImage.getFurnitureLoot(furnitureLootType).getImage(), g);
+    		
+    		printFurnitureLoot = false;
+    	}
+    	
     	g.dispose();
     } 
 	
@@ -84,7 +105,17 @@ public class Renderer extends JPanel implements GameContext.Listener
 		
 		int overflow = image.getHeight() - bindedGameObject.getHeight();
 		
-		g.drawImage(image, gameObjectX, gameObjectY - overflow, null);
+		g.drawImage(image, gameObjectX + bindedGameObject.getWidth() / 2 - image.getWidth() / 2, gameObjectY - overflow, null);
+		
+    	g.setColor(Color.red);
+    	g.drawRect(gameObjectX, gameObjectY, bindedGameObject.getWidth(), bindedGameObject.getHeight());
+	}
+	
+	private void paintFurnitureInfo(Furniture furniture, BufferedImage image, Graphics g)
+	{
+		Point furniturePosition = interestingFurniture.copyPosition();
+		int furnitureX = (int)furniturePosition.getX(), furnitureY = (int)furniturePosition.getY();
+		g.drawImage(image,  furnitureX + furniture.getWidth() / 2 - image.getWidth() / 2, furnitureY - image.getHeight(), null);
 	}
 
 	@Override 
@@ -130,10 +161,10 @@ public class Renderer extends JPanel implements GameContext.Listener
 	{ /*TODO*/ }
 	
 	private void printFurnitureLoot(Furniture furniture)
-	{ /*TODO*/ }
+	{ printFurnitureLoot = true; interestingFurniture = furniture; }
 	
 	private void printSearchingState(Furniture furniture)
-	{ /* TODO */ }
+	{ printSearchingState = true; interestingFurniture = furniture; }
 	
 	public void setCurrentSpritesList(Player player, Room room)
 	{
