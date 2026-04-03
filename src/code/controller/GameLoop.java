@@ -22,6 +22,9 @@ public class GameLoop extends Thread implements GameContext.StateListener
 	private Renderer renderer;
 	private GameContext context;
 	
+	private boolean pauseSimulation;
+	private long pauseUntil;
+	
 	public GameLoop(GameContext context, Renderer renderer)
 	{ 
 		this.renderer = renderer;
@@ -41,6 +44,14 @@ public class GameLoop extends Thread implements GameContext.StateListener
 		while(true)
 		{
 			long currentTime = System.nanoTime();
+			
+			if(pauseSimulation)
+			{ 
+				pauseSimulation = currentTime < pauseUntil;
+			    try { Thread.sleep(10); } catch (Exception e) {}
+			    continue; 
+			}
+			
 		    double deltaTime = (currentTime - previousTime) / 1e9;
 		    previousTime = currentTime;
 		    
@@ -73,5 +84,11 @@ public class GameLoop extends Thread implements GameContext.StateListener
 
 	@Override
 	public void notifyState(GameState state)
-	{ }
+	{ 
+		if(state instanceof StopSimulation)
+			pauseFor(((StopSimulation)state).nanos());
+	}	
+	
+	private void pauseFor(long nanos)
+	{ pauseSimulation = true; pauseUntil = System.nanoTime() + nanos; }
 }

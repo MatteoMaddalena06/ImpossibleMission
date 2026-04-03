@@ -14,8 +14,6 @@ import code.model.room.RoomMap;
 
 public class RunnerRobot extends Enemy
 {	
-	private static final long serialVersionUID = 1L;
-	
 	private static final double    HORIZONTAL_SPEED = 350f;
 	private static final int       FOV_WIDTH        = 16 * RoomMap.TILE_SIZE;
 	private static final int   	   FOV_HEIGHT       = 4 * RoomMap.TILE_SIZE;

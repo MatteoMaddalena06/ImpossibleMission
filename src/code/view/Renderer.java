@@ -86,6 +86,8 @@ public class Renderer extends JPanel implements GameContext.EventListener
     	{ 
     		Furniture.LootType furnitureLootType = interestingFurniture.getContent();
     		
+    		System.out.println(furnitureLootType);
+    		
     		if(furnitureLootType == Furniture.LootType.PUZZLE_PIECE) 
     			paintFurnitureInfo(interestingFurniture, StaticImage.getPuzzlePiece(interestingFurniture.getPuzzlePiece()).getImage(), g);
     		
@@ -106,9 +108,6 @@ public class Renderer extends JPanel implements GameContext.EventListener
 		int overflow = image.getHeight() - bindedGameObject.getHeight();
 		
 		g.drawImage(image, gameObjectX + bindedGameObject.getWidth() / 2 - image.getWidth() / 2, gameObjectY - overflow, null);
-		
-    	g.setColor(Color.red);
-    	g.drawRect(gameObjectX, gameObjectY, bindedGameObject.getWidth(), bindedGameObject.getHeight());
 	}
 	
 	private void paintFurnitureInfo(Furniture furniture, BufferedImage image, Graphics g)

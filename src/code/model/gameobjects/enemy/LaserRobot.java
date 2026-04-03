@@ -10,8 +10,6 @@ import code.model.gameobjects.MovingObject;
 
 public class LaserRobot extends AttackerRobot
 {
-	private static final long serialVersionUID = 1L;
-	
 	private static final double HORIZONTAL_SPEED   = 150f;
 	private static final int    FOV_WIDTH          = 4 * RoomMap.TILE_SIZE;
 	private static final int    FOV_HEIGHT         = 3 * RoomMap.TILE_SIZE;

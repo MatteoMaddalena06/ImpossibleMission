@@ -1,15 +1,10 @@
 package code.model.gameobjects;
 
-//IO modules
-import java.io.Serializable;
-
 import code.model.Point;
 import code.model.context.GameContext;
 
-public abstract class GameObject implements Serializable
-{
-	private static final long serialVersionUID = 1L;
-	
+public abstract class GameObject
+{	
 	private Point position;
 	private int width, height;
 	

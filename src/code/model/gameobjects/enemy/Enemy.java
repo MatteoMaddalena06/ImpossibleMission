@@ -11,8 +11,6 @@ import code.model.gameobjects.MovingObject;
 
 public abstract class Enemy extends MovingObject 
 { 
-	private static final long serialVersionUID = 1L;
-	
 	private static final double SHARED_HORIZONTAL_SPEED = 150f;
 	
 	private FieldOfView fieldOfView;

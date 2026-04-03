@@ -12,9 +12,7 @@ import code.model.context.StopSimulation;
 
 public class Furniture extends GameObject
 {
-    private static final long serialVersionUID = 1L;
-    
-    private static final double LOOT_WAITING = 1.5f;
+    private static final long LOOT_WAITING = 1000000000L;
    
     private LootType content;
     private Type type;

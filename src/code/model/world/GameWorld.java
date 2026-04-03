@@ -9,15 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-//IO modules
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.nio.file.Path;
-
 //inproject import
 import code.model.room.Room;
 import code.model.room.PresettedRoom;
@@ -26,43 +17,21 @@ import code.model.gameobjects.Furniture;
 import code.model.puzzle.PresettedPassword;
 import code.model.puzzle.PuzzlePiece;
 
-public class GameWorld implements Serializable
+public class GameWorld 
 {
-	private static final long serialVersionUID = 1L;
-	
-	private static final int STD_ELEVATOR_NUMBER       = 8;
-	private static final int STD_WORLD_DEPTH           = 6;
-	private static final int STD_MAX_ROBOT_PASSWORD    = 10;
-	private static final int STD_MAX_PLATFORM_PASSWORD = 10;
+	private static final int ELEVATOR_NUMBER       = 8;
+	private static final int WORLD_DEPTH           = 6;
+	private static final int MAX_ROBOT_PASSWORD    = 10;
+	private static final int MAX_PLATFORM_PASSWORD = 10;
 
 	private Room[][] worldMatrix;
 
 	public GameWorld(Room[][] worldMatrix)
 	{ this.worldMatrix = worldMatrix; }
 	
-	public static GameWorld load(Path pathname) throws IOException, ClassNotFoundException 
-	{
-		FileInputStream fileInput = new FileInputStream(pathname.toFile());
-		ObjectInputStream objectInput = new ObjectInputStream(fileInput);
-		
-		GameWorld world = (GameWorld)objectInput.readObject();
-		objectInput.close();
-		
-		return world;
-	}
-	
-	public void store(Path pathname) throws IOException
-	{
-		FileOutputStream fileOutput = new FileOutputStream(pathname.toFile());
-		ObjectOutputStream objectOutput = new ObjectOutputStream(fileOutput);
-		
-		objectOutput.writeObject(this);
-		objectOutput.close();
-	}
-
 	public static GameWorld randomGeneration()
 	{
-		Room[][] worldMatrix = new Room[STD_WORLD_DEPTH][(STD_ELEVATOR_NUMBER << 1) + 1];
+		Room[][] worldMatrix = new Room[WORLD_DEPTH][(ELEVATOR_NUMBER << 1) + 1];
 		
 		createTraversableRandomMap(worldMatrix);
 		PresettedPassword randomPassword = PresettedPassword.values()[(int)(Math.random() * PresettedPassword.PASSWORD_NUMBER)];
@@ -135,8 +104,8 @@ public class GameWorld implements Serializable
 	{
 		Collections.shuffle(furnitureList);
 		distributeInFurniture(furnitureList, PuzzlePiece.getPieces(password.getPassword()));
-		distributeInFurniture(furnitureList, (int)(Math.random() * STD_MAX_ROBOT_PASSWORD) + 1, Furniture.LootType.ROBOT_PASSWORD);
-		distributeInFurniture(furnitureList, (int)(Math.random() * STD_MAX_PLATFORM_PASSWORD) + 1, Furniture.LootType.PLATFORM_PASSWORD);
+		distributeInFurniture(furnitureList, (int)(Math.random() * MAX_ROBOT_PASSWORD) + 1, Furniture.LootType.ROBOT_PASSWORD);
+		distributeInFurniture(furnitureList, (int)(Math.random() * MAX_PLATFORM_PASSWORD) + 1, Furniture.LootType.PLATFORM_PASSWORD);
 	}
 	
 	private static List<Furniture> distributeInFurniture(List<Furniture> furnitureList, int amount, Furniture.LootType type)

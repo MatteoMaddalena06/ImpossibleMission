@@ -5,7 +5,6 @@ import code.model.context.GameContext;
 
 public class FixedObject extends GameObject
 {
-	private static final long serialVersionUID = 1L;
 	private Type type;
 	
 	public enum Type 

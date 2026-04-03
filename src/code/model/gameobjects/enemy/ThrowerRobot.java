@@ -11,7 +11,6 @@ import code.model.context.GameContext;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.MovingObject;
-import code.model.gameobjects.Platform;
 import code.model.room.Room;
 import code.model.room.RoomMap;
 

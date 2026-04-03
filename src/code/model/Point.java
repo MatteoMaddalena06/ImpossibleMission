@@ -1,12 +1,7 @@
 package code.model;
 
-//IO modules
-import java.io.Serializable;
-
-public class Point implements Serializable
+public class Point
 {
-    private static final long serialVersionUID = 1L;
-    
 	private double x, y;
 
     public Point(double x, double y)

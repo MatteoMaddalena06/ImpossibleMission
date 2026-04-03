@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 
-//IO modules
-import java.io.Serializable;
-
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.Furniture;
 import code.model.gameobjects.GameObject;
@@ -15,10 +12,8 @@ import code.model.gameobjects.Platform;
 import code.model.gameobjects.enemy.AttackerRobot;
 import code.model.gameobjects.enemy.Enemy;
 
-public class Room implements Serializable
+public class Room
 {
-	private static final long serialVersionUID = 1L;
-	
 	private List<GameObject> gameObjectList;
 	private List<Platform> platformList;
 	private List<FixedObject> fixedObjectList;

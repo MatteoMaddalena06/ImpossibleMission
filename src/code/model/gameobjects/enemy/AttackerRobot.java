@@ -5,8 +5,6 @@ import code.model.gameobjects.MovingObject;
 
 public abstract class AttackerRobot extends Enemy
 {
-	private static final long serialVersionUID = 1L;
-	
 	private boolean isAttacking;
 	
 	public abstract class Attack extends MovingObject
