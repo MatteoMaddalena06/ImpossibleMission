@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 //graphics import
 import javax.swing.JPanel;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.awt.Color;
 //view import
 import code.view.sprites.Sprite;
 import code.view.sprites.SpriteFactory;
@@ -61,6 +61,8 @@ public class Renderer extends JPanel implements GameContext.EventListener
 	protected void paintComponent(Graphics g)
 	{
     	super.paintComponent(g);
+    	
+    	this.setBackground(Color.BLACK);
     	
     	List<Sprite> firstLayerSprites = currentSpritesList.stream().filter(s -> {
     		GameObject go = s.getGameObject();

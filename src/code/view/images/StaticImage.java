@@ -4,6 +4,7 @@ package code.view.images;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.List;
 //graphics import
 import java.awt.image.BufferedImage;
 //model import
@@ -270,9 +271,24 @@ public enum StaticImage
 	Z_UPPER_RIGHT (ImageUtils.loadImage("/resources/FurnitureLoots/PuzzlePieces/z/z_01.png"),  Type.FURNITURE_LOOT, Furniture.LootType.PUZZLE_PIECE, PuzzlePiece.Z_UPPER_RIGHT),
 	Z_UPPER_LEFT  (ImageUtils.loadImage("/resources/FurnitureLoots/PuzzlePieces/z/z_01.png"),  Type.FURNITURE_LOOT, Furniture.LootType.PUZZLE_PIECE, PuzzlePiece.Z_UPPER_LEFT ),  
 	Z_BOTTOM_RIGHT(ImageUtils.loadImage("/resources/FurnitureLoots/PuzzlePieces/z/z_01.png"),  Type.FURNITURE_LOOT, Furniture.LootType.PUZZLE_PIECE, PuzzlePiece.Z_BOTTOM_RIGHT),
-	Z_BOTTOM_LEFT (ImageUtils.loadImage("/resources/FurnitureLoots/PuzzlePieces/z/z_01.png"),  Type.FURNITURE_LOOT, Furniture.LootType.PUZZLE_PIECE, PuzzlePiece.Z_BOTTOM_LEFT);
-
-	//BACKGROUND(ImageUtils.loadImage("/resources/Background.png"), Type.BACKGROUND);
+	Z_BOTTOM_LEFT (ImageUtils.loadImage("/resources/FurnitureLoots/PuzzlePieces/z/z_01.png"),  Type.FURNITURE_LOOT, Furniture.LootType.PUZZLE_PIECE, PuzzlePiece.Z_BOTTOM_LEFT), 
+	
+	MENU_TITLE         		   (ImageUtils.loadImage("/resources/Menu/MenuTitle.png")),
+	NORMAL_START_BUTTON		   (ImageUtils.loadImage("/resources/Menu/NormalStartButton.png")),
+	NORMAL_LEADERBOARD_BUTTON  (ImageUtils.loadImage("/resources/Menu/NormalLeaderboardButton.png")),
+	NORMAL_EXIT_BUTTON         (ImageUtils.loadImage("/resources/Menu/NormalExitButton.png")),
+	SELECTED_START_BUTTON      (ImageUtils.loadImage("/resources/Menu/SelectedStartButton.png")),
+	SELECTED_LEADERBOARD_BUTTON(ImageUtils.loadImage("/resources/Menu/SelectedLeaderboardButton.png")),
+	SELECTED_EXIT_BUTTON       (ImageUtils.loadImage("/resources/Menu/SelectedExitButton.png")),
+	MENU_BACKGROUND   		   (ImageUtils.loadImage("/resources/Menu/MenuBackground.png")),
+	ENTRY_BACKGROUND           (ImageUtils.loadImage("/resources/Menu/EntryBackground.png")),
+	LEADERBOARD_1TROPHY        (ImageUtils.loadImage("/resources/Menu/Leaderboard1Trophy.png")),
+	LEADERBOARD_2TROPHY        (ImageUtils.loadImage("/resources/Menu/Leaderboard2Trophy.png")),
+	LEADERBOARD_3TROPHY        (ImageUtils.loadImage("/resources/Menu/Leaderboard3Trophy.png")),
+	LEADERBOARD_STAR           (ImageUtils.loadImage("/resources/Menu/LeaderboardStar.png")),
+	LEADERBOARD_SAD            (ImageUtils.loadImage("/resources/Menu/LeaderboardSad.png")),
+	
+	WINDOW_ICON (ImageUtils.loadImage("/resources/Menu/WindowIcon.png"));
 	
 	private static final Map<Room.Color, Map<Furniture.Type, StaticImage>> furnitureMap =  
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.FURNITURE).collect(Collectors.groupingBy(i -> i.color, Collectors.toMap(i -> i.furnitureType, i -> i)));
@@ -297,6 +313,8 @@ public enum StaticImage
 	private static final Map<PuzzlePiece, StaticImage> puzzlePieces = 
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.FURNITURE_LOOT && i.furnitureLootType == Furniture.LootType.PUZZLE_PIECE).collect(Collectors.toMap(i -> i.puzzlePieceType, i -> i));
 	
+	private static final List<StaticImage> awardsList = Arrays.asList(new StaticImage[] {LEADERBOARD_1TROPHY, LEADERBOARD_2TROPHY, LEADERBOARD_3TROPHY, LEADERBOARD_STAR, LEADERBOARD_SAD});
+	
 	private BufferedImage image;
 	private Room.Color color;
 	private Type type;
@@ -308,12 +326,15 @@ public enum StaticImage
 	{ 
 		TERMINAL, MIDDLE_WALL_RIGHT, MIDDLE_WALL_LEFT, UPPER_LEFT_WALL, 
 		UPPER_RIGHT_WALL, BOTTOM_LEFT_WALL, BOTTOM_RIGHT_WALL, FURNITURE, FLOOR, PLATFORM,
-		BACKGROUND, FURNITURE_LOOT
+		FURNITURE_LOOT
 	}
+	
+	private StaticImage(BufferedImage image)
+	{ this.image = image; }
 		
 	private StaticImage(BufferedImage image, Room.Color color, Type type, Furniture.Type furnitureType, Furniture.LootType furnitureLootType, PuzzlePiece puzzlePieceType)
 	{
-		this.image = image; 
+		this(image);
 		this.color = color;
 		this.type = type;
 		this.furnitureType = furnitureType;
@@ -385,4 +406,7 @@ public enum StaticImage
 			default -> throw new IllegalArgumentException("This method does not provide sprites for puzzle pieces");
 		};
 	}
+	
+	public static List<StaticImage> getAwardsList()
+	{ return awardsList; }
 }

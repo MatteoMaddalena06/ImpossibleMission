@@ -2,6 +2,7 @@ package code.model.context;
 
 //inproject import
 import code.model.room.Room;
+import code.model.Leaderboard;
 import code.model.gameobjects.Player;
 
 public class GameContext
@@ -11,6 +12,7 @@ public class GameContext
 	private boolean[] userInput;
 	private boolean isRobotsDisabled;
 	private int platformsToReset;
+	private Leaderboard leaderboard;
 	
 	private static double deltaTime;
 	
@@ -37,10 +39,11 @@ public class GameContext
 		{ return index; }
 	}
 	
-	public GameContext(Player player, Room currentRoom)
+	public GameContext(Player player, Room currentRoom, Leaderboard leaderboard)
 	{	
 		this.player = player;
 		this.currentRoom = currentRoom;
+		this.leaderboard = leaderboard;
 		userInput = new boolean[UserInput.values().length];
 		isRobotsDisabled = false;
 		platformsToReset = 0;
@@ -78,6 +81,9 @@ public class GameContext
 	
 	public int getPlatformsToReset()
 	{ return platformsToReset; }
+	
+	public Leaderboard getLeaderboard()
+	{ return leaderboard; }
 	
 	public static double getDeltaTime()
 	{ return deltaTime; }

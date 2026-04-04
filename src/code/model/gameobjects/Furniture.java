@@ -21,7 +21,17 @@ public class Furniture extends GameObject
     private double remainingTimeForSearch;
     
     public enum LootType
-    { EMPTY, PUZZLE_PIECE, ROBOT_PASSWORD, PLATFORM_PASSWORD }
+    {
+    	EMPTY(0), PUZZLE_PIECE(1000), ROBOT_PASSWORD(250), PLATFORM_PASSWORD(250); 
+    	
+    	private int points;
+    	
+    	private LootType(int points)
+    	{ this.points = points; }
+    	
+    	public int getPoints()
+    	{ return points; }
+    }
 
     public enum Type
     {
@@ -60,6 +70,8 @@ public class Furniture extends GameObject
 
 		if((remainingTimeForSearch -= GameContext.getDeltaTime()) > 0)
 		{ eventListener.notifyEvent(new PlayerIsSearching(this)); return; }
+		
+		player.updatePoints(content.getPoints());
 
 		switch(content)
 		{

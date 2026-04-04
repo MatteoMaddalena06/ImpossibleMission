@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import code.model.puzzle.PuzzlePiece;
 import code.model.room.Room;
 import code.model.room.RoomMap;
+import code.model.Leaderboard;
 import code.model.Point;
 import code.model.context.GameContext;
 import code.model.context.PlayerDied;
@@ -24,6 +25,9 @@ public class Player extends MovingObject
 	private static final double VERTICAL_SPEED   = 600f;
 	protected static final int  STANDING_TOLLERANCE = 2; 
 	
+	private String name;
+	private int points;
+	
 	private List<PuzzlePiece> puzzlePiecesObtained;
 	private int robotPasswordsObtained;
 	private int platformPasswordsObtained;
@@ -36,9 +40,11 @@ public class Player extends MovingObject
 	
 	private boolean wasHitboxModified;
 		
-	public Player(Point position)
+	public Player(String name, Point position)
 	{
 		super(position, NORMAL_WIDTH, NORMAL_HEIGHT); 
+		this.name = name;
+		points = 0;
 		puzzlePiecesObtained = new ArrayList<PuzzlePiece>();
 		robotPasswordsObtained = platformPasswordsObtained = 0;
 		setPhysicsState(MovingObject.PhysicsState.IDLE);
@@ -105,7 +111,10 @@ public class Player extends MovingObject
 		boolean isCollidingWithAttack = currentRoom.getGameObjectList().stream().filter(g -> g instanceof AttackerRobot.Attack).anyMatch(a -> isColliding(a));
 		
 		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
+		{
+			context.getLeaderboard().addEntry(new Leaderboard.Entry(name, points));
 			context.getEventListener().notifyEvent(new PlayerDied(this));
+		}
 	}
 	
 	private void shrinkHitbox(int newWidth, int newHeight) 
@@ -148,6 +157,9 @@ public class Player extends MovingObject
 
 	    return horizontalOverlap && verticalContact;
 	}
+	
+	public void updatePoints(int amount)
+	{ points += amount; }
 	
 	public void givePuzzlePiece(PuzzlePiece piece)
 	{ puzzlePiecesObtained.add(piece); }

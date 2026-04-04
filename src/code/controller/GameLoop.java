@@ -29,6 +29,7 @@ public class GameLoop extends Thread implements GameContext.StateListener
 	{ 
 		this.renderer = renderer;
 		this.context = context; 
+		pauseSimulation = false;
 	}
 	
 	@Override 
@@ -86,9 +87,6 @@ public class GameLoop extends Thread implements GameContext.StateListener
 	public void notifyState(GameState state)
 	{ 
 		if(state instanceof StopSimulation)
-			pauseFor(((StopSimulation)state).nanos());
+			pauseSimulation = true; pauseUntil = System.nanoTime() + ((StopSimulation)state).nanos();
 	}	
-	
-	private void pauseFor(long nanos)
-	{ pauseSimulation = true; pauseUntil = System.nanoTime() + nanos; }
 }
