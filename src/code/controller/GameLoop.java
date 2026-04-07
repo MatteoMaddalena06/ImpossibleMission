@@ -6,11 +6,14 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 //model import
 import code.model.context.GameContext;
+import code.model.context.GameEnded;
 import code.model.context.GameState;
+import code.model.context.PlayerDied;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.PlatformCluster;
 import code.model.gameobjects.Player;
 import code.model.room.Room;
+import code.model.Leaderboard;
 //view import
 import code.view.Renderer;
 import code.view.sprites.AnimatedSprite;
@@ -24,6 +27,9 @@ public class GameLoop extends Thread implements GameContext.StateListener
 	
 	private boolean pauseSimulation;
 	private long pauseUntil;
+	
+	private boolean skipPlayerUpdate;
+	private long skipUntil;
 	
 	public GameLoop(GameContext context, Renderer renderer)
 	{ 
@@ -75,7 +81,11 @@ public class GameLoop extends Thread implements GameContext.StateListener
 				gameObjectList.get(i).update(context);
 			
 			platformClusterList.forEach(c -> c.update(context));
-			player.update(context);
+			
+			if(skipPlayerUpdate)
+				skipPlayerUpdate = currentTime < skipUntil;
+			else
+				player.update(context);
 			
 			SwingUtilities.invokeLater(() -> renderer.repaint());
 			
@@ -87,6 +97,21 @@ public class GameLoop extends Thread implements GameContext.StateListener
 	public void notifyState(GameState state)
 	{ 
 		if(state instanceof StopSimulation)
-			pauseSimulation = true; pauseUntil = System.nanoTime() + ((StopSimulation)state).nanos();
+		{ 
+			pauseSimulation = true; 
+			pauseUntil = System.nanoTime() + ((StopSimulation)state).nanos();
+		}
+		else if(state instanceof GameEnded)
+		{
+			Player player = context.getPlayer();
+			Leaderboard leaderboard = context.getLeaderboard();
+			leaderboard.addEntry(new Leaderboard.Entry(player.getName(), player.getPoints()));
+			leaderboard.store();
+		}
+		else if(state instanceof PlayerDied)
+		{
+			skipPlayerUpdate = true;
+			skipUntil = System.nanoTime() + ((PlayerDied)state).nanos();
+		}
 	}	
 }

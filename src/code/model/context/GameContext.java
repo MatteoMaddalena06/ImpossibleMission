@@ -3,6 +3,7 @@ package code.model.context;
 //inproject import
 import code.model.room.Room;
 import code.model.Leaderboard;
+import code.model.Point;
 import code.model.gameobjects.Player;
 
 public class GameContext
@@ -13,6 +14,7 @@ public class GameContext
 	private boolean isRobotsDisabled;
 	private int platformsToReset;
 	private Leaderboard leaderboard;
+	private Point playerSpawn;
 	
 	private static double deltaTime;
 	
@@ -84,6 +86,12 @@ public class GameContext
 	
 	public Leaderboard getLeaderboard()
 	{ return leaderboard; }
+	
+	public Point getPlayerSpawn()
+	{ return playerSpawn; }
+	
+	public void setPlayerSpawn(Point playerSpawn)
+	{ this.playerSpawn = playerSpawn; }
 	
 	public static double getDeltaTime()
 	{ return deltaTime; }

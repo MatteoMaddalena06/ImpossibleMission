@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 //graphics import
 import javax.swing.JPanel;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 //view import
 import code.view.sprites.Sprite;
 import code.view.sprites.SpriteFactory;
+import code.view.images.ImageUtils;
 import code.view.images.StaticImage;
 import code.view.sprites.PlayerSprite;
 import code.view.sprites.SearchingWindow;
@@ -36,12 +36,21 @@ import code.model.context.GameEvent;
 import code.model.context.AttackEnded;
 import code.model.context.AttackLaunched;
 import code.model.context.FurnitureSearchEnded;
-import code.model.context.PlayerDied;
 import code.model.context.PlayerFoundSomething;
 import code.model.context.PlayerIsSearching;
 
 public class Renderer extends JPanel implements GameContext.EventListener
 {
+	private static final BufferedImage background  = StaticImage.BACKGROUND.getImage();
+	private static final BufferedImage lifeIcon    = StaticImage.LIFE_ICON.getImage();
+	private static final StaticImage[] numbersList = StaticImage.getNumbersList();
+	
+	private static final int LIFEICON_SIZE    = 35;
+	private static final int LIFEICON_PADDING = 5;
+	private static final int DIGITICON_SIZE   = 35;
+	private static final int DIGITICON_PADDING = 5;
+	
+	private Player player;
 	private Room currentRoom;
 	private List<Sprite> currentSpritesList; 
 	private Map<Room, List<Sprite>> spritesListsCache;
@@ -50,11 +59,12 @@ public class Renderer extends JPanel implements GameContext.EventListener
 	private boolean printFurnitureLoot;
 	private Furniture interestingFurniture;
 	
-	public Renderer()
+	public Renderer(Player player)
 	{
 		currentSpritesList = new LinkedList<Sprite>();
 		spritesListsCache = new HashMap<Room, List<Sprite>>();
 		printSearchingState = printFurnitureLoot = false;
+		this.player = player;
 	}
 	
 	@Override
@@ -62,7 +72,7 @@ public class Renderer extends JPanel implements GameContext.EventListener
 	{
     	super.paintComponent(g);
     	
-    	this.setBackground(Color.BLACK);
+    	g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
     	
     	List<Sprite> firstLayerSprites = currentSpritesList.stream().filter(s -> {
     		GameObject go = s.getGameObject();
@@ -99,8 +109,20 @@ public class Renderer extends JPanel implements GameContext.EventListener
     		printFurnitureLoot = false;
     	}
     	
+    	drawHUD(g);
     	g.dispose();
     } 
+	
+	private void drawHUD(Graphics g)
+	{
+		for(int i = 0; i < player.getLifes(); i++)
+			g.drawImage(lifeIcon, i * (LIFEICON_SIZE + LIFEICON_PADDING), 0, LIFEICON_SIZE, LIFEICON_SIZE, null);
+		
+		List<BufferedImage> digitsList = ImageUtils.getNumberAsImagesList(player.getPoints(), numbersList);
+		
+		for(int i = 0; i < digitsList.size(); i++)
+			g.drawImage(digitsList.get(i), this.getWidth() - (i + 1) * (DIGITICON_SIZE + DIGITICON_PADDING), 0, DIGITICON_SIZE, DIGITICON_SIZE, null);
+	}
 	
 	private void paintImage(GameObject bindedGameObject, BufferedImage image, Graphics g)
 	{
@@ -131,9 +153,6 @@ public class Renderer extends JPanel implements GameContext.EventListener
 		else if(event instanceof FurnitureSearchEnded)
 			removeFurnitureSprite(((FurnitureSearchEnded)event).source());
 		
-		else if(event instanceof PlayerDied)
-			playPlayerDeadAnimation(((PlayerDied)event).source());
-		
 		else if(event instanceof PlayerFoundSomething)
 			printFurnitureLoot(((PlayerFoundSomething)event).source());
 	
@@ -157,9 +176,6 @@ public class Renderer extends JPanel implements GameContext.EventListener
 		currentSpritesList.remove(spriteToRemove);
 		updateCache();
 	}
-	
-	private void playPlayerDeadAnimation(Player player)
-	{ /*TODO*/ }
 	
 	private void printFurnitureLoot(Furniture furniture)
 	{ printFurnitureLoot = true; interestingFurniture = furniture; }

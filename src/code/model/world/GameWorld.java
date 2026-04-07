@@ -26,10 +26,10 @@ public class GameWorld
 
 	private Room[][] worldMatrix;
 
-	public GameWorld(Room[][] worldMatrix)
-	{ this.worldMatrix = worldMatrix; }
+	public GameWorld()
+	{ this.worldMatrix = randomGeneration(); }
 	
-	public static GameWorld randomGeneration()
+	private static Room[][] randomGeneration()
 	{
 		Room[][] worldMatrix = new Room[WORLD_DEPTH][(ELEVATOR_NUMBER << 1) + 1];
 		
@@ -39,7 +39,7 @@ public class GameWorld
 				Arrays.stream(PresettedRoom.values()).flatMap(r -> r.getFurnitures().stream()).collect(Collectors.toList());
 		makeTheMapPlayable(allFurnitures, randomPassword);
 		
-		return new GameWorld(worldMatrix);
+		return worldMatrix;
 	}
 	
 	private static void createTraversableRandomMap(Room[][] worldMatrix)

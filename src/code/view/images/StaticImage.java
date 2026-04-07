@@ -288,7 +288,22 @@ public enum StaticImage
 	LEADERBOARD_STAR           (ImageUtils.loadImage("/resources/Menu/LeaderboardStar.png")),
 	LEADERBOARD_SAD            (ImageUtils.loadImage("/resources/Menu/LeaderboardSad.png")),
 	
-	WINDOW_ICON (ImageUtils.loadImage("/resources/Menu/WindowIcon.png"));
+	WINDOW_ICON (ImageUtils.loadImage("/resources/Menu/WindowIcon.png")),
+	
+	BACKGROUND(ImageUtils.loadImage("/resources/Background.png")),
+	
+	GAMEOVER_ICON(ImageUtils.loadImage("/resources/Hud/GameOver.png")),
+	LIFE_ICON	 (ImageUtils.loadImage("/resources/Hud/LifeIcon.png")),
+	NUMBER_0 	 (ImageUtils.loadImage("/resources/Hud/Number_0.png")),
+	NUMBER_1 	 (ImageUtils.loadImage("/resources/Hud/Number_1.png")),
+	NUMBER_2 	 (ImageUtils.loadImage("/resources/Hud/Number_2.png")),
+	NUMBER_3 	 (ImageUtils.loadImage("/resources/Hud/Number_3.png")),
+	NUMBER_4 	 (ImageUtils.loadImage("/resources/Hud/Number_4.png")),
+	NUMBER_5 	 (ImageUtils.loadImage("/resources/Hud/Number_5.png")),
+	NUMBER_6 	 (ImageUtils.loadImage("/resources/Hud/Number_6.png")),
+	NUMBER_7 	 (ImageUtils.loadImage("/resources/Hud/Number_7.png")),
+	NUMBER_8 	 (ImageUtils.loadImage("/resources/Hud/Number_8.png")),
+	NUMBER_9 	 (ImageUtils.loadImage("/resources/Hud/Number_9.png"));
 	
 	private static final Map<Room.Color, Map<Furniture.Type, StaticImage>> furnitureMap =  
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.FURNITURE).collect(Collectors.groupingBy(i -> i.color, Collectors.toMap(i -> i.furnitureType, i -> i)));
@@ -314,6 +329,8 @@ public enum StaticImage
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.FURNITURE_LOOT && i.furnitureLootType == Furniture.LootType.PUZZLE_PIECE).collect(Collectors.toMap(i -> i.puzzlePieceType, i -> i));
 	
 	private static final List<StaticImage> awardsList = Arrays.asList(new StaticImage[] {LEADERBOARD_1TROPHY, LEADERBOARD_2TROPHY, LEADERBOARD_3TROPHY, LEADERBOARD_STAR, LEADERBOARD_SAD});
+	
+	private static final StaticImage[] numbersList = new StaticImage[] {NUMBER_0, NUMBER_1, NUMBER_2, NUMBER_3, NUMBER_4, NUMBER_5, NUMBER_6, NUMBER_7, NUMBER_8, NUMBER_9}; 
 	
 	private BufferedImage image;
 	private Room.Color color;
@@ -409,4 +426,7 @@ public enum StaticImage
 	
 	public static List<StaticImage> getAwardsList()
 	{ return awardsList; }
+	
+	public static StaticImage[] getNumbersList()
+	{ return numbersList; }
 }

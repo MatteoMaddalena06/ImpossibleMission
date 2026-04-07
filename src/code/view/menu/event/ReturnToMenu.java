@@ -1,3 +1,6 @@
 package code.view.menu.event;
 
-public record ReturnToMenu() implements MenuEvent {}
+//graphics import
+import javax.swing.JPanel;
+
+public record ReturnToMenu(JPanel from) implements MenuEvent {}

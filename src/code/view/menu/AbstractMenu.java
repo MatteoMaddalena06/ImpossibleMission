@@ -25,7 +25,7 @@ public abstract class AbstractMenu extends JPanel
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-	    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+	    g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
 	}
 	
 	protected abstract void buildMenu();

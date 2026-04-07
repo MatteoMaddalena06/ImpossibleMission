@@ -3,14 +3,13 @@ package code.model.gameobjects;
 //data structure modules
 import java.util.List;
 import java.util.ArrayList;
-
 //inproject import
 import code.model.puzzle.PuzzlePiece;
 import code.model.room.Room;
 import code.model.room.RoomMap;
-import code.model.Leaderboard;
 import code.model.Point;
 import code.model.context.GameContext;
+import code.model.context.GameEnded;
 import code.model.context.PlayerDied;
 import code.model.gameobjects.enemy.AttackerRobot;
 
@@ -25,6 +24,10 @@ public class Player extends MovingObject
 	private static final double VERTICAL_SPEED   = 600f;
 	protected static final int  STANDING_TOLLERANCE = 2; 
 	
+	private static final long DIE_WAITING = 1500000000L;
+	private static final int DIE_PENALITY = 350;
+	
+	private int lifes;
 	private String name;
 	private int points;
 	
@@ -35,6 +38,7 @@ public class Player extends MovingObject
 	private boolean isOnPlatform;
 	private Platform usedPlatform;
 	
+	private boolean isDead;
 	private boolean isSearching;
 	private Furniture usedFurniture;
 	
@@ -43,6 +47,7 @@ public class Player extends MovingObject
 	public Player(String name, Point position)
 	{
 		super(position, NORMAL_WIDTH, NORMAL_HEIGHT); 
+		lifes = 3;
 		this.name = name;
 		points = 0;
 		puzzlePiecesObtained = new ArrayList<PuzzlePiece>();
@@ -54,6 +59,17 @@ public class Player extends MovingObject
 	@Override
 	public void update(GameContext context) 
 	{	
+		if(isDead)
+		{
+			Point spawnPosition = context.getPlayerSpawn();
+			Point thisPosition = getPosition();
+			
+			thisPosition.setX(spawnPosition.getX());
+			thisPosition.setY(spawnPosition.getY());
+			
+			isDead = false;
+		}
+		
 		Room currentRoom = context.getCurrentRoom();
 		List<GameObject> interestingGameObjects = 
 				currentRoom.getGameObjectList().stream().filter(g -> g instanceof FixedObject || g instanceof Platform).toList();
@@ -112,8 +128,12 @@ public class Player extends MovingObject
 		
 		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
 		{
-			context.getLeaderboard().addEntry(new Leaderboard.Entry(name, points));
-			context.getEventListener().notifyEvent(new PlayerDied(this));
+			isDead = true;
+			points = Math.max(0, points - DIE_PENALITY);
+			context.getStatetListener().notifyState(new PlayerDied(DIE_WAITING));
+			
+			if(--lifes == 0)
+				context.getStatetListener().notifyState(new GameEnded());
 		}
 	}
 	
@@ -157,6 +177,15 @@ public class Player extends MovingObject
 
 	    return horizontalOverlap && verticalContact;
 	}
+
+	public String getName()
+	{ return name; }
+	
+	public int getLifes()
+	{ return lifes; }
+	
+	public int getPoints()
+	{ return points; }
 	
 	public void updatePoints(int amount)
 	{ points += amount; }
@@ -190,6 +219,9 @@ public class Player extends MovingObject
 	
 	void setSearchingState(boolean isSearching)
 	{ this.isSearching = isSearching; }
+	
+	public boolean isDead()
+	{ return isDead; }
 	
 	public boolean isSearching()
 	{ return isSearching; }

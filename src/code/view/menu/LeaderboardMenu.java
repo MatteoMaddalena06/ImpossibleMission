@@ -19,7 +19,6 @@ import java.awt.Font;
 import code.model.Leaderboard;
 //view import
 import code.view.images.StaticImage;
-import code.view.menu.event.CloseGame;
 import code.view.menu.event.ReturnToMenu;
 
 public class LeaderboardMenu extends AbstractMenu
@@ -41,10 +40,12 @@ public class LeaderboardMenu extends AbstractMenu
 	private static final int NAME_POINTS_PADDING 	  = 10;
 	private static final int LEFT_AWARD_PADDING 	  = 10;
 	private static final int VERTICAL_ENTRIES_PADDING = 10;
+	private static final int EXIT_LEADERBOARD_PADDING = 15;
+	private static final int EMPTYLEADERBOARD_SPACING = 100;
 	
 	private static final int PERMOUSEWHEEL_PIXEL = 16;
 	
-	private static final int EXIT_LEADERBOARD_PADDING = 15;
+	private static final String EMPTY_LEADERBOARD_MSG = "Leaderboard is empty";
 	
 	private Leaderboard leaderboard;
 	private Font leaderboardFont;
@@ -75,7 +76,7 @@ public class LeaderboardMenu extends AbstractMenu
 	
 		MenuButton exitButton = new MenuButton(normalExitButtonImage, selectedExitButtonImage);
 		exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		exitButton.addActionListener(e -> getEventListener().notifyMenuEvent(new ReturnToMenu()));
+		exitButton.addActionListener(e -> getEventListener().notifyMenuEvent(new ReturnToMenu(this)));
 		
 		JScrollPane scrollPane = new JScrollPane(entriesPanel);
 		scrollPane.setPreferredSize(new Dimension(SCROLLPANE_WIDTH, SCROLLPANE_HEIGHT));
@@ -88,10 +89,24 @@ public class LeaderboardMenu extends AbstractMenu
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(PERMOUSEWHEEL_PIXEL);
 		
+		JLabel emptyLeaderboardLabel = new JLabel(EMPTY_LEADERBOARD_MSG);
+		emptyLeaderboardLabel.setFont(leaderboardFont);
+		emptyLeaderboardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.add(exitButton);
-		this.add(Box.createRigidArea(new Dimension(0, EXIT_LEADERBOARD_PADDING)));
-		this.add(scrollPane);
+		
+		if(leaderboardContent.size() != 0)
+		{
+			this.add(Box.createRigidArea(new Dimension(0, EXIT_LEADERBOARD_PADDING)));
+			this.add(scrollPane);
+		}
+		else
+		{
+			this.add(Box.createRigidArea(new Dimension(0, EMPTYLEADERBOARD_SPACING)));
+			this.add(emptyLeaderboardLabel);
+			this.add(Box.createRigidArea(new Dimension(0, EMPTYLEADERBOARD_SPACING)));
+		}
 	}
 	
 	private JPanel createEntryPanel(Leaderboard.Entry entry, Font leaderboardFont)

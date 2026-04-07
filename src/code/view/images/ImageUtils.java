@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.IntStream;
+import java.util.ArrayList;
 //graphics import
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
@@ -99,5 +100,18 @@ public abstract class ImageUtils
 		
 		graphics.dispose();
 		return resultImage;
+	}
+	
+	public static List<BufferedImage> getNumberAsImagesList(int number, StaticImage[] symbolsList)
+	{
+		List<BufferedImage> numbersList = new ArrayList<BufferedImage>();
+		
+		while(number != 0)
+		{
+			numbersList.add(symbolsList[number % 10].getImage());
+			number /= 10;
+		}
+		
+		return numbersList;
 	}
 }

@@ -56,13 +56,7 @@ public class Leaderboard implements Serializable
 	}
 	
 	private Leaderboard()
-	{ 
-		content = new ArrayList<Entry>(); 
-		
-		//for testing
-		for(int i = 0; i < 100; i++)
-			addEntry(new Entry("A" + i, (int)(Math.random() * 10)));
-	}
+	{ content = new ArrayList<Entry>(); }
 		
 	public void store() 
 	{

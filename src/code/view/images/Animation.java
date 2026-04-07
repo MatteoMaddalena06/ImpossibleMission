@@ -113,6 +113,9 @@ public enum Animation
 			 
 			if(movingObject instanceof Player && ((Player)movingObject).isSearching())
 				return SEARCHING;
+			
+			if(movingObject instanceof Player && ((Player)movingObject).isDead())
+				return (direction == MovingObject.Direction.LEFT) ? DIE_LEFT : DIE_RIGHT;
 			 
 			MovingObject.PhysicsState physicsState = movingObject.getPhysicsState();
 			 

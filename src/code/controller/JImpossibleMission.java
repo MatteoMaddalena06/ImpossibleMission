@@ -11,6 +11,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.Arrays;
+
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -18,29 +20,35 @@ import javax.swing.JComponent;
 //model import
 import code.model.context.GameContext;
 import code.model.context.GameContext.UserInput;
+import code.model.gameobjects.Player;
+import code.model.room.Room;
+import code.model.world.GameWorld;
 import code.model.Leaderboard;
+import code.model.Point;
 //view import
 import code.view.Renderer;
 import code.view.images.StaticImage;
 import code.view.menu.LeaderboardMenu;
 import code.view.menu.Menu;
+import code.view.menu.PlayerNameMenu;
 import code.view.menu.event.MenuEventListener;
 import code.view.menu.event.ReturnToMenu;
+import code.view.menu.event.StartGame;
 import code.view.menu.event.CloseGame;
 import code.view.menu.event.MenuEvent;
 import code.view.menu.event.SwapToLeaderboard;
+import code.view.menu.event.SwapToPlayerNameMenu;
 
 public class JImpossibleMission implements MenuEventListener
 {
 	private static final String WINDOW_TITLE          = "Impossible mission";
-	private static final String CUSTOMFONT_LOAD_ERROR = "Unable to load the leaderboard custom font";
+	private static final String CUSTOMFONT_LOAD_ERROR = "Unable to load menu custom font";
+
+	private static final float FONT_SIZE = 32f;
+	private static Font customFont = UIManager.getFont("Label.font").deriveFont(FONT_SIZE);
 	
 	private JFrame frame;
 	private Menu menu;
-	private LeaderboardMenu leaderboard;
-	private Renderer gamePanel;
-	
-	private static Font customFont = UIManager.getFont("Label.font");;
 	
 	public static void main(String[] args)
 	{ 
@@ -49,11 +57,11 @@ public class JImpossibleMission implements MenuEventListener
 			customFont = Font.createFont(
 					Font.TRUETYPE_FONT, 
 					LeaderboardMenu.class.getResourceAsStream("/resources/Menu/LeaderboardFont.ttf")
-			).deriveFont(32f);
+			).deriveFont(FONT_SIZE);
 			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
 		} 
 		catch (FontFormatException | IOException e)
-		{ System.out.println(CUSTOMFONT_LOAD_ERROR); }
+		{ System.out.println(CUSTOMFONT_LOAD_ERROR); } 
 		
 		new JImpossibleMission().start();
 	}
@@ -67,6 +75,7 @@ public class JImpossibleMission implements MenuEventListener
 		frame.setIconImage(StaticImage.WINDOW_ICON.getImage());
 		frame.add(menu);
 		frame.pack();
+		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
@@ -77,16 +86,43 @@ public class JImpossibleMission implements MenuEventListener
 		if(event instanceof CloseGame)
 			System.exit(0);
 		
-		if(event instanceof SwapToLeaderboard)
+		else if(event instanceof ReturnToMenu)
+			swapPanel(frame, ((ReturnToMenu)event).from(), menu);
+		
+		else if(event instanceof SwapToLeaderboard)
 		{
-			leaderboard = new LeaderboardMenu(Leaderboard.load(), customFont);
+			LeaderboardMenu leaderboard = new LeaderboardMenu(Leaderboard.load(), customFont);
 			leaderboard.setEventListener(this);
-			swapPanel(frame, menu, leaderboard);
-			return;
+			swapPanel(frame, menu,  leaderboard);
 		}
 		
-		if(event instanceof ReturnToMenu)
-			swapPanel(frame, leaderboard, menu);
+		else if(event instanceof SwapToPlayerNameMenu)
+		{
+			PlayerNameMenu playerNameMenu = new PlayerNameMenu(customFont);
+			playerNameMenu.setEventListener(this);
+			swapPanel(frame, menu, playerNameMenu);
+		}
+		
+		else if(event instanceof StartGame)
+		{
+			GameWorld world = new GameWorld();
+			Player player = new Player(((StartGame)event).playerName(), new Point(60, 60));
+			
+			Room randRoom = Arrays.stream(world.getWorldMatrix()).flatMap(r -> Arrays.stream(r)).filter(r -> r != null).findAny().get();
+			GameContext context = new GameContext(player, randRoom, Leaderboard.load());
+			context.setPlayerSpawn(new Point(60, 60));
+			
+			Renderer gamePanel = new Renderer(player);
+			gamePanel.setCurrentSpritesList(player, randRoom);
+			
+			GameLoop gameLoop = new GameLoop(context, gamePanel);
+			
+			context.setStateListener(gameLoop);
+			context.setEventListener(gamePanel);
+			bindAllKey(gamePanel, context);
+			swapPanel(frame, ((StartGame)event).from(), gamePanel);
+			gameLoop.start();
+		}
 	}
 
 	private void swapPanel(JFrame frame, JPanel src, JPanel dest)
@@ -105,14 +141,12 @@ public class JImpossibleMission implements MenuEventListener
 		bindKey(renderer, context, "UP_PRESSED",    KeyEvent.VK_UP,    true);
 		bindKey(renderer, context, "DOWN_PRESSED",  KeyEvent.VK_DOWN,  true);
 		bindKey(renderer, context, "JUMP_PRESSED",  KeyEvent.VK_SPACE, true);
-		bindKey(renderer, context, "A_PRESSED",     KeyEvent.VK_A,     true);
 		
 		bindKey(renderer, context, "LEFT_RELEASED",  KeyEvent.VK_LEFT,  false);
 		bindKey(renderer, context, "RIGHT_RELEASED", KeyEvent.VK_RIGHT, false);
 		bindKey(renderer, context, "UP_RELEASED",    KeyEvent.VK_UP,    false);
 		bindKey(renderer, context, "DOWN_RELEASED",  KeyEvent.VK_DOWN,  false);
 		bindKey(renderer, context, "JUMP_RELEASED",  KeyEvent.VK_SPACE, false);
-		bindKey(renderer, context, "A_RELEASED",     KeyEvent.VK_A,     false);
 	}
 	
 	private static void bindKey(Renderer renderer, GameContext context, String keyName, int keyCode , boolean pressed)
@@ -132,7 +166,6 @@ public class JImpossibleMission implements MenuEventListener
 					case KeyEvent.VK_UP    -> context.setUserInput(UserInput.UP,    pressed);
 					case KeyEvent.VK_DOWN  -> context.setUserInput(UserInput.DOWN,  pressed);
 					case KeyEvent.VK_SPACE -> context.setUserInput(UserInput.JUMP,  pressed);
-					case KeyEvent.VK_A     -> context.setUserInput(UserInput.A_KEY, pressed);
 				}
 			}	
 		});
