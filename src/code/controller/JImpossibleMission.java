@@ -1,20 +1,16 @@
 package code.controller;
 
-import java.util.Arrays;
 //graphics import
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-
+import javax.swing.UIManager;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -22,21 +18,19 @@ import javax.swing.JComponent;
 //model import
 import code.model.context.GameContext;
 import code.model.context.GameContext.UserInput;
-import code.model.gameobjects.Player;
-import code.model.world.GameWorld;
 import code.model.Leaderboard;
-import code.model.Point;
 //view import
 import code.view.Renderer;
 import code.view.images.StaticImage;
-import code.view.menu.CloseGame;
 import code.view.menu.LeaderboardMenu;
 import code.view.menu.Menu;
-import code.view.menu.MenuEvent;
-import code.view.menu.StartGame;
-import code.view.menu.SwapToLeaderboard;
+import code.view.menu.event.MenuEventListener;
+import code.view.menu.event.ReturnToMenu;
+import code.view.menu.event.CloseGame;
+import code.view.menu.event.MenuEvent;
+import code.view.menu.event.SwapToLeaderboard;
 
-public class JImpossibleMission implements Menu.EventListener
+public class JImpossibleMission implements MenuEventListener
 {
 	private static final String WINDOW_TITLE          = "Impossible mission";
 	private static final String CUSTOMFONT_LOAD_ERROR = "Unable to load the leaderboard custom font";
@@ -46,7 +40,7 @@ public class JImpossibleMission implements Menu.EventListener
 	private LeaderboardMenu leaderboard;
 	private Renderer gamePanel;
 	
-	private static Font customFont;
+	private static Font customFont = UIManager.getFont("Label.font");;
 	
 	public static void main(String[] args)
 	{ 
@@ -68,8 +62,7 @@ public class JImpossibleMission implements Menu.EventListener
 	{
 		frame = new JFrame(WINDOW_TITLE);
 		menu = new Menu();
-		
-		menu.setListener(this);
+		menu.setEventListener(this);
 		
 		frame.setIconImage(StaticImage.WINDOW_ICON.getImage());
 		frame.add(menu);
@@ -85,13 +78,15 @@ public class JImpossibleMission implements Menu.EventListener
 			System.exit(0);
 		
 		if(event instanceof SwapToLeaderboard)
-			printLeaderboard();
-	}
-	
-	private void printLeaderboard()
-	{
-		leaderboard = new LeaderboardMenu(Leaderboard.load(), customFont);
-		swapPanel(frame, menu, leaderboard);
+		{
+			leaderboard = new LeaderboardMenu(Leaderboard.load(), customFont);
+			leaderboard.setEventListener(this);
+			swapPanel(frame, menu, leaderboard);
+			return;
+		}
+		
+		if(event instanceof ReturnToMenu)
+			swapPanel(frame, leaderboard, menu);
 	}
 
 	private void swapPanel(JFrame frame, JPanel src, JPanel dest)

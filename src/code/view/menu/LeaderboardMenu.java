@@ -11,18 +11,24 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 //model import
 import code.model.Leaderboard;
 //view import
 import code.view.images.StaticImage;
+import code.view.menu.event.CloseGame;
+import code.view.menu.event.ReturnToMenu;
 
-public class LeaderboardMenu extends JPanel
+public class LeaderboardMenu extends AbstractMenu
 {
-	private static final BufferedImage backgroundImage = StaticImage.MENU_BACKGROUND.getImage();
 	private static final BufferedImage entryBackground = StaticImage.ENTRY_BACKGROUND.getImage();
 	private static final List<StaticImage> awardsList = StaticImage.getAwardsList();
+	
+	private static final BufferedImage normalExitButtonImage  = StaticImage.NORMAL_EXIT_BUTTON.getImage();
+	private static final BufferedImage selectedExitButtonImage = StaticImage.SELECTED_EXIT_BUTTON.getImage();
 	
 	private static final int SCROLLPANE_WIDTH  = 749;
 	private static final int SCROLLPANE_HEIGHT = 605;
@@ -38,7 +44,21 @@ public class LeaderboardMenu extends JPanel
 	
 	private static final int PERMOUSEWHEEL_PIXEL = 16;
 	
+	private static final int EXIT_LEADERBOARD_PADDING = 15;
+	
+	private Leaderboard leaderboard;
+	private Font leaderboardFont;
+	
 	public LeaderboardMenu(Leaderboard leaderboard, Font leaderboardFont)
+	{
+		this.leaderboard = leaderboard;
+		this.leaderboardFont = leaderboardFont;
+		
+		buildMenu();
+	}
+	
+	@Override 
+	protected void buildMenu()
 	{
 		JPanel entriesPanel = new JPanel();
 		List<Leaderboard.Entry> leaderboardContent = leaderboard.getContent();
@@ -53,6 +73,10 @@ public class LeaderboardMenu extends JPanel
 			entriesPanel.add(createEntryPanel(leaderboardContent.get(i), leaderboardFont));
 		}
 	
+		MenuButton exitButton = new MenuButton(normalExitButtonImage, selectedExitButtonImage);
+		exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		exitButton.addActionListener(e -> getEventListener().notifyMenuEvent(new ReturnToMenu()));
+		
 		JScrollPane scrollPane = new JScrollPane(entriesPanel);
 		scrollPane.setPreferredSize(new Dimension(SCROLLPANE_WIDTH, SCROLLPANE_HEIGHT));
 		scrollPane.setMinimumSize(new Dimension(SCROLLPANE_WIDTH,SCROLLPANE_HEIGHT));
@@ -64,6 +88,9 @@ public class LeaderboardMenu extends JPanel
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(PERMOUSEWHEEL_PIXEL);
 		
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.add(exitButton);
+		this.add(Box.createRigidArea(new Dimension(0, EXIT_LEADERBOARD_PADDING)));
 		this.add(scrollPane);
 	}
 	
@@ -121,12 +148,5 @@ public class LeaderboardMenu extends JPanel
 		entryPanel.add(Box.createRigidArea(new Dimension(NAME_POINTS_PADDING, 0)));
 		
 		return entryPanel;
-	}
-	
-	@Override
-	public void paintComponent(Graphics g)
-	{
-		super.paintComponent(g);
-	    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 	}
 }

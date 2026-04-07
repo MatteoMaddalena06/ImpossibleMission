@@ -1,3 +1,3 @@
-package code.view.menu;
+package code.view.menu.event;
 
 public record CloseGame() implements MenuEvent {}
