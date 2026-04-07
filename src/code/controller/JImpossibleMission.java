@@ -38,8 +38,11 @@ import code.view.menu.event.CloseGame;
 import code.view.menu.event.MenuEvent;
 import code.view.menu.event.SwapToLeaderboard;
 import code.view.menu.event.SwapToPlayerNameMenu;
+//controller import
+import code.controller.event.GameLoopEvent;
+import code.controller.event.StopGame;
 
-public class JImpossibleMission implements MenuEventListener
+public class JImpossibleMission implements MenuEventListener, GameLoop.GameLoopListener
 {
 	private static final String WINDOW_TITLE          = "Impossible mission";
 	private static final String CUSTOMFONT_LOAD_ERROR = "Unable to load menu custom font";
@@ -116,6 +119,7 @@ public class JImpossibleMission implements MenuEventListener
 			gamePanel.setCurrentSpritesList(player, randRoom);
 			
 			GameLoop gameLoop = new GameLoop(context, gamePanel);
+			gameLoop.setListener(this);
 			
 			context.setStateListener(gameLoop);
 			context.setEventListener(gamePanel);
@@ -123,6 +127,13 @@ public class JImpossibleMission implements MenuEventListener
 			swapPanel(frame, ((StartGame)event).from(), gamePanel);
 			gameLoop.start();
 		}
+	}
+	
+	@Override
+	public void notifyGameLoopEvent(GameLoopEvent event)
+	{
+		if(event instanceof StopGame)
+			swapPanel(frame, ((StopGame)event).from(), menu);
 	}
 
 	private void swapPanel(JFrame frame, JPanel src, JPanel dest)

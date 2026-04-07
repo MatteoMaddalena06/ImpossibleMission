@@ -110,12 +110,12 @@ public enum Animation
 			 
 			if(movingObject instanceof AttackerRobot && ((AttackerRobot)movingObject).isAttacking())
 				return (direction == MovingObject.Direction.LEFT) ? ATTACKING_LEFT : ATTACKING_RIGHT;
-			 
-			if(movingObject instanceof Player && ((Player)movingObject).isSearching())
-				return SEARCHING;
 			
 			if(movingObject instanceof Player && ((Player)movingObject).isDead())
 				return (direction == MovingObject.Direction.LEFT) ? DIE_LEFT : DIE_RIGHT;
+			 
+			if(movingObject instanceof Player && ((Player)movingObject).isSearching())
+				return SEARCHING;
 			 
 			MovingObject.PhysicsState physicsState = movingObject.getPhysicsState();
 			 

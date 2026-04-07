@@ -9,7 +9,7 @@ import code.model.room.Room;
 import code.model.room.RoomMap;
 import code.model.Point;
 import code.model.context.GameContext;
-import code.model.context.GameEnded;
+import code.model.context.GameWillEnd;
 import code.model.context.PlayerDied;
 import code.model.gameobjects.enemy.AttackerRobot;
 
@@ -24,8 +24,9 @@ public class Player extends MovingObject
 	private static final double VERTICAL_SPEED   = 600f;
 	protected static final int  STANDING_TOLLERANCE = 2; 
 	
+	private static final int  PLAYER_FULL_LIFES = 3;
 	private static final long DIE_WAITING = 1500000000L;
-	private static final int DIE_PENALITY = 350;
+	private static final int  DIE_PENALITY = 350;
 	
 	private int lifes;
 	private String name;
@@ -47,7 +48,7 @@ public class Player extends MovingObject
 	public Player(String name, Point position)
 	{
 		super(position, NORMAL_WIDTH, NORMAL_HEIGHT); 
-		lifes = 3;
+		lifes = PLAYER_FULL_LIFES;
 		this.name = name;
 		points = 0;
 		puzzlePiecesObtained = new ArrayList<PuzzlePiece>();
@@ -133,7 +134,7 @@ public class Player extends MovingObject
 			context.getStatetListener().notifyState(new PlayerDied(DIE_WAITING));
 			
 			if(--lifes == 0)
-				context.getStatetListener().notifyState(new GameEnded());
+				context.getStatetListener().notifyState(new GameWillEnd(DIE_WAITING));
 		}
 	}
 	
