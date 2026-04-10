@@ -15,6 +15,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+//event import
+import code.event.EventDispatcher;
 //view import
 import code.view.images.StaticImage;
 import code.view.menu.event.ReturnToMenu;
@@ -97,7 +99,7 @@ public class PlayerNameMenu extends AbstractMenu
 		this.add(exitButton);
 		this.add(Box.createRigidArea(new Dimension(0, Y_SPACING)));
 		
-		exitButton.addActionListener(e -> getEventListener().notifyMenuEvent(new ReturnToMenu(this)));
-		startButton.addActionListener(e -> getEventListener().notifyMenuEvent(new StartGame(inputBox.getText(), this)));
+		exitButton.addActionListener(e -> EventDispatcher.notify(new ReturnToMenu()));
+		startButton.addActionListener(e -> EventDispatcher.notify(new StartGame(inputBox.getText())));
 	}	
 }

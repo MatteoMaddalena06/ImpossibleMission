@@ -816,7 +816,7 @@ public enum RoomMap
 	public static final int EMPTY_SPACE = 0;
 	public static final int TILE_SIZE   = 32;
 	public static final int MAP_WIDTH   = 40;
-	public static final int MAP_HEIGHT  = 25;
+	public static final int MAP_HEIGHT  = 26;
 	
 	public static final int WALL_ID      = 1;
 	public static final int FLOOR_ID 	 = 2;

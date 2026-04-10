@@ -1,3 +1,3 @@
 package code.model.context;
 
-public record PlayerDied(long nanos) implements GameState {}
+public record PlayerDied(long nanos) implements ModelState {}

@@ -3,25 +3,20 @@ package code.controller;
 //graphics import
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 //model import
 import code.model.context.GameContext;
-import code.model.context.GameContext.UserInput;
 import code.model.gameobjects.Player;
 import code.model.room.Room;
+import code.model.room.RoomMap;
 import code.model.world.GameWorld;
 import code.model.Leaderboard;
 import code.model.Point;
@@ -31,27 +26,36 @@ import code.view.images.StaticImage;
 import code.view.menu.LeaderboardMenu;
 import code.view.menu.Menu;
 import code.view.menu.PlayerNameMenu;
-import code.view.menu.event.MenuEventListener;
 import code.view.menu.event.ReturnToMenu;
 import code.view.menu.event.StartGame;
 import code.view.menu.event.CloseGame;
-import code.view.menu.event.MenuEvent;
 import code.view.menu.event.SwapToLeaderboard;
 import code.view.menu.event.SwapToPlayerNameMenu;
 //controller import
-import code.controller.event.GameLoopEvent;
 import code.controller.event.StopGame;
+import code.controller.event.SwitchToTerminal;
+//event import
+import code.event.EventDispatcher;
 
-public class JImpossibleMission implements MenuEventListener, GameLoop.GameLoopListener
+public class JImpossibleMission
 {
 	private static final String WINDOW_TITLE          = "Impossible mission";
 	private static final String CUSTOMFONT_LOAD_ERROR = "Unable to load menu custom font";
-
+	
+	private static final String MAIN_MENU_ID  	    = "MAIN_MENU";
+	private static final String PLAYER_MENU_ID 		= "PLAYER_MENU_ID";
+	private static final String LEADERBOARD_MENU_ID = "LEADERBOARD_MENU_ID";
+	private static final String GAMEPANEL_ID        = "GAMEPANEL_ID";
+	
 	private static final float FONT_SIZE = 32f;
+	private static final BufferedImage CUSTOM_FRAME_ICON = StaticImage.WINDOW_ICON.getImage();
 	private static Font customFont = UIManager.getFont("Label.font").deriveFont(FONT_SIZE);
 	
-	private JFrame frame;
-	private Menu menu;
+	private static final int FRAME_WIDTH  = RoomMap.MAP_WIDTH * RoomMap.TILE_SIZE;
+	private static final int FRAME_HEIGHT = RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE;
+	
+	private LeaderboardMenu oldLeaderboardPanel;
+	private Renderer oldGamePanel;
 	
 	public static void main(String[] args)
 	{ 
@@ -71,114 +75,74 @@ public class JImpossibleMission implements MenuEventListener, GameLoop.GameLoopL
 
 	private void start()
 	{
-		frame = new JFrame(WINDOW_TITLE);
-		menu = new Menu();
-		menu.setEventListener(this);
+		JFrame frame = new JFrame(WINDOW_TITLE);
+		JPanel rootPanel = new JPanel();
+		Menu mainMenu = new Menu();
+		PlayerNameMenu playerMenu = new PlayerNameMenu(customFont);
 		
-		frame.setIconImage(StaticImage.WINDOW_ICON.getImage());
-		frame.add(menu);
+		CardLayout layout = new CardLayout();
+		rootPanel.setLayout(layout);
+		rootPanel.add(mainMenu, MAIN_MENU_ID);
+		rootPanel.add(playerMenu, PLAYER_MENU_ID);
+		
+		initEventHandler(rootPanel, layout);
+		
+		frame.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		frame.pack();
-		frame.setResizable(false);
+		frame.setContentPane(rootPanel);	
+		frame.setIconImage(CUSTOM_FRAME_ICON);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
 		frame.setVisible(true);
 	}
 	
-	@Override
-	public void notifyMenuEvent(MenuEvent event)
+	private void initEventHandler(JPanel rootPanel, CardLayout layout)
 	{
-		if(event instanceof CloseGame)
-			System.exit(0);
-		
-		else if(event instanceof ReturnToMenu)
-			swapPanel(frame, ((ReturnToMenu)event).from(), menu);
-		
-		else if(event instanceof SwapToLeaderboard)
-		{
-			LeaderboardMenu leaderboard = new LeaderboardMenu(Leaderboard.load(), customFont);
-			leaderboard.setEventListener(this);
-			swapPanel(frame, menu,  leaderboard);
-		}
-		
-		else if(event instanceof SwapToPlayerNameMenu)
-		{
-			PlayerNameMenu playerNameMenu = new PlayerNameMenu(customFont);
-			playerNameMenu.setEventListener(this);
-			swapPanel(frame, menu, playerNameMenu);
-		}
-		
-		else if(event instanceof StartGame)
-		{
-			GameWorld world = new GameWorld();
-			Player player = new Player(((StartGame)event).playerName(), new Point(60, 60));
-			
-			Room randRoom = Arrays.stream(world.getWorldMatrix()).flatMap(r -> Arrays.stream(r)).filter(r -> r != null).findAny().get();
-			GameContext context = new GameContext(player, randRoom, Leaderboard.load());
-			context.setPlayerSpawn(new Point(60, 60));
-			
-			Renderer gamePanel = new Renderer(player);
-			gamePanel.setCurrentSpritesList(player, randRoom);
-			
-			GameLoop gameLoop = new GameLoop(context, gamePanel);
-			gameLoop.setListener(this);
-			
-			context.setStateListener(gameLoop);
-			context.setEventListener(gamePanel);
-			bindAllKey(gamePanel, context);
-			swapPanel(frame, ((StartGame)event).from(), gamePanel);
-			gameLoop.start();
-		}
+		EventDispatcher.subscribe(CloseGame.class,            x -> System.exit(0));
+		EventDispatcher.subscribe(ReturnToMenu.class,         x -> layout.show(rootPanel, MAIN_MENU_ID));
+		EventDispatcher.subscribe(SwapToPlayerNameMenu.class, x -> layout.show(rootPanel, PLAYER_MENU_ID));
+		EventDispatcher.subscribe(StartGame.class,            x -> { x = (StartGame)x; startGame(x.playerName(), rootPanel, layout); });
+		EventDispatcher.subscribe(SwapToLeaderboard.class,    x -> swapToLeaderboard(rootPanel, layout));
+		EventDispatcher.subscribe(StopGame.class,             x -> layout.show(rootPanel, MAIN_MENU_ID) );
+		EventDispatcher.subscribe(SwitchToTerminal.class,     x -> {});
 	}
 	
-	@Override
-	public void notifyGameLoopEvent(GameLoopEvent event)
+	private void startGame(String playerName, JPanel rootPanel, CardLayout layout)
 	{
-		if(event instanceof StopGame)
-			swapPanel(frame, ((StopGame)event).from(), menu);
-	}
+		GameWorld world = new GameWorld();
+		Player player = new Player(playerName, new Point(60, 60));
+		Room rndRoom = Arrays.stream(world.getWorldMatrix()).flatMap(r -> Arrays.stream(r)).filter(r -> r != null).findAny().get();
+		GameContext context = new GameContext(player, rndRoom, Leaderboard.load());
+		context.setPlayerSpawn(new Point(60, 60));
+		
+		Renderer gamePanel = new Renderer(player, context);
+		GameLoop gameLoop = new GameLoop(context, gamePanel);
+		
+		if(oldGamePanel != null)
+			rootPanel.remove(oldGamePanel);
 
-	private void swapPanel(JFrame frame, JPanel src, JPanel dest)
-	{
-		frame.remove(src);
-		frame.add(dest);
-		frame.revalidate(); 
-		frame.pack();
-		frame.repaint();
+		oldGamePanel = gamePanel;
+		
+		rootPanel.add(gamePanel, GAMEPANEL_ID);
+		layout.show(rootPanel, GAMEPANEL_ID);
+		gameLoop.start();
 	}
 	
-	private static void bindAllKey(Renderer renderer, GameContext context)
+	private void swapToLeaderboard(JPanel rootPanel, CardLayout layout)
 	{
-		bindKey(renderer, context, "LEFT_PRESSED",  KeyEvent.VK_LEFT,  true);
-		bindKey(renderer, context, "RIGHT_PRESSED", KeyEvent.VK_RIGHT, true);
-		bindKey(renderer, context, "UP_PRESSED",    KeyEvent.VK_UP,    true);
-		bindKey(renderer, context, "DOWN_PRESSED",  KeyEvent.VK_DOWN,  true);
-		bindKey(renderer, context, "JUMP_PRESSED",  KeyEvent.VK_SPACE, true);
-		
-		bindKey(renderer, context, "LEFT_RELEASED",  KeyEvent.VK_LEFT,  false);
-		bindKey(renderer, context, "RIGHT_RELEASED", KeyEvent.VK_RIGHT, false);
-		bindKey(renderer, context, "UP_RELEASED",    KeyEvent.VK_UP,    false);
-		bindKey(renderer, context, "DOWN_RELEASED",  KeyEvent.VK_DOWN,  false);
-		bindKey(renderer, context, "JUMP_RELEASED",  KeyEvent.VK_SPACE, false);
+	    LeaderboardMenu leaderboardPanel = new LeaderboardMenu(Leaderboard.load(), customFont);
+
+	    if(oldLeaderboardPanel != null)
+	    	rootPanel.remove(oldLeaderboardPanel);
+	    
+	    oldLeaderboardPanel = leaderboardPanel;
+	    
+	    rootPanel.add(leaderboardPanel, LEADERBOARD_MENU_ID);   
+	    layout.show(rootPanel, LEADERBOARD_MENU_ID);
 	}
 	
-	private static void bindKey(Renderer renderer, GameContext context, String keyName, int keyCode , boolean pressed)
+	private void swapToTerminalMenu(JFrame frame)
 	{
-		InputMap inputMap = renderer.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		ActionMap actionMap = renderer.getActionMap();
 		
-		inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, !pressed), keyName);
-		actionMap.put(keyName, new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				switch(keyCode)
-				{
-					case KeyEvent.VK_LEFT  -> context.setUserInput(UserInput.LEFT,  pressed);
-					case KeyEvent.VK_RIGHT -> context.setUserInput(UserInput.RIGHT, pressed);
-					case KeyEvent.VK_UP    -> context.setUserInput(UserInput.UP,    pressed);
-					case KeyEvent.VK_DOWN  -> context.setUserInput(UserInput.DOWN,  pressed);
-					case KeyEvent.VK_SPACE -> context.setUserInput(UserInput.JUMP,  pressed);
-				}
-			}	
-		});
 	}
 }

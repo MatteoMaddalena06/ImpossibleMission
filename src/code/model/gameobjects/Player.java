@@ -12,6 +12,8 @@ import code.model.context.GameContext;
 import code.model.context.GameWillEnd;
 import code.model.context.PlayerDied;
 import code.model.gameobjects.enemy.AttackerRobot;
+//event import
+import code.event.EventDispatcher;
 
 public class Player extends MovingObject
 {	
@@ -129,12 +131,12 @@ public class Player extends MovingObject
 		
 		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
 		{
-			isDead = true;
+			/*isDead = true;
 			points = Math.max(0, points - DIE_PENALITY);
-			context.getStatetListener().notifyState(new PlayerDied(DIE_WAITING));
+			EventDispatcher.notify(new PlayerDied(DIE_WAITING));
 			
 			if(--lifes == 0)
-				context.getStatetListener().notifyState(new GameWillEnd(DIE_WAITING));
+				EventDispatcher.notify(new GameWillEnd(DIE_WAITING));*/
 		}
 	}
 	

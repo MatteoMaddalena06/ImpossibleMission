@@ -7,6 +7,8 @@ import code.model.context.AttackEnded;
 import code.model.context.AttackLaunched;
 import code.model.context.GameContext;
 import code.model.gameobjects.MovingObject;
+//event import
+import code.event.EventDispatcher;
 
 public class LaserRobot extends AttackerRobot
 {
@@ -38,7 +40,7 @@ public class LaserRobot extends AttackerRobot
 		{
 			Attack attack = produceAttack();
 			context.getCurrentRoom().addEnemyAttack(attack);
-			context.getEventListener().notifyEvent(new AttackLaunched(attack));
+			EventDispatcher.notify(new AttackLaunched(attack));
 			setAttackingState(true);
 			return;
 		}
@@ -79,7 +81,7 @@ public class LaserRobot extends AttackerRobot
 				setAttackingState(false);
 				attackDuration = ATTACK_DURATION;
 				context.getCurrentRoom().removeEnemyAttack(this);
-				context.getEventListener().notifyEvent(new AttackEnded(this));
+				EventDispatcher.notify(new AttackEnded(this));
 			} 
 		};
 	}

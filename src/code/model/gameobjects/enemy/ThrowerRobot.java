@@ -2,7 +2,6 @@ package code.model.gameobjects.enemy;
 
 //data structure modules
 import java.util.List;
-
 //inproject import
 import code.model.Point;
 import code.model.context.AttackEnded;
@@ -13,6 +12,8 @@ import code.model.gameobjects.GameObject;
 import code.model.gameobjects.MovingObject;
 import code.model.room.Room;
 import code.model.room.RoomMap;
+//event import
+import code.event.EventDispatcher;
 
 public class ThrowerRobot extends AttackerRobot
 {
@@ -47,7 +48,7 @@ public class ThrowerRobot extends AttackerRobot
 		{
 			Attack attack = produceAttack();
 			context.getCurrentRoom().addEnemyAttack(attack);
-			context.getEventListener().notifyEvent(new AttackLaunched(attack));
+			EventDispatcher.notify(new AttackLaunched(attack));
 			setAttackingState(true);
 			return;
 		}
@@ -87,7 +88,7 @@ public class ThrowerRobot extends AttackerRobot
 				if((attackCounter != 0 && isOnGround()) || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
 				{
 					currentRoom.removeEnemyAttack(this);
-					context.getEventListener().notifyEvent(new AttackEnded(this));
+					EventDispatcher.notify(new AttackEnded(this));
 					setAttackingState(false); attackCounter = 0;
 					return;
 				}

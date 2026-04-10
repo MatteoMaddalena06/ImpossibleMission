@@ -1,3 +1,3 @@
 package code.model.context;
 
-public record StopSimulation(long nanos) implements GameState {}
+public record StopSimulation(long nanos) implements ModelState {}

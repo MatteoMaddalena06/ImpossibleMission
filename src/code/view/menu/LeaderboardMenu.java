@@ -11,10 +11,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+//event import
+import code.event.EventDispatcher;
 //model import
 import code.model.Leaderboard;
 //view import
@@ -76,7 +77,7 @@ public class LeaderboardMenu extends AbstractMenu
 	
 		MenuButton exitButton = new MenuButton(normalExitButtonImage, selectedExitButtonImage);
 		exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		exitButton.addActionListener(e -> getEventListener().notifyMenuEvent(new ReturnToMenu(this)));
+		exitButton.addActionListener(e -> EventDispatcher.notify(new ReturnToMenu()));
 		
 		JScrollPane scrollPane = new JScrollPane(entriesPanel);
 		scrollPane.setPreferredSize(new Dimension(SCROLLPANE_WIDTH, SCROLLPANE_HEIGHT));

@@ -7,46 +7,49 @@ import javax.swing.SwingUtilities;
 //model import
 import code.model.context.GameContext;
 import code.model.context.GameWillEnd;
-import code.model.context.GameState;
 import code.model.context.PlayerDied;
+import code.model.context.PlayerOpenTerminal;
+import code.model.context.StopSimulation;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.PlatformCluster;
 import code.model.gameobjects.Player;
 import code.model.room.Room;
-import code.controller.event.GameLoopEvent;
 import code.model.Leaderboard;
 //view import
 import code.view.Renderer;
 import code.view.sprites.AnimatedSprite;
-//model state import
-import code.model.context.StopSimulation;
 //controller import
 import code.controller.event.StopGame;
+import code.controller.event.SwitchToTerminal;
+//event import
+import code.event.EventDispatcher;
 
-public class GameLoop extends Thread implements GameContext.StateListener
+public class GameLoop extends Thread
 {
 	private Renderer renderer;
 	private GameContext context;
 	
-	private volatile boolean pauseSimulation;
-	private volatile long pauseUntil;
+	private boolean pauseSimulation;
+	
+	private boolean pauseSimulationUntil;
+	private long pauseUntil;
 
-	private volatile boolean skipPlayerUpdate;
-	private volatile long skipUntil;
+	private boolean skipPlayerUpdateUntil;
+	private long skipUntil;
 	
-	private volatile boolean gameWillEnd;
-	private volatile long continueUntil;
-	
-	private GameLoopListener listener;
-	
-	public interface GameLoopListener
-	{ public void notifyGameLoopEvent(GameLoopEvent event); }
+	private boolean gameWillEnd;
+	private long continueUntil;
 	
 	public GameLoop(GameContext context, Renderer renderer)
 	{ 
 		this.renderer = renderer;
 		this.context = context; 
-		pauseSimulation = gameWillEnd = skipPlayerUpdate = false;
+		pauseSimulationUntil = gameWillEnd = skipPlayerUpdateUntil = pauseSimulation = false;
+		
+		EventDispatcher.subscribe(PlayerDied.class,     	x -> skipPlayerUpdate(((PlayerDied)x).nanos()));
+		EventDispatcher.subscribe(StopSimulation.class, 	x -> pauseSimulation(((StopSimulation)x).nanos()));
+		EventDispatcher.subscribe(GameWillEnd.class,    	x -> setGameEnd(((GameWillEnd)x).nanos()));
+		EventDispatcher.subscribe(PlayerOpenTerminal.class, x -> manageTerminalOpening());
 	}
 	
 	@Override 
@@ -63,9 +66,9 @@ public class GameLoop extends Thread implements GameContext.StateListener
 		{
 			long currentTime = System.nanoTime();
 			
-			if(pauseSimulation)
+			if(pauseSimulationUntil || pauseSimulation)
 			{ 
-				pauseSimulation = currentTime < pauseUntil;
+				pauseSimulationUntil = currentTime < pauseUntil;
 			    try { Thread.sleep(10); } catch (Exception e) {}
 			    continue; 
 			}
@@ -83,7 +86,7 @@ public class GameLoop extends Thread implements GameContext.StateListener
 			
 			if(previousRoom != currentRoom)
 			{
-				renderer.setCurrentSpritesList(player, currentRoom);
+				renderer.setCurrentSpritesList();
 				platformClusterList = PlatformCluster.getPlatformClusters(currentRoom);
 				previousRoom = currentRoom;
 			}
@@ -96,8 +99,8 @@ public class GameLoop extends Thread implements GameContext.StateListener
 			if(gameWillEnd && currentTime > continueUntil)
 				break;
 			
-			if(skipPlayerUpdate)
-				skipPlayerUpdate = currentTime < skipUntil;
+			if(skipPlayerUpdateUntil)
+				skipPlayerUpdateUntil = currentTime < skipUntil;
 			else
 				player.update(context);
 			
@@ -106,34 +109,23 @@ public class GameLoop extends Thread implements GameContext.StateListener
 			try { Thread.sleep(1); } catch (Exception e) {}
 		}
 
-		SwingUtilities.invokeLater(() -> { listener.notifyGameLoopEvent(new StopGame(renderer)); });
-	}
-
-	@Override
-	public void notifyState(GameState state)
-	{ 
-		if(state instanceof StopSimulation)
-		{ 
-			pauseSimulation = true; 
-			pauseUntil = System.nanoTime() + ((StopSimulation)state).nanos();
-		}
-		else if(state instanceof GameWillEnd)
-		{
-			Player player = context.getPlayer();
-			Leaderboard leaderboard = context.getLeaderboard();
-			leaderboard.addEntry(new Leaderboard.Entry(player.getName(), player.getPoints()));
-			leaderboard.store();
-			
-			gameWillEnd = true;
-			continueUntil =  System.nanoTime() + ((GameWillEnd)state).nanos();
-		}
-		else if(state instanceof PlayerDied)
-		{
-			skipPlayerUpdate = true;
-			skipUntil = System.nanoTime() + ((PlayerDied)state).nanos();
-		}
+		SwingUtilities.invokeLater(() -> { EventDispatcher.notify(new StopGame()); });
+		
+		Leaderboard leaderboard = context.getLeaderboard();
+		leaderboard.addEntry(new Leaderboard.Entry(player.getName(), player.getPoints()));
+		leaderboard.store();
+		
 	}	
 	
-	public void setListener(GameLoopListener listener)
-	{ this.listener = listener; }
+	private void skipPlayerUpdate(long nanos)
+	{ skipPlayerUpdateUntil = true; skipUntil = System.nanoTime() + nanos; }
+	
+	private void pauseSimulation(long nanos)
+	{ pauseSimulationUntil = true; pauseUntil = System.nanoTime() + nanos; }
+	
+	private void setGameEnd(long nanos)
+	{ gameWillEnd = true; continueUntil = System.nanoTime() + nanos; }
+	
+	private void manageTerminalOpening()
+	{ pauseSimulation = true; EventDispatcher.notify(new SwitchToTerminal()); }
 }

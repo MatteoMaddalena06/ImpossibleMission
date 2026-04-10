@@ -5,6 +5,8 @@ import code.model.room.Room;
 import code.model.Leaderboard;
 import code.model.Point;
 import code.model.gameobjects.Player;
+//event import
+import code.event.EventDispatcher;
 
 public class GameContext
 {
@@ -17,16 +19,7 @@ public class GameContext
 	private Point playerSpawn;
 	
 	private static double deltaTime;
-	
-	private EventListener eventListener;
-	private StateListener stateListener;
-	
-	public interface EventListener 
-	{ public void notifyEvent(GameEvent event); }
-	
-	public interface StateListener 
-	{ public void notifyState(GameState event); }
-	
+
 	public enum UserInput 
 	{ 
 		UP(0), DOWN(1), LEFT(2), RIGHT(3), 
@@ -98,16 +91,4 @@ public class GameContext
 	
 	public static void setDeltaTime(double deltaTime)
 	{ GameContext.deltaTime = deltaTime; }
-	
-	public void setEventListener(EventListener listener)
-	{ eventListener = listener; }
-	
-	public EventListener getEventListener()
-	{ return eventListener; }
-	
-	public void setStateListener(StateListener listener)
-	{ stateListener = listener; }
-	
-	public StateListener getStatetListener()
-	{ return stateListener; }
 }

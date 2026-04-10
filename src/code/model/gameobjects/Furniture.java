@@ -1,6 +1,6 @@
 package code.model.gameobjects;
 
-//inproject import
+//model import
 import code.model.puzzle.PuzzlePiece;
 import code.model.room.RoomMap;
 import code.model.Point;
@@ -9,6 +9,8 @@ import code.model.context.GameContext;
 import code.model.context.PlayerFoundSomething;
 import code.model.context.PlayerIsSearching;
 import code.model.context.StopSimulation;
+//event import
+import code.event.EventDispatcher;
 
 public class Furniture extends GameObject
 {
@@ -65,11 +67,9 @@ public class Furniture extends GameObject
 
 		player.setUsedFurniture(this);
 		player.setSearchingState(true);	
-		
-		GameContext.EventListener eventListener = context.getEventListener();
 
 		if((remainingTimeForSearch -= GameContext.getDeltaTime()) > 0)
-		{ eventListener.notifyEvent(new PlayerIsSearching(this)); return; }
+		{ EventDispatcher.notify(new PlayerIsSearching(this)); return; }
 		
 		player.updatePoints(content.getPoints());
 
@@ -81,9 +81,9 @@ public class Furniture extends GameObject
 			case LootType.EMPTY             -> { /*do nothing */ }
 		}
 		
-		eventListener.notifyEvent(new PlayerFoundSomething(this));
-		eventListener.notifyEvent(new FurnitureSearchEnded(this));
-		context.getStatetListener().notifyState(new StopSimulation(LOOT_WAITING));
+		EventDispatcher.notify(new PlayerFoundSomething(this));
+		EventDispatcher.notify(new FurnitureSearchEnded(this));
+		EventDispatcher.notify(new StopSimulation(LOOT_WAITING));
 		
 		player.setSearchingState(false);
 		context.getCurrentRoom().removeForniture(this);

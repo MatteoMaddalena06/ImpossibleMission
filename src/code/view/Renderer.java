@@ -6,10 +6,19 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 //graphics import
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 //view import
 import code.view.sprites.Sprite;
@@ -19,7 +28,6 @@ import code.view.images.StaticImage;
 import code.view.sprites.PlayerSprite;
 import code.view.sprites.SearchingWindow;
 //model import
-import code.model.context.GameContext;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.Furniture;
 import code.model.gameobjects.GameObject;
@@ -30,16 +38,17 @@ import code.model.gameobjects.enemy.AttackerRobot;
 import code.model.gameobjects.enemy.Enemy;
 import code.model.room.Room;
 import code.model.room.RoomMap;
+import code.event.EventDispatcher;
 import code.model.Point;
-//model event import
-import code.model.context.GameEvent;
 import code.model.context.AttackEnded;
 import code.model.context.AttackLaunched;
 import code.model.context.FurnitureSearchEnded;
+import code.model.context.GameContext;
 import code.model.context.PlayerFoundSomething;
 import code.model.context.PlayerIsSearching;
+import code.model.context.GameContext.UserInput;
 
-public class Renderer extends JPanel implements GameContext.EventListener
+public class Renderer extends JPanel
 {
 	private static final BufferedImage background  = StaticImage.BACKGROUND.getImage();
 	private static final BufferedImage lifeIcon    = StaticImage.LIFE_ICON.getImage();
@@ -51,7 +60,7 @@ public class Renderer extends JPanel implements GameContext.EventListener
 	private static final int DIGITICON_PADDING = 5;
 	
 	private Player player;
-	private Room currentRoom;
+	private GameContext context;
 	private List<Sprite> currentSpritesList; 
 	private Map<Room, List<Sprite>> spritesListsCache;
 	
@@ -59,12 +68,21 @@ public class Renderer extends JPanel implements GameContext.EventListener
 	private boolean printFurnitureLoot;
 	private Furniture interestingFurniture;
 	
-	public Renderer(Player player)
-	{
+	public Renderer(Player player, GameContext context)
+	{	
 		currentSpritesList = new LinkedList<Sprite>();
 		spritesListsCache = new HashMap<Room, List<Sprite>>();
 		printSearchingState = printFurnitureLoot = false;
 		this.player = player;
+		this.context = context;
+		
+		EventDispatcher.subscribe(AttackLaunched.class,       x -> addAttackSprite(((AttackLaunched)x).source()));
+		EventDispatcher.subscribe(AttackEnded.class,          x -> removeAttackSprite(((AttackEnded)x).source()));
+		EventDispatcher.subscribe(FurnitureSearchEnded.class, x -> removeFurnitureSprite(((FurnitureSearchEnded)x).source()));
+		EventDispatcher.subscribe(PlayerFoundSomething.class, x -> printFurnitureLoot(((PlayerFoundSomething)x).source()));
+		EventDispatcher.subscribe(PlayerIsSearching.class, 	  x -> printSearchingState(((PlayerIsSearching)x).source()));
+		
+		bindAllKey(this, context);
 	}
 	
 	@Override
@@ -140,24 +158,34 @@ public class Renderer extends JPanel implements GameContext.EventListener
 		int furnitureX = (int)furniturePosition.getX(), furnitureY = (int)furniturePosition.getY();
 		g.drawImage(image,  furnitureX + furniture.getWidth() / 2 - image.getWidth() / 2, furnitureY - image.getHeight(), null);
 	}
-
-	@Override 
-	public void notifyEvent(GameEvent event)
-	{
-		if(event instanceof AttackLaunched)
-			addAttackSprite(((AttackLaunched)event).source());
-		
-		else if(event instanceof AttackEnded)
-			removeAttackSprite(((AttackEnded)event).source());
-		
-		else if(event instanceof FurnitureSearchEnded)
-			removeFurnitureSprite(((FurnitureSearchEnded)event).source());
-		
-		else if(event instanceof PlayerFoundSomething)
-			printFurnitureLoot(((PlayerFoundSomething)event).source());
 	
+	public void setCurrentSpritesList()
+	{
+		Room room = context.getCurrentRoom();
+		
+		if(!spritesListsCache.containsKey(room))
+		{
+			List<Sprite> result = room.getGameObjectList().stream().map(g -> {
+				if(g instanceof FixedObject || g instanceof Furniture)
+					return SpriteFactory.produce(g, room.getColor());
+				
+				return SpriteFactory.produce(g);
+			}).collect(Collectors.toList());
+			
+			spritesListsCache.put(room, result);
+			currentSpritesList = result;
+		}
 		else 
-			printSearchingState(((PlayerIsSearching)event).source());
+			currentSpritesList = spritesListsCache.get(room);
+
+		currentSpritesList.add(SpriteFactory.produce(player));
+	}
+	
+	private void updateCache()
+	{ 
+		List<Sprite> spritesListToStore = 
+				currentSpritesList.stream().filter(s -> !(s instanceof PlayerSprite)).collect(Collectors.toList());
+		spritesListsCache.put(context.getCurrentRoom(), spritesListToStore);
 	}
 	
 	private void addAttackSprite(AttackerRobot.Attack attack)
@@ -183,34 +211,43 @@ public class Renderer extends JPanel implements GameContext.EventListener
 	private void printSearchingState(Furniture furniture)
 	{ printSearchingState = true; interestingFurniture = furniture; }
 	
-	public void setCurrentSpritesList(Player player, Room room)
+	private void bindAllKey(Renderer renderer, GameContext context)
 	{
-		currentRoom = room;
+		bindKey(renderer, context, "LEFT_PRESSED",  KeyEvent.VK_LEFT,  true);
+		bindKey(renderer, context, "RIGHT_PRESSED", KeyEvent.VK_RIGHT, true);
+		bindKey(renderer, context, "UP_PRESSED",    KeyEvent.VK_UP,    true);
+		bindKey(renderer, context, "DOWN_PRESSED",  KeyEvent.VK_DOWN,  true);
+		bindKey(renderer, context, "JUMP_PRESSED",  KeyEvent.VK_SPACE, true);
 		
-		if(!spritesListsCache.containsKey(room))
-		{
-			List<Sprite> result = room.getGameObjectList().stream().map(g -> {
-				if(g instanceof FixedObject || g instanceof Furniture)
-					return SpriteFactory.produce(g, room.getColor());
-				
-				return SpriteFactory.produce(g);
-			}).collect(Collectors.toList());
-			
-			spritesListsCache.put(room, result);
-			currentSpritesList = result;
-		}
-		else 
-			currentSpritesList = spritesListsCache.get(room);
-
-		currentSpritesList.add(SpriteFactory.produce(player));
+		bindKey(renderer, context, "LEFT_RELEASED",  KeyEvent.VK_LEFT,  false);
+		bindKey(renderer, context, "RIGHT_RELEASED", KeyEvent.VK_RIGHT, false);
+		bindKey(renderer, context, "UP_RELEASED",    KeyEvent.VK_UP,    false);
+		bindKey(renderer, context, "DOWN_RELEASED",  KeyEvent.VK_DOWN,  false);
+		bindKey(renderer, context, "JUMP_RELEASED",  KeyEvent.VK_SPACE, false);
 	}
 	
-	private void updateCache()
-	{ 
-		List<Sprite> spritesListToStore = 
-				currentSpritesList.stream().filter(s -> !(s instanceof PlayerSprite)).collect(Collectors.toList());
-		spritesListsCache.put(currentRoom, spritesListToStore);
+	private void bindKey(Renderer renderer, GameContext context, String keyName, int keyCode , boolean pressed)
+	{
+		InputMap inputMap = renderer.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = renderer.getActionMap();
+		
+		inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, !pressed), keyName);
+		actionMap.put(keyName, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switch(keyCode)
+				{
+					case KeyEvent.VK_LEFT  -> context.setUserInput(UserInput.LEFT,  pressed);
+					case KeyEvent.VK_RIGHT -> context.setUserInput(UserInput.RIGHT, pressed);
+					case KeyEvent.VK_UP    -> context.setUserInput(UserInput.UP,    pressed);
+					case KeyEvent.VK_DOWN  -> context.setUserInput(UserInput.DOWN,  pressed);
+					case KeyEvent.VK_SPACE -> context.setUserInput(UserInput.JUMP,  pressed);
+				}
+			}	
+		});
 	}
+	
 	
 	public List<Sprite> getCurrentSpritesList()
 	{ return currentSpritesList; }

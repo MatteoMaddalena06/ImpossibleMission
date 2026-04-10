@@ -8,6 +8,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import javax.swing.Box;
+//event import
+import code.event.EventDispatcher;
 //view import
 import code.view.images.StaticImage;
 import code.view.menu.event.CloseGame;
@@ -53,8 +55,8 @@ public class Menu extends AbstractMenu
 		this.add(exitButton);
 		this.add(Box.createRigidArea(new Dimension(0, Y_SPACING)));
 		
-		startButton.addActionListener(e -> getEventListener().notifyMenuEvent(new SwapToPlayerNameMenu()));
-		leaderboardButton.addActionListener(e -> getEventListener().notifyMenuEvent(new SwapToLeaderboard()));
-		exitButton.addActionListener(e -> getEventListener().notifyMenuEvent(new CloseGame()));
+		startButton.addActionListener(e -> EventDispatcher.notify(new SwapToPlayerNameMenu()));
+		leaderboardButton.addActionListener(e -> EventDispatcher.notify(new SwapToLeaderboard()));
+		exitButton.addActionListener(e -> EventDispatcher.notify(new CloseGame()));
 	}
 }
