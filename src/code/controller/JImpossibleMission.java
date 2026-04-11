@@ -2,6 +2,7 @@ package code.controller;
 
 //graphics import
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import java.awt.CardLayout;
@@ -26,14 +27,12 @@ import code.view.images.StaticImage;
 import code.view.menu.LeaderboardMenu;
 import code.view.menu.Menu;
 import code.view.menu.PlayerNameMenu;
-import code.view.menu.event.ReturnToMenu;
-import code.view.menu.event.StartGame;
-import code.view.menu.event.CloseGame;
-import code.view.menu.event.SwapToLeaderboard;
-import code.view.menu.event.SwapToPlayerNameMenu;
+import code.view.menu.TerminalMenu;
+import code.view.menu.event.*;
 //controller import
 import code.controller.event.StopGame;
-import code.controller.event.SwitchToTerminal;
+import code.controller.event.TerminalMenuRequested;
+import code.controller.event.GameResumed;
 //event import
 import code.event.EventDispatcher;
 
@@ -56,6 +55,7 @@ public class JImpossibleMission
 	
 	private LeaderboardMenu oldLeaderboardPanel;
 	private Renderer oldGamePanel;
+	private TerminalMenu oldTerminalMenu;
 	
 	public static void main(String[] args)
 	{ 
@@ -79,13 +79,15 @@ public class JImpossibleMission
 		JPanel rootPanel = new JPanel();
 		Menu mainMenu = new Menu();
 		PlayerNameMenu playerMenu = new PlayerNameMenu(customFont);
+		JLayeredPane layeredPane = new JLayeredPane();
 		
 		CardLayout layout = new CardLayout();
 		rootPanel.setLayout(layout);
 		rootPanel.add(mainMenu, MAIN_MENU_ID);
 		rootPanel.add(playerMenu, PLAYER_MENU_ID);
+		rootPanel.add(layeredPane, GAMEPANEL_ID);
 		
-		initEventHandler(rootPanel, layout);
+		initEventHandler(rootPanel, layout, layeredPane);
 		
 		frame.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		frame.pack();
@@ -96,18 +98,19 @@ public class JImpossibleMission
 		frame.setVisible(true);
 	}
 	
-	private void initEventHandler(JPanel rootPanel, CardLayout layout)
+	private void initEventHandler(JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
 	{
-		EventDispatcher.subscribe(CloseGame.class,            x -> System.exit(0));
-		EventDispatcher.subscribe(ReturnToMenu.class,         x -> layout.show(rootPanel, MAIN_MENU_ID));
-		EventDispatcher.subscribe(SwapToPlayerNameMenu.class, x -> layout.show(rootPanel, PLAYER_MENU_ID));
-		EventDispatcher.subscribe(StartGame.class,            x -> { x = (StartGame)x; startGame(x.playerName(), rootPanel, layout); });
-		EventDispatcher.subscribe(SwapToLeaderboard.class,    x -> swapToLeaderboard(rootPanel, layout));
-		EventDispatcher.subscribe(StopGame.class,             x -> layout.show(rootPanel, MAIN_MENU_ID) );
-		EventDispatcher.subscribe(SwitchToTerminal.class,     x -> {});
+		EventDispatcher.subscribe(CloseGame.class,                x -> System.exit(0));
+		EventDispatcher.subscribe(SecondaryMenuClosed.class,      x -> layout.show(rootPanel, MAIN_MENU_ID));
+		EventDispatcher.subscribe(InputBoxMenuRequested.class,    x -> layout.show(rootPanel, PLAYER_MENU_ID));
+		EventDispatcher.subscribe(GamePanelRequested.class,       x -> { x = (GamePanelRequested)x; startGame(x.playerName(), rootPanel, layout, layeredPane); });
+		EventDispatcher.subscribe(LeaderboardMenuRequested.class, x -> swapToLeaderboard(rootPanel, layout));
+		EventDispatcher.subscribe(StopGame.class,                 x -> layout.show(rootPanel, MAIN_MENU_ID) );
+		EventDispatcher.subscribe(TerminalMenuRequested.class,    x -> swapToTerminalMenu(((TerminalMenuRequested)x).player(), layeredPane));
+		EventDispatcher.subscribe(TerminalClosed.class,           x -> { oldTerminalMenu.setVisible(false); EventDispatcher.notify(new GameResumed());});
 	}
 	
-	private void startGame(String playerName, JPanel rootPanel, CardLayout layout)
+	private void startGame(String playerName, JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
 	{
 		GameWorld world = new GameWorld();
 		Player player = new Player(playerName, new Point(60, 60));
@@ -119,11 +122,12 @@ public class JImpossibleMission
 		GameLoop gameLoop = new GameLoop(context, gamePanel);
 		
 		if(oldGamePanel != null)
-			rootPanel.remove(oldGamePanel);
+			layeredPane.remove(oldGamePanel);
 
 		oldGamePanel = gamePanel;
 		
-		rootPanel.add(gamePanel, GAMEPANEL_ID);
+		gamePanel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+		layeredPane.add(gamePanel, JLayeredPane.DEFAULT_LAYER);
 		layout.show(rootPanel, GAMEPANEL_ID);
 		gameLoop.start();
 	}
@@ -141,8 +145,16 @@ public class JImpossibleMission
 	    layout.show(rootPanel, LEADERBOARD_MENU_ID);
 	}
 	
-	private void swapToTerminalMenu(JFrame frame)
+	private void swapToTerminalMenu(Player player, JLayeredPane layeredPane)
 	{
+		TerminalMenu terminalMenu = new TerminalMenu(player, customFont);
+			
+		if(oldTerminalMenu != null)
+			layeredPane.remove(oldTerminalMenu);
 		
+		oldTerminalMenu = terminalMenu;
+		
+		terminalMenu.setPositionInFrame(FRAME_WIDTH, FRAME_HEIGHT);
+		layeredPane.add(terminalMenu, JLayeredPane.PALETTE_LAYER);
 	}
 }

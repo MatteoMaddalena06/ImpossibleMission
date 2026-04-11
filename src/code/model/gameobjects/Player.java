@@ -131,12 +131,12 @@ public class Player extends MovingObject
 		
 		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
 		{
-			/*isDead = true;
+			isDead = true;
 			points = Math.max(0, points - DIE_PENALITY);
 			EventDispatcher.notify(new PlayerDied(DIE_WAITING));
 			
 			if(--lifes == 0)
-				EventDispatcher.notify(new GameWillEnd(DIE_WAITING));*/
+				EventDispatcher.notify(new GameWillEnd(DIE_WAITING));
 		}
 	}
 	
@@ -207,6 +207,12 @@ public class Player extends MovingObject
 	
 	public boolean usePlatoformPassword()
 	{ return (platformPasswordsObtained == 0) ? false : platformPasswordsObtained-- >= 0; }
+	
+	public int getRobotPasswordsObtained()
+	{ return robotPasswordsObtained; }
+	
+	public int getPlatformPasswordsObtained()
+	{ return platformPasswordsObtained; }
 	
 	public void setOnPlatformState(boolean isOnPlatform)
 	{ this.isOnPlatform = isOnPlatform; }

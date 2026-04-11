@@ -27,7 +27,7 @@ public abstract class GameObjectFactory
 				Collections.shuffle(wantedEnemyType);
 				EnemyFactory.Type rndEnemyType = wantedEnemyType.getFirst();
 				
-				yield EnemyFactory.produce(position, width, height, rndEnemyType);
+				yield EnemyFactory.produce(position, width, height / 2, rndEnemyType);
 			}
 			case RoomMap.FURNITURE_ID -> new Furniture(position, width, height, Furniture.Type.RANDOM);
 			case RoomMap.TERMINAL_ID  -> new Terminal(position, width, height);

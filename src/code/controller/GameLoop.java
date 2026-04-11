@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 import code.model.context.GameContext;
 import code.model.context.GameWillEnd;
 import code.model.context.PlayerDied;
-import code.model.context.PlayerOpenTerminal;
+import code.model.context.TerminalOpened;
 import code.model.context.StopSimulation;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.PlatformCluster;
@@ -20,7 +20,8 @@ import code.view.Renderer;
 import code.view.sprites.AnimatedSprite;
 //controller import
 import code.controller.event.StopGame;
-import code.controller.event.SwitchToTerminal;
+import code.controller.event.TerminalMenuRequested;
+import code.controller.event.GameResumed;
 //event import
 import code.event.EventDispatcher;
 
@@ -46,10 +47,11 @@ public class GameLoop extends Thread
 		this.context = context; 
 		pauseSimulationUntil = gameWillEnd = skipPlayerUpdateUntil = pauseSimulation = false;
 		
-		EventDispatcher.subscribe(PlayerDied.class,     	x -> skipPlayerUpdate(((PlayerDied)x).nanos()));
-		EventDispatcher.subscribe(StopSimulation.class, 	x -> pauseSimulation(((StopSimulation)x).nanos()));
-		EventDispatcher.subscribe(GameWillEnd.class,    	x -> setGameEnd(((GameWillEnd)x).nanos()));
-		EventDispatcher.subscribe(PlayerOpenTerminal.class, x -> manageTerminalOpening());
+		EventDispatcher.subscribe(PlayerDied.class,     x -> skipPlayerUpdate(((PlayerDied)x).nanos()));
+		EventDispatcher.subscribe(StopSimulation.class, x -> pauseSimulation(((StopSimulation)x).nanos()));
+		EventDispatcher.subscribe(GameWillEnd.class,    x -> setGameEnd(((GameWillEnd)x).nanos()));
+		EventDispatcher.subscribe(TerminalOpened.class, x -> { pauseSimulation = true; EventDispatcher.notify(new TerminalMenuRequested(context.getPlayer())); });
+		EventDispatcher.subscribe(GameResumed.class,    x -> pauseSimulation = false);
 	}
 	
 	@Override 
@@ -125,7 +127,4 @@ public class GameLoop extends Thread
 	
 	private void setGameEnd(long nanos)
 	{ gameWillEnd = true; continueUntil = System.nanoTime() + nanos; }
-	
-	private void manageTerminalOpening()
-	{ pauseSimulation = true; EventDispatcher.notify(new SwitchToTerminal()); }
 }

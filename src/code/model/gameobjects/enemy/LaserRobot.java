@@ -13,7 +13,7 @@ import code.event.EventDispatcher;
 public class LaserRobot extends AttackerRobot
 {
 	private static final double HORIZONTAL_SPEED   = 150f;
-	private static final int    FOV_WIDTH          = 4 * RoomMap.TILE_SIZE;
+	private static final int    FOV_WIDTH          = 3 * RoomMap.TILE_SIZE;
 	private static final int    FOV_HEIGHT         = 3 * RoomMap.TILE_SIZE;
 	private static final int    ATTACK_WIDTH       = FOV_WIDTH;
 	private static final int    ATTACK_HEIGHT      = FOV_HEIGHT;
@@ -53,7 +53,7 @@ public class LaserRobot extends AttackerRobot
 		if(currentHorizontalVelocity != 0)
 		{
 			thisFov.setX((currentHorizontalVelocity > 0) ? thisX : thisX - FOV_WIDTH + getWidth());
-			thisFov.setY(thisY);
+			thisFov.setY(thisY - FOV_HEIGHT + getHeight());
 		}
 	}
 	

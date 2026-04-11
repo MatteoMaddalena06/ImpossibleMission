@@ -19,7 +19,7 @@ public abstract class Enemy extends MovingObject
 	private enum RandomHorizontalMovement
 	{ LEFT, RIGHT, IDLE }
 
-	protected class FieldOfView extends GameObject
+	public class FieldOfView extends GameObject
 	{	
 		public FieldOfView(Point position, int width, int height)
 		{ super(position, width, height);} 

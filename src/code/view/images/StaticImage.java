@@ -288,7 +288,14 @@ public enum StaticImage
 	LEADERBOARD_STAR           (ImageUtils.loadImage("/resources/Menu/LeaderboardStar.png")),
 	LEADERBOARD_SAD            (ImageUtils.loadImage("/resources/Menu/LeaderboardSad.png")),
 	
-	WINDOW_ICON (ImageUtils.loadImage("/resources/Menu/WindowIcon.png")),
+	NORMAL_ROBODISABLE_BUTTON     (ImageUtils.loadImage("/resources/Menu/NormalRobotDisableButton.png")),
+	SELECTED_ROBOTDISABLE_BUTTON  (ImageUtils.loadImage("/resources/Menu/SelectedRobotDisableButton.png")),
+	NORMAL_PLATFORMREST_BUTTON    (ImageUtils.loadImage("/resources/Menu/NormalPlatformResetButton.png")),
+	SELECTED_PLATFORMRESET_BUTTON (ImageUtils.loadImage("/resources/Menu/SelectedPlatformResetButton.png")),
+	
+	TERMINAL_WALLPAPER(ImageUtils.loadImage("/resources/Menu/TerminalWallpaper.png")),
+	
+	WINDOW_ICON(ImageUtils.loadImage("/resources/Menu/WindowIcon.png")),
 	
 	BACKGROUND(ImageUtils.loadImage("/resources/Background.png")),
 	

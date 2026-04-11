@@ -18,14 +18,14 @@ import code.event.EventDispatcher;
 public class ThrowerRobot extends AttackerRobot
 {
 	private static final double HORIZONTAL_SPEED        = 200f;
-	private static final int    FOV_WIDTH               = 12 * RoomMap.TILE_SIZE;
+	private static final int    FOV_WIDTH               = 6 * RoomMap.TILE_SIZE;
 	private static final int    FOV_HEIGHT              = 5 * RoomMap.TILE_SIZE;
 	private final  double       INITIAL_FOV_X           = getPosition().getX();
 	private final  double       INITIAL_FOV_Y           = getPosition().getY() - (FOV_HEIGHT - getHeight());
  	private static final int    ATTACK_WIDTH      	    = 1 * RoomMap.TILE_SIZE;
 	private static final int    ATTACK_HEIGHT     	    = 1 * RoomMap.TILE_SIZE;
-	private static final double ATTACK_HORIZONTAL_SPEED = 600f;
-	private static final double ATTACK_VERTICAL_SPEED   = 450f;;
+	private static final double ATTACK_HORIZONTAL_SPEED = 400f;
+	private static final double ATTACK_VERTICAL_SPEED   = 250f;;
 	
 	private int attackCounter;
 	

@@ -20,12 +20,13 @@ import code.event.EventDispatcher;
 import code.model.Leaderboard;
 //view import
 import code.view.images.StaticImage;
-import code.view.menu.event.ReturnToMenu;
+import code.view.menu.event.SecondaryMenuClosed;
 
-public class LeaderboardMenu extends AbstractMenu
+public class LeaderboardMenu extends JPanel
 {
+	private static final BufferedImage backgroundImage = StaticImage.MENU_BACKGROUND.getImage();
 	private static final BufferedImage entryBackground = StaticImage.ENTRY_BACKGROUND.getImage();
-	private static final List<StaticImage> awardsList = StaticImage.getAwardsList();
+	private static final List<StaticImage> awardsList  = StaticImage.getAwardsList();
 	
 	private static final BufferedImage normalExitButtonImage  = StaticImage.NORMAL_EXIT_BUTTON.getImage();
 	private static final BufferedImage selectedExitButtonImage = StaticImage.SELECTED_EXIT_BUTTON.getImage();
@@ -36,6 +37,8 @@ public class LeaderboardMenu extends AbstractMenu
 	private static final int ENTRY_HEIGHT      = 65;
 	private static final int AWARD_WIDTH       = 58;
 	private static final int AWARD_HEIGHT      = 58;
+	private static final int EXITBUTTON_WIDTH  = 749;
+	private static final int EXITBUTTON_HEIGHT = 122;
 	
 	private static final int AWARD_NAME_PADDING  	  = 50;
 	private static final int NAME_POINTS_PADDING 	  = 10;
@@ -56,12 +59,6 @@ public class LeaderboardMenu extends AbstractMenu
 		this.leaderboard = leaderboard;
 		this.leaderboardFont = leaderboardFont;
 		
-		buildMenu();
-	}
-	
-	@Override 
-	protected void buildMenu()
-	{
 		JPanel entriesPanel = new JPanel();
 		List<Leaderboard.Entry> leaderboardContent = leaderboard.getContent();
 		
@@ -75,9 +72,12 @@ public class LeaderboardMenu extends AbstractMenu
 			entriesPanel.add(createEntryPanel(leaderboardContent.get(i), leaderboardFont));
 		}
 	
-		MenuButton exitButton = new MenuButton(normalExitButtonImage, selectedExitButtonImage);
+		MenuButton exitButton = new MenuButton(
+				normalExitButtonImage, selectedExitButtonImage,
+				EXITBUTTON_WIDTH, EXITBUTTON_HEIGHT
+		);
 		exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		exitButton.addActionListener(e -> EventDispatcher.notify(new ReturnToMenu()));
+		exitButton.addActionListener(e -> EventDispatcher.notify(new SecondaryMenuClosed()));
 		
 		JScrollPane scrollPane = new JScrollPane(entriesPanel);
 		scrollPane.setPreferredSize(new Dimension(SCROLLPANE_WIDTH, SCROLLPANE_HEIGHT));
@@ -164,5 +164,12 @@ public class LeaderboardMenu extends AbstractMenu
 		entryPanel.add(Box.createRigidArea(new Dimension(NAME_POINTS_PADDING, 0)));
 		
 		return entryPanel;
+	}
+	
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+	    g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
 	}
 }

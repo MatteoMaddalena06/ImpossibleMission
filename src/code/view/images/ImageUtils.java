@@ -9,6 +9,7 @@ import java.util.ArrayList;
 //graphics import
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
+import java.awt.Image;
 //IO import
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,6 +101,19 @@ public abstract class ImageUtils
 		
 		graphics.dispose();
 		return resultImage;
+	}
+	
+	public static BufferedImage scaleImage(BufferedImage image, int width, int height)
+	{
+	    Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+	    BufferedImage resultImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	    
+	    Graphics2D graphics = resultImage.createGraphics();
+	    
+	    graphics.drawImage(scaledImage, 0, 0, null);
+	    graphics.dispose();
+	    
+	    return resultImage;
 	}
 	
 	public static List<BufferedImage> getNumberAsImagesList(int number, StaticImage[] symbolsList)

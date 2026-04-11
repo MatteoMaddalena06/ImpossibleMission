@@ -3,7 +3,7 @@ package code.model.gameobjects;
 //model import
 import code.model.Point;
 import code.model.context.GameContext;
-import code.model.context.PlayerOpenTerminal;
+import code.model.context.TerminalOpened;
 //event import
 import code.event.EventDispatcher;
 
@@ -18,6 +18,6 @@ public class Terminal extends GameObject
 		Player player = context.getPlayer();
 		
 		if(context.getUserInput(GameContext.UserInput.UP) && isColliding(player))
-			EventDispatcher.notify(new PlayerOpenTerminal());
+			EventDispatcher.notify(new TerminalOpened());
 	}
 }

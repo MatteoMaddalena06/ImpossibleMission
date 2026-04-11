@@ -7,6 +7,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.AbstractDocument;
@@ -19,16 +20,23 @@ import java.awt.Graphics;
 import code.event.EventDispatcher;
 //view import
 import code.view.images.StaticImage;
-import code.view.menu.event.ReturnToMenu;
-import code.view.menu.event.StartGame;
+import code.view.menu.event.SecondaryMenuClosed;
+import code.view.menu.event.GamePanelRequested;
 
-public class PlayerNameMenu extends AbstractMenu 
+public class PlayerNameMenu extends JPanel
 {
+	private static final BufferedImage backgroundImage = StaticImage.MENU_BACKGROUND.getImage();
+	
 	private static final BufferedImage normalStartButtonImage   = StaticImage.NORMAL_START_BUTTON.getImage();
 	private static final BufferedImage selectedStartButtonImage = StaticImage.SELECTED_START_BUTTON.getImage();
 	private static final BufferedImage normalExitButtonImage    = StaticImage.NORMAL_EXIT_BUTTON.getImage();
 	private static final BufferedImage selectedExitButtonImage  = StaticImage.SELECTED_EXIT_BUTTON.getImage();
 	private static final BufferedImage inputBoxBackground       = StaticImage.ENTRY_BACKGROUND.getImage();
+	
+	private static final int STARTBUTTON_WIDTH  = 743;
+	private static final int STARTBUTTON_HEIGHT = 127;
+	private static final int EXITBUTTON_WIDTH   = 743;
+	private static final int EXITBUTTON_HEIGHT  = 127;
 	
 	private static final int Y_SPACING = 20;
 	private static final int MAX_INPUT_SIZE = 10;
@@ -60,12 +68,7 @@ public class PlayerNameMenu extends AbstractMenu
 	public PlayerNameMenu(Font inputBoxFont)
 	{ 
 		this.inputBoxFont = inputBoxFont;
-		buildMenu(); 
-	}
-
-	@Override
-	protected void buildMenu() 
-	{
+		
 		JTextField inputBox = new JTextField() {
 			@Override
 			public void paintComponent(Graphics g)
@@ -75,9 +78,15 @@ public class PlayerNameMenu extends AbstractMenu
 			}
 		};
 		
-		MenuButton exitButton = new MenuButton(normalExitButtonImage, selectedExitButtonImage);
-		MenuButton startButton = new MenuButton(normalStartButtonImage, selectedStartButtonImage);
-		
+		MenuButton exitButton = new MenuButton(
+				normalExitButtonImage, selectedExitButtonImage,
+				EXITBUTTON_WIDTH, EXITBUTTON_HEIGHT
+		);
+		MenuButton startButton = new MenuButton(
+				normalStartButtonImage, selectedStartButtonImage,
+				STARTBUTTON_WIDTH, STARTBUTTON_HEIGHT
+		);
+
 		inputBox.setOpaque(false);
 		inputBox.setFont(inputBoxFont);
 		inputBox.setFocusable(true);
@@ -90,16 +99,23 @@ public class PlayerNameMenu extends AbstractMenu
 		startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		this.add(Box.createRigidArea(new Dimension(0, Y_SPACING)));
+		this.add(Box.createRigidArea(new Dimension(0, 5*Y_SPACING)));
 		this.add(inputBox);
 		SwingUtilities.invokeLater(() -> {inputBox.requestFocusInWindow(); });
-		this.add(Box.createRigidArea(new Dimension(0, Y_SPACING)));
+		this.add(Box.createRigidArea(new Dimension(0, 5*Y_SPACING)));
 		this.add(startButton);
 		this.add(Box.createRigidArea(new Dimension(0, Y_SPACING)));
 		this.add(exitButton);
 		this.add(Box.createRigidArea(new Dimension(0, Y_SPACING)));
 		
-		exitButton.addActionListener(e -> EventDispatcher.notify(new ReturnToMenu()));
-		startButton.addActionListener(e -> EventDispatcher.notify(new StartGame(inputBox.getText())));
-	}	
+		exitButton.addActionListener(e -> EventDispatcher.notify(new SecondaryMenuClosed()));
+		startButton.addActionListener(e -> EventDispatcher.notify(new GamePanelRequested(inputBox.getText())));
+	}
+
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+	    g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
+	}
 }

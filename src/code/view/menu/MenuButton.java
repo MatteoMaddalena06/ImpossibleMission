@@ -9,19 +9,24 @@ import java.awt.image.BufferedImage;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+//view import
+import code.view.images.ImageUtils;
 
 public class MenuButton extends JButton
 {
 	private static final String normalIconID   = "normalIcon";
 	private static final String selectedIconID = "selectedIcon";
 	
-	public MenuButton(BufferedImage normalImage, BufferedImage selectionImage)
+	public MenuButton(BufferedImage normalImage, BufferedImage selectionImage, int width, int height)
 	{
-		ImageIcon normalImageIcon = new ImageIcon(normalImage);
-		ImageIcon selectionImageIcon = new ImageIcon(selectionImage);
+		BufferedImage scaledNormalImage = ImageUtils.scaleImage(normalImage, width, height);
+		BufferedImage scaledSelectionImage = ImageUtils.scaleImage(selectionImage, width, height);
+		
+		ImageIcon normalImageIcon = new ImageIcon(scaledNormalImage);
+		ImageIcon selectionImageIcon = new ImageIcon(scaledSelectionImage);
 		
 		this.setIcon(normalImageIcon);
-		this.setPreferredSize(new Dimension(normalImage.getWidth(), normalImage.getHeight()));
+		this.setPreferredSize(new Dimension(width, height));
 		this.setBorderPainted(false);
 		this.setContentAreaFilled(false);
 		

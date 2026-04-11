@@ -48,6 +48,9 @@ import code.model.context.PlayerFoundSomething;
 import code.model.context.PlayerIsSearching;
 import code.model.context.GameContext.UserInput;
 
+import code.model.gameobjects.enemy.Enemy.FieldOfView;
+import code.model.gameobjects.enemy.BlackOrb;
+
 public class Renderer extends JPanel
 {
 	private static final BufferedImage background  = StaticImage.BACKGROUND.getImage();
@@ -150,6 +153,22 @@ public class Renderer extends JPanel
 		int overflow = image.getHeight() - bindedGameObject.getHeight();
 		
 		g.drawImage(image, gameObjectX + bindedGameObject.getWidth() / 2 - image.getWidth() / 2, gameObjectY - overflow, null);
+		
+		//for hitbox debugging
+		if(bindedGameObject instanceof Enemy && !(bindedGameObject instanceof BlackOrb))
+		{
+			FieldOfView fov = ((Enemy)bindedGameObject).getFOV();
+			Point p = fov.copyPosition();
+			g.setColor(java.awt.Color.RED);
+			g.drawRect((int)p.getX(), (int)p.getY(), fov.getWidth(), fov.getHeight());
+			g.setColor(java.awt.Color.GREEN);
+			g.drawRect(gameObjectX, gameObjectY, bindedGameObject.getWidth(), bindedGameObject.getHeight());
+		}
+		else if(bindedGameObject instanceof Player)
+		{
+			g.setColor(java.awt.Color.GREEN);
+			g.drawRect(gameObjectX, gameObjectY, bindedGameObject.getWidth(), bindedGameObject.getHeight());
+		}
 	}
 	
 	private void paintFurnitureInfo(Furniture furniture, BufferedImage image, Graphics g)
