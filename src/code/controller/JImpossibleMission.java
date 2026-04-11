@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Arrays;
 //model import
 import code.model.context.GameContext;
+import code.model.gameobjects.Furniture;
 import code.model.gameobjects.Player;
 import code.model.room.Room;
 import code.model.room.RoomMap;
@@ -115,6 +116,7 @@ public class JImpossibleMission
 		GameWorld world = new GameWorld();
 		Player player = new Player(playerName, new Point(60, 60));
 		Room rndRoom = Arrays.stream(world.getWorldMatrix()).flatMap(r -> Arrays.stream(r)).filter(r -> r != null).findAny().get();
+		rndRoom.getFurnitureList().forEach(f -> f.setContent(Furniture.LootType.ROBOT_PASSWORD));
 		GameContext context = new GameContext(player, rndRoom, Leaderboard.load());
 		context.setPlayerSpawn(new Point(60, 60));
 		

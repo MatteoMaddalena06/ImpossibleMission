@@ -60,7 +60,7 @@ public class GameContext
 	{ return this.userInput[userInput.getInput()]; }
 	
 	public void disableRobots()
-	{ isRobotsDisabled = true; }
+	{ isRobotsDisabled = player.useRobotPassword(); }
 	
 	public void enableRobots()
 	{ isRobotsDisabled = false; }

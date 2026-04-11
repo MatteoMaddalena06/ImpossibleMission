@@ -12,6 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 //view import
 import code.view.images.StaticImage;
+import code.view.menu.event.RobotDisableRequested;
 import code.view.menu.event.TerminalClosed;
 import code.event.EventDispatcher;
 //model import
@@ -97,6 +98,12 @@ public class TerminalMenu extends JPanel
 		this.add(exitButton);
 		this.add(Box.createRigidArea(new Dimension(0, Y_SPACING)));
 		
+		robotDisableButton.addActionListener(e -> {
+			if(player.getRobotPasswordsObtained() != 0)
+				EventDispatcher.notify(new TerminalClosed());
+			
+			EventDispatcher.notify(new RobotDisableRequested());
+		});
 		exitButton.addActionListener(e -> EventDispatcher.notify(new TerminalClosed()));
 	}
 	

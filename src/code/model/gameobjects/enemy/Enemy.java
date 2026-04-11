@@ -11,6 +11,7 @@ import code.model.gameobjects.MovingObject;
 
 public abstract class Enemy extends MovingObject 
 { 
+	public static long ROBOT_DISABLE_NANOS = 10000000000L;
 	private static final double SHARED_HORIZONTAL_SPEED = 150f;
 	
 	private FieldOfView fieldOfView;

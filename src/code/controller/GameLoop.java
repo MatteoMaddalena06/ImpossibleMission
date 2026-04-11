@@ -13,10 +13,12 @@ import code.model.context.StopSimulation;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.PlatformCluster;
 import code.model.gameobjects.Player;
+import code.model.gameobjects.enemy.Enemy;
 import code.model.room.Room;
 import code.model.Leaderboard;
 //view import
 import code.view.Renderer;
+import code.view.menu.event.RobotDisableRequested;
 import code.view.sprites.AnimatedSprite;
 //controller import
 import code.controller.event.StopGame;
@@ -41,17 +43,20 @@ public class GameLoop extends Thread
 	private boolean gameWillEnd;
 	private long continueUntil;
 	
+	private long disableRobotsFor;
+	
 	public GameLoop(GameContext context, Renderer renderer)
 	{ 
 		this.renderer = renderer;
 		this.context = context; 
 		pauseSimulationUntil = gameWillEnd = skipPlayerUpdateUntil = pauseSimulation = false;
 		
-		EventDispatcher.subscribe(PlayerDied.class,     x -> skipPlayerUpdate(((PlayerDied)x).nanos()));
-		EventDispatcher.subscribe(StopSimulation.class, x -> pauseSimulation(((StopSimulation)x).nanos()));
-		EventDispatcher.subscribe(GameWillEnd.class,    x -> setGameEnd(((GameWillEnd)x).nanos()));
-		EventDispatcher.subscribe(TerminalOpened.class, x -> { pauseSimulation = true; EventDispatcher.notify(new TerminalMenuRequested(context.getPlayer())); });
-		EventDispatcher.subscribe(GameResumed.class,    x -> pauseSimulation = false);
+		EventDispatcher.subscribe(PlayerDied.class,            x -> skipPlayerUpdate(((PlayerDied)x).nanos()));
+		EventDispatcher.subscribe(StopSimulation.class,		   x -> pauseSimulation(((StopSimulation)x).nanos()));
+		EventDispatcher.subscribe(RobotDisableRequested.class, x -> disableRobots());
+		EventDispatcher.subscribe(GameWillEnd.class,    	   x -> setGameEnd(((GameWillEnd)x).nanos()));
+		EventDispatcher.subscribe(TerminalOpened.class,		   x -> terminalOpened());
+		EventDispatcher.subscribe(GameResumed.class,    	   x -> pauseSimulation = false);
 	}
 	
 	@Override 
@@ -66,19 +71,24 @@ public class GameLoop extends Thread
 			
 		while(true)
 		{
-			long currentTime = System.nanoTime();
-			
 			if(pauseSimulationUntil || pauseSimulation)
 			{ 
+				long currentTime = previousTime = System.nanoTime();
 				pauseSimulationUntil = currentTime < pauseUntil;
 			    try { Thread.sleep(10); } catch (Exception e) {}
 			    continue; 
 			}
 			
-		    double deltaTime = (currentTime - previousTime) / 1e9;
+			long currentTime = System.nanoTime();
+			long deltaTimeNanos =  currentTime - previousTime;
+			
+			if(context.isRobotsDisabled() && (disableRobotsFor -= deltaTimeNanos) <= 0)
+				context.enableRobots();
+			
+		    double deltaTimeSeconds = deltaTimeNanos / 1e9;
 		    previousTime = currentTime;
 		    
-		    double dt = Math.min(deltaTime, 0.005f);
+		    double dt = Math.min(deltaTimeSeconds, 0.005f);
 		    
 			GameContext.setDeltaTime(dt);
 			renderer.getCurrentSpritesList().stream().filter(s -> s instanceof AnimatedSprite).forEach(s -> ((AnimatedSprite)s).updateElapsedTime(dt));
@@ -115,8 +125,7 @@ public class GameLoop extends Thread
 		
 		Leaderboard leaderboard = context.getLeaderboard();
 		leaderboard.addEntry(new Leaderboard.Entry(player.getName(), player.getPoints()));
-		leaderboard.store();
-		
+		leaderboard.store();		
 	}	
 	
 	private void skipPlayerUpdate(long nanos)
@@ -127,4 +136,10 @@ public class GameLoop extends Thread
 	
 	private void setGameEnd(long nanos)
 	{ gameWillEnd = true; continueUntil = System.nanoTime() + nanos; }
+	
+	private void terminalOpened()
+	{ pauseSimulation = true; EventDispatcher.notify(new TerminalMenuRequested(context.getPlayer())); }
+	
+	private void disableRobots()
+	{ context.disableRobots(); disableRobotsFor = Enemy.ROBOT_DISABLE_NANOS; }
 }
