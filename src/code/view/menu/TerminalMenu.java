@@ -12,6 +12,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 //view import
 import code.view.images.StaticImage;
+import code.view.menu.event.PlatformResetRequested;
 import code.view.menu.event.RobotDisableRequested;
 import code.view.menu.event.TerminalClosed;
 import code.event.EventDispatcher;
@@ -103,6 +104,12 @@ public class TerminalMenu extends JPanel
 				EventDispatcher.notify(new TerminalClosed());
 			
 			EventDispatcher.notify(new RobotDisableRequested());
+		});
+		platformResetButton.addActionListener(e -> {
+			if(player.getPlatformPasswordsObtained() != 0)
+				EventDispatcher.notify(new TerminalClosed());
+			
+			EventDispatcher.notify(new PlatformResetRequested());
 		});
 		exitButton.addActionListener(e -> EventDispatcher.notify(new TerminalClosed()));
 	}

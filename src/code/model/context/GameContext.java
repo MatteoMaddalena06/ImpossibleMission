@@ -5,8 +5,6 @@ import code.model.room.Room;
 import code.model.Leaderboard;
 import code.model.Point;
 import code.model.gameobjects.Player;
-//event import
-import code.event.EventDispatcher;
 
 public class GameContext
 {
@@ -69,7 +67,7 @@ public class GameContext
 	{ return isRobotsDisabled; }
 	
 	public void resetPlatform()
-	{ platformsToReset = currentRoom.getPlatformsNumber(); }
+	{ platformsToReset = (player.usePlatoformPassword()) ? currentRoom.getPlatformsNumber() : 0; }
 	
 	public void resetOnePlatform()
 	{ platformsToReset--; }

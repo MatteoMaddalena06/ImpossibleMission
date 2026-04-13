@@ -19,13 +19,17 @@ import code.model.Leaderboard;
 //view import
 import code.view.Renderer;
 import code.view.menu.event.RobotDisableRequested;
+import code.view.menu.event.PlatformResetRequested;
 import code.view.sprites.AnimatedSprite;
+import code.view.sprites.PlayerSprite;
 //controller import
 import code.controller.event.StopGame;
 import code.controller.event.TerminalMenuRequested;
 import code.controller.event.GameResumed;
 //event import
 import code.event.EventDispatcher;
+
+import code.model.gameobjects.Platform;
 
 public class GameLoop extends Thread
 {
@@ -51,12 +55,13 @@ public class GameLoop extends Thread
 		this.context = context; 
 		pauseSimulationUntil = gameWillEnd = skipPlayerUpdateUntil = pauseSimulation = false;
 		
-		EventDispatcher.subscribe(PlayerDied.class,            x -> skipPlayerUpdate(((PlayerDied)x).nanos()));
-		EventDispatcher.subscribe(StopSimulation.class,		   x -> pauseSimulation(((StopSimulation)x).nanos()));
-		EventDispatcher.subscribe(RobotDisableRequested.class, x -> disableRobots());
-		EventDispatcher.subscribe(GameWillEnd.class,    	   x -> setGameEnd(((GameWillEnd)x).nanos()));
-		EventDispatcher.subscribe(TerminalOpened.class,		   x -> terminalOpened());
-		EventDispatcher.subscribe(GameResumed.class,    	   x -> pauseSimulation = false);
+		EventDispatcher.subscribe(PlayerDied.class,             x -> skipPlayerUpdate(((PlayerDied)x).nanos()));
+		EventDispatcher.subscribe(StopSimulation.class,		    x -> pauseSimulation(((StopSimulation)x).nanos()));
+		EventDispatcher.subscribe(RobotDisableRequested.class,  x -> disableRobots());
+		EventDispatcher.subscribe(GameWillEnd.class,    	    x -> setGameEnd(((GameWillEnd)x).nanos()));
+		EventDispatcher.subscribe(TerminalOpened.class,		    x -> terminalOpened());
+		EventDispatcher.subscribe(GameResumed.class,    	    x -> pauseSimulation = false);
+		EventDispatcher.subscribe(PlatformResetRequested.class, x -> context.resetPlatform());
 	}
 	
 	@Override 
@@ -91,7 +96,9 @@ public class GameLoop extends Thread
 		    double dt = Math.min(deltaTimeSeconds, 0.005f);
 		    
 			GameContext.setDeltaTime(dt);
-			renderer.getCurrentSpritesList().stream().filter(s -> s instanceof AnimatedSprite).forEach(s -> ((AnimatedSprite)s).updateElapsedTime(dt));
+			renderer.getCurrentSpritesList().stream().filter(
+					s -> (!context.isRobotsDisabled() && s instanceof AnimatedSprite) || s instanceof PlayerSprite
+			).forEach(s -> ((AnimatedSprite)s).updateElapsedTime(dt));
 			
 			Room currentRoom = context.getCurrentRoom();
 			gameObjectList = currentRoom.getGameObjectList();
@@ -103,10 +110,10 @@ public class GameLoop extends Thread
 				previousRoom = currentRoom;
 			}
 			
+			platformClusterList.forEach(c -> c.update(context));
+			
 			for(int i = gameObjectList.size() - 1; i >= 0; i--)
 				gameObjectList.get(i).update(context);
-			
-			platformClusterList.forEach(c -> c.update(context));
 			
 			if(gameWillEnd && currentTime > continueUntil)
 				break;

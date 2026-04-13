@@ -10,7 +10,7 @@ public class Platform extends MovingObject
 	public Platform(Point position, int width, int height)
 	{ 
 		super(position, width, height);
-		originalPosition = position;
+		originalPosition = new Point(position);
 	}
 	
 	@Override
@@ -18,7 +18,7 @@ public class Platform extends MovingObject
 	{
 		if(context.getPlatformsToReset() == 0)
 			return;
-		
+
 		setPosition(originalPosition);
 		context.resetOnePlatform();		
 	}
