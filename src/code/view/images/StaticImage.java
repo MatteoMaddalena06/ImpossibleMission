@@ -393,6 +393,7 @@ public enum StaticImage
 			case Room.Color.GREEN  -> greenFurnitures.clone();
 			case Room.Color.RED    -> redFurnitures.clone();
 			case Room.Color.PURPLE -> purpleFurnitures.clone();
+			default -> throw new IllegalArgumentException("It is impossible to return a furniture list without color");
 		};
 	}
 	
@@ -402,6 +403,7 @@ public enum StaticImage
 			case Room.Color.GREEN  -> GREEN_FLOOR;
 			case Room.Color.RED    -> RED_FLOOR;
 			case Room.Color.PURPLE -> PURPLE_FLOOR;
+			default -> throw new IllegalArgumentException("It is impossible to return a floor without color");
 		};
 	}
 	

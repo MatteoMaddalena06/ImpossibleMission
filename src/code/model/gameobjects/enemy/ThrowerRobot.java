@@ -85,7 +85,7 @@ public class ThrowerRobot extends AttackerRobot
 			{
 				Room currentRoom = context.getCurrentRoom();
 				
-				if((attackCounter != 0 && isOnGround()) || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
+				if((attackCounter != 0 && isOnGround()) || getPosition().getY() >= RoomMap.PIXELS_MAP_HEIGHT)
 				{
 					currentRoom.removeEnemyAttack(this);
 					EventDispatcher.notify(new AttackEnded(this));

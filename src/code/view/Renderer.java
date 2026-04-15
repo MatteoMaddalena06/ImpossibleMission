@@ -57,15 +57,17 @@ public class Renderer extends JPanel
 	private static final BufferedImage lifeIcon    = StaticImage.LIFE_ICON.getImage();
 	private static final StaticImage[] numbersList = StaticImage.getNumbersList();
 	
-	private static final int LIFEICON_SIZE    = 35;
-	private static final int LIFEICON_PADDING = 5;
-	private static final int DIGITICON_SIZE   = 35;
+	private static final int LIFEICON_SIZE     = 35;
+	private static final int LIFEICON_PADDING  = 5;
+	private static final int DIGITICON_SIZE    = 35;
 	private static final int DIGITICON_PADDING = 5;
 	
 	private Player player;
 	private GameContext context;
 	private List<Sprite> currentSpritesList; 
 	private Map<Room, List<Sprite>> spritesListsCache;
+	
+	private double currentWindowY;
 	
 	private boolean printSearchingState;
 	private boolean printFurnitureLoot;
@@ -75,6 +77,7 @@ public class Renderer extends JPanel
 	{	
 		currentSpritesList = new LinkedList<Sprite>();
 		spritesListsCache = new HashMap<Room, List<Sprite>>();
+		currentWindowY = 0;
 		printSearchingState = printFurnitureLoot = false;
 		this.player = player;
 		this.context = context;
@@ -95,12 +98,26 @@ public class Renderer extends JPanel
     	
     	g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
     	
-    	List<Sprite> firstLayerSprites = currentSpritesList.stream().filter(s -> {
+    	List<Sprite> spritesList = currentSpritesList;
+    	
+    	if(player.isInElevator())
+    	{
+    		double referenceY = context.getCurrentRoom().getPlatformList().get(0).copyPosition().getY();
+    		
+    		spritesList = currentSpritesList.stream().filter(s -> {
+    			double spriteY = s.getGameObject().copyPosition().getY();
+    			return spriteY + s.getGameObject().getHeight() >= currentWindowY;
+    		}).toList();	
+    		
+    		currentWindowY = referenceY - RoomMap.PIXELS_MAP_HEIGHT + RoomMap.TILE_SIZE;
+    	}
+    	
+    	List<Sprite> firstLayerSprites = spritesList.stream().filter(s -> {
     		GameObject go = s.getGameObject();
     		return go instanceof FixedObject || go instanceof Furniture || go instanceof Terminal || go instanceof Platform;
     	}).toList();
     	
-    	List<Sprite> secondLayerSprites = currentSpritesList.stream().filter(s -> {
+    	List<Sprite> secondLayerSprites = spritesList.stream().filter(s -> {
     		GameObject go = s.getGameObject();
     		return go instanceof Enemy || go instanceof Player || go instanceof AttackerRobot.Attack;
     	}).toList();
@@ -148,27 +165,12 @@ public class Renderer extends JPanel
 	private void paintImage(GameObject bindedGameObject, BufferedImage image, Graphics g)
 	{
 		Point gameObjectPosition = bindedGameObject.copyPosition();
-		int gameObjectX = (int)gameObjectPosition.getX(), gameObjectY = (int)gameObjectPosition.getY();
-		
+		int paintX = (int)gameObjectPosition.getX();
+		int paintY = (int)(gameObjectPosition.getY() - currentWindowY);
+	
 		int overflow = image.getHeight() - bindedGameObject.getHeight();
 		
-		g.drawImage(image, gameObjectX + bindedGameObject.getWidth() / 2 - image.getWidth() / 2, gameObjectY - overflow, null);
-		
-		//for hitbox debugging
-		if(bindedGameObject instanceof Enemy && !(bindedGameObject instanceof BlackOrb))
-		{
-			FieldOfView fov = ((Enemy)bindedGameObject).getFOV();
-			Point p = fov.copyPosition();
-			g.setColor(java.awt.Color.RED);
-			g.drawRect((int)p.getX(), (int)p.getY(), fov.getWidth(), fov.getHeight());
-			g.setColor(java.awt.Color.GREEN);
-			g.drawRect(gameObjectX, gameObjectY, bindedGameObject.getWidth(), bindedGameObject.getHeight());
-		}
-		else if(bindedGameObject instanceof Player)
-		{
-			g.setColor(java.awt.Color.GREEN);
-			g.drawRect(gameObjectX, gameObjectY, bindedGameObject.getWidth(), bindedGameObject.getHeight());
-		}
+		g.drawImage(image, paintX + bindedGameObject.getWidth() / 2 - image.getWidth() / 2, paintY - overflow, null);
 	}
 	
 	private void paintFurnitureInfo(Furniture furniture, BufferedImage image, Graphics g)
@@ -273,5 +275,5 @@ public class Renderer extends JPanel
 	
 	@Override
 	public Dimension getPreferredSize() 
-	{ return new Dimension(RoomMap.MAP_WIDTH * RoomMap.TILE_SIZE, RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE); }
+	{ return new Dimension(RoomMap.PIXELS_MAP_WIDTH, RoomMap.PIXELS_MAP_HEIGHT); }
 }

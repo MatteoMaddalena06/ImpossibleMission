@@ -39,7 +39,12 @@ public enum PresettedRoom
 	ROOM29(RoomMapParser.parse(RoomMap.ROOM29), Room.Color.GREEN,  Room.ExitLayout.ONLEFT),
 	ROOM30(RoomMapParser.parse(RoomMap.ROOM30), Room.Color.PURPLE, Room.ExitLayout.ONLEFTANDRIGHT),
 	ROOM31(RoomMapParser.parse(RoomMap.ROOM31), Room.Color.GREEN,  Room.ExitLayout.ONLEFTANDRIGHT),
-	ROOM32(RoomMapParser.parse(RoomMap.ROOM32), Room.Color.PURPLE, Room.ExitLayout.ONRIGHT);
+	ROOM32(RoomMapParser.parse(RoomMap.ROOM32), Room.Color.PURPLE, Room.ExitLayout.ONRIGHT),
+	
+	ELEVATOR_RIGHT_EXIT    (RoomMapParser.parse(RoomMap.RIGHTEXIT_ELEVATOR_ROOM),     Room.Color.ANY, Room.ExitLayout.ONRIGHT),
+	ELEVATOR_LEFT_EXIT     (RoomMapParser.parse(RoomMap.LEFTEXIT_ELEVATOR_ROOM),      Room.Color.ANY, Room.ExitLayout.ONLEFT),
+	ELEVATOR_RIGHTLEFT_EXIT(RoomMapParser.parse(RoomMap.RIGHTLEFTEXIT_ELEVATOR_ROOM), Room.Color.ANY, Room.ExitLayout.ONRIGHT),
+	ELEVATOR_NOEXIT        (RoomMapParser.parse(RoomMap.NOEXIT_ELEVATOR_ROOM),        Room.Color.ANY, Room.ExitLayout.NOEXIT);
 	
 	private static final PresettedRoom[] leftRoom          = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONLEFT).toArray(PresettedRoom[]::new);
 	private static final PresettedRoom[] rightRoom         = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONRIGHT).toArray(PresettedRoom[]::new);
@@ -67,11 +72,12 @@ public enum PresettedRoom
 			case Room.ExitLayout.ONLEFT  		-> leftRoom[index].getRoom();
 			case Room.ExitLayout.ONRIGHT		-> rightRoom[index].getRoom();
 			case Room.ExitLayout.ONLEFTANDRIGHT -> leftAndRightRoom[index].getRoom();
+			case Room.ExitLayout.NOEXIT         -> ELEVATOR_NOEXIT.getRoom();
 		};
 	}
 	
-	private Room getRoom()
-	{ return new Room(gameObjectList, color, exitLayout); }
+	public Room getRoom()
+	{ return new Room(gameObjectList, color); }
 	
 	public List<Furniture> getFurnitures()
 	{ return gameObjectList.stream().filter(g -> g instanceof Furniture).map(g -> (Furniture)g).toList(); }

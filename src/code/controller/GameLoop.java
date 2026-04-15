@@ -123,6 +123,8 @@ public class GameLoop extends Thread
 			else
 				player.update(context);
 			
+			System.out.println(player.copyPosition().getX() + " " + player.copyPosition().getY());
+			
 			SwingUtilities.invokeLater(() -> renderer.repaint());
 			
 			try { Thread.sleep(1); } catch (Exception e) {}

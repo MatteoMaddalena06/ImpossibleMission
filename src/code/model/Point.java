@@ -7,6 +7,9 @@ public class Point
     public Point(double x, double y)
     { this.x = x; this.y = y; }
     
+  	public Point(Point source)
+  	{ this(source.x, source.y); }
+  	
     @Override
     public boolean equals(Object obj)
     {
@@ -19,10 +22,6 @@ public class Point
         Point other = (Point) obj;
         return x == other.x && y == other.y;
     }
-    
-    //for a copy of the point
-  	public Point(Point source)
-  	{ this(source.x, source.y); }
 
     public void setX(double x) 
     { this.x = x; }

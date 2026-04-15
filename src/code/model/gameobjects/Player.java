@@ -30,6 +30,11 @@ public class Player extends MovingObject
 	private static final long DIE_WAITING = 1500000000L;
 	private static final int  DIE_PENALITY = 350;
 	
+	public static final int START_GAME_SAPWN_X = RoomMap.PIXELS_MAP_WIDTH / 2;
+	public static final int START_GAME_SPAWN_Y = RoomMap.PIXELS_MAP_HEIGHT - 200;
+	
+	private GameContext context;
+	
 	private int lifes;
 	private String name;
 	private int points;
@@ -41,6 +46,7 @@ public class Player extends MovingObject
 	private boolean isOnPlatform;
 	private Platform usedPlatform;
 	
+	private boolean isInElevator;
 	private boolean isDead;
 	private boolean isSearching;
 	private Furniture usedFurniture;
@@ -57,11 +63,14 @@ public class Player extends MovingObject
 		robotPasswordsObtained = platformPasswordsObtained = 0;
 		setPhysicsState(MovingObject.PhysicsState.IDLE);
 		wasHitboxModified = isSearching = isOnPlatform  = false;
+		isInElevator = true;
 	}
 
 	@Override
 	public void update(GameContext context) 
 	{	
+		this.context = context;
+		
 		if(isDead)
 		{
 			Point spawnPosition = context.getPlayerSpawn();
@@ -129,7 +138,7 @@ public class Player extends MovingObject
 		boolean isCollidingWithEnemy = currentRoom.getEnemiesList().stream().anyMatch(g -> isColliding(g));
 		boolean isCollidingWithAttack = currentRoom.getGameObjectList().stream().filter(g -> g instanceof AttackerRobot.Attack).anyMatch(a -> isColliding(a));
 		
-		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || getPosition().getY() >= RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE)
+		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || (getPosition().getY() >= RoomMap.PIXELS_MAP_HEIGHT && !isInElevator))
 		{
 			isDead = true;
 			points = Math.max(0, points - DIE_PENALITY);
@@ -228,6 +237,9 @@ public class Player extends MovingObject
 	
 	void setSearchingState(boolean isSearching)
 	{ this.isSearching = isSearching; }
+	
+	public boolean isInElevator()
+	{ return isInElevator; }
 	
 	public boolean isDead()
 	{ return isDead; }

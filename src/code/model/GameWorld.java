@@ -1,4 +1,4 @@
-package code.model.world;
+package code.model;
 
 //data structure modules
 import java.util.List;
@@ -8,12 +8,15 @@ import java.util.stream.IntStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-
 //inproject import
 import code.model.room.Room;
+import code.model.room.Room.Color;
+import code.model.room.RoomMap;
 import code.model.room.PresettedRoom;
-import code.model.Point;
 import code.model.gameobjects.Furniture;
+import code.model.gameobjects.GameObjectFactory;
+import code.model.gameobjects.Platform;
+import code.model.gameobjects.Player;
 import code.model.puzzle.PresettedPassword;
 import code.model.puzzle.PuzzlePiece;
 
@@ -98,6 +101,31 @@ public class GameWorld
 				}	
 			}	
 		}
+		
+		for(int x = 1; x < cols; x += 2)
+		{
+			List<Room.Color> colors = new ArrayList<Room.Color>(Arrays.asList(Room.Color.values()));
+			colors.remove(Color.ANY);
+			Collections.shuffle(colors);
+			Room.Color randomColor = colors.get(0);
+			
+			for(int y = 0; y < rows; y++)
+			{
+				if(worldMatrix[y][x - 1] == null && worldMatrix[y][x + 1] == null)
+					worldMatrix[y][x] = PresettedRoom.ELEVATOR_NOEXIT.getRoom();
+				
+				else if(worldMatrix[y][x - 1] != null && worldMatrix[y][x + 1] == null)
+					worldMatrix[y][x] = PresettedRoom.ELEVATOR_LEFT_EXIT.getRoom();
+				
+				else if(worldMatrix[y][x - 1] == null && worldMatrix[y][x + 1] != null)
+					worldMatrix[y][x] = PresettedRoom.ELEVATOR_RIGHT_EXIT.getRoom();
+				
+				else
+					worldMatrix[y][x] = PresettedRoom.ELEVATOR_RIGHTLEFT_EXIT.getRoom();
+				
+				worldMatrix[y][x].setColor(randomColor);
+			}
+		}
 	}
 	
 	private static void makeTheMapPlayable(List<Furniture> furnitureList, PresettedPassword password)
@@ -126,6 +154,30 @@ public class GameWorld
 	{ 
 		List<Furniture> visitedFurniture =  distributeInFurniture(furnitureList, puzzlePieces.length, Furniture.LootType.PUZZLE_PIECE); 
 		IntStream.range(0, visitedFurniture.size()).forEach(i -> visitedFurniture.get(i).setPuzzlePiece(puzzlePieces[i]));
+	}
+	
+	public Room getElevatorColumnAsRoom(int column, Player player)
+	{
+		if(column % 2 == 0)
+			throw new IllegalArgumentException("worldMatrix[][" + column + "] is not an elevator column");
+		
+		Room result = worldMatrix[0][column];
+		
+		for(int y = 1; y < worldMatrix.length; y++)
+			result = result.merge(worldMatrix[y][column]);
+		
+		double playerY = player.copyPosition().getY();
+	
+		result.addPlatform(
+				(Platform)GameObjectFactory.produce
+				(
+						RoomMap.PLATFORM_ID, 
+						new Point(RoomMap.ELEVATOR_X, RoomMap.ELEVATOR_Y + (int)(playerY / RoomMap.PIXELS_MAP_HEIGHT)),
+						RoomMap.ELEVATOR_WIDTH, RoomMap.ELEVATOR_HEIGHT
+				)
+		);
+		
+		return result;
 	}
 	
 	public Room[][] getWorldMatrix()

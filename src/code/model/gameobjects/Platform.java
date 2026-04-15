@@ -12,7 +12,7 @@ public class Platform extends MovingObject
 		super(position, width, height);
 		originalPosition = new Point(position);
 	}
-	
+
 	@Override
 	public void update(GameContext context)
 	{

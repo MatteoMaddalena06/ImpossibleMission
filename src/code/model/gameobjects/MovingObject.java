@@ -54,7 +54,7 @@ public abstract class MovingObject extends GameObject
 	    double correctionX = thisPosition.getX(), minDistance = Integer.MAX_VALUE;
 	    GameObject nearest = null;
 
-	    for (GameObject fixed : gameObjectList) 
+	    for(GameObject fixed : gameObjectList) 
 	    {
 	        if(!isColliding(fixed))
 	        	continue;
@@ -81,7 +81,7 @@ public abstract class MovingObject extends GameObject
 	    double correctionY = thisPosition.getY(), minDistance = Integer.MAX_VALUE;
 		GameObject nearest = null;
 
-	    for (GameObject fixed : gameObjectList)
+	    for(GameObject fixed : gameObjectList)
 	    {
 	        if(!isColliding(fixed)) 
 	        	continue;

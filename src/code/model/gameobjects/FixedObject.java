@@ -10,11 +10,14 @@ public class FixedObject extends GameObject
 	public enum Type 
 	{ WALL, FLOOR }
 	
-    public FixedObject(Type type, Point point, int w, int h)
+    public FixedObject(Type type, Point point, int width, int height)
     {
-        super(point, w, h);
+        super(point, width, height);
         this.type = type;
     }
+    
+    public FixedObject(FixedObject source, Point position)
+    { this(source.type, position, source.getWidth(), source.getHeight()); }
     
     public Type getType()
     { return type; }

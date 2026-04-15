@@ -15,11 +15,10 @@ import java.io.IOException;
 import java.util.Arrays;
 //model import
 import code.model.context.GameContext;
-import code.model.gameobjects.Furniture;
 import code.model.gameobjects.Player;
 import code.model.room.Room;
 import code.model.room.RoomMap;
-import code.model.world.GameWorld;
+import code.model.GameWorld;
 import code.model.Leaderboard;
 import code.model.Point;
 //view import
@@ -51,8 +50,8 @@ public class JImpossibleMission
 	private static final BufferedImage CUSTOM_FRAME_ICON = StaticImage.WINDOW_ICON.getImage();
 	private static Font customFont = UIManager.getFont("Label.font").deriveFont(FONT_SIZE);
 	
-	private static final int FRAME_WIDTH  = RoomMap.MAP_WIDTH * RoomMap.TILE_SIZE;
-	private static final int FRAME_HEIGHT = RoomMap.MAP_HEIGHT * RoomMap.TILE_SIZE;
+	private static final int FRAME_WIDTH  = RoomMap.PIXELS_MAP_WIDTH;
+	private static final int FRAME_HEIGHT = RoomMap.PIXELS_MAP_HEIGHT + RoomMap.TILE_SIZE;
 	
 	private LeaderboardMenu oldLeaderboardPanel;
 	private Renderer oldGamePanel;
@@ -108,16 +107,15 @@ public class JImpossibleMission
 		EventDispatcher.subscribe(LeaderboardMenuRequested.class, x -> swapToLeaderboard(rootPanel, layout));
 		EventDispatcher.subscribe(StopGame.class,                 x -> layout.show(rootPanel, MAIN_MENU_ID) );
 		EventDispatcher.subscribe(TerminalMenuRequested.class,    x -> swapToTerminalMenu(((TerminalMenuRequested)x).player(), layeredPane));
-		EventDispatcher.subscribe(TerminalClosed.class,           x -> { oldTerminalMenu.setVisible(false); EventDispatcher.notify(new GameResumed());});
+		EventDispatcher.subscribe(TerminalClosed.class,           x -> { oldTerminalMenu.setVisible(false); EventDispatcher.notify(new GameResumed()); });
 	}
 	
 	private void startGame(String playerName, JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
 	{
 		GameWorld world = new GameWorld();
-		Player player = new Player(playerName, new Point(60, 60));
-		Room rndRoom = Arrays.stream(world.getWorldMatrix()).flatMap(r -> Arrays.stream(r)).filter(r -> r != null).findAny().get();
-		GameContext context = new GameContext(player, rndRoom, Leaderboard.load());
-		context.setPlayerSpawn(new Point(60, 60));
+		Player player = new Player(playerName, new Point(Player.START_GAME_SAPWN_X, Player.START_GAME_SPAWN_Y));
+		GameContext context = new GameContext(player, world.getElevatorColumnAsRoom(1, player), Leaderboard.load());
+		context.setPlayerSpawn(new Point(Player.START_GAME_SAPWN_X, Player.START_GAME_SPAWN_Y));
 		
 		Renderer gamePanel = new Renderer(player, context);
 		GameLoop gameLoop = new GameLoop(context, gamePanel);
