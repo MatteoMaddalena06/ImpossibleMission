@@ -147,8 +147,6 @@ public class Renderer extends JPanel
     	{ 
     		Furniture.LootType furnitureLootType = interestingFurniture.getContent();
     		
-    		System.out.println(furnitureLootType);
-    		
     		if(furnitureLootType == Furniture.LootType.PUZZLE_PIECE) 
     			paintFurnitureInfo(interestingFurniture, StaticImage.getPuzzlePiece(interestingFurniture.getPuzzlePiece()).getImage(), g);
     		

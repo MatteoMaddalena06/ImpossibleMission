@@ -19,7 +19,7 @@ public class Platform extends MovingObject
 		if(context.getPlatformsToReset() == 0)
 			return;
 
-		setPosition(originalPosition);
+		setPosition(new Point(originalPosition));
 		context.resetOnePlatform();		
 	}
 }

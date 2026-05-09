@@ -163,6 +163,8 @@ public class Player extends MovingObject
 			points = Math.max(0, points - DIE_PENALITY);
 			EventDispatcher.notify(new PlayerDied(DIE_WAITING));
 			
+			context.resetPlatforms();
+			
 			if(--lifes == 0)
 				EventDispatcher.notify(new GameWillEnd(DIE_WAITING));
 		}
