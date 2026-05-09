@@ -63,7 +63,7 @@ public class GameContext
 			needToRegenerateElevatorRoom = false;
 			generatedElevatorRoom = world.getElevatorColumnAsRoom(worldX, player);
 		}
-		
+
 		return generatedElevatorRoom;
 	}
 	
@@ -82,7 +82,7 @@ public class GameContext
 	public boolean isRobotsDisabled()
 	{ return isRobotsDisabled; }
 	
-	public void resetPlatform()
+	public void resetPlatforms()
 	{ platformsToReset = (player.usePlatoformPassword()) ? getCurrentRoom().getPlatformsNumber() : 0; }
 	
 	public void resetOnePlatform()

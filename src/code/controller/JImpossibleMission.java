@@ -68,7 +68,7 @@ public class JImpossibleMission
 		} 
 		catch (FontFormatException | IOException e)
 		{ System.out.println(CUSTOMFONT_LOAD_ERROR); } 
-		
+
 		new JImpossibleMission().start();
 	}
 

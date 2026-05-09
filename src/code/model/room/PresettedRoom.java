@@ -2,7 +2,6 @@ package code.model.room;
 
 //data structure modules
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 //model import
 import code.model.Point;
@@ -42,14 +41,14 @@ public enum PresettedRoom
 	ROOM31(RoomMapParser.parse(RoomMap.ROOM31), Room.Color.GREEN,  Room.ExitLayout.ONLEFTANDRIGHT, RoomMap.bottomLeftSpawnPosition, RoomMap.upperRightSpawnPosition),
 	ROOM32(RoomMapParser.parse(RoomMap.ROOM32), Room.Color.PURPLE, Room.ExitLayout.ONRIGHT,        RoomMap.bottomRightSpawnPosition),
 	
-	ELEVATOR_RIGHT_EXIT    (RoomMapParser.parse(RoomMap.RIGHTEXIT_ELEVATOR_ROOM),     Room.Color.GREEN, Room.ExitLayout.ONRIGHT,        RoomMap.bottomRightSpawnPosition),
-	ELEVATOR_LEFT_EXIT     (RoomMapParser.parse(RoomMap.LEFTEXIT_ELEVATOR_ROOM),      Room.Color.GREEN, Room.ExitLayout.ONLEFT,  	      RoomMap.bottomLeftSpawnPosition),
-	ELEVATOR_RIGHTLEFT_EXIT(RoomMapParser.parse(RoomMap.RIGHTLEFTEXIT_ELEVATOR_ROOM), Room.Color.GREEN, Room.ExitLayout.ONLEFTANDRIGHT, RoomMap.bottomLeftSpawnPosition, RoomMap.bottomRightSpawnPosition),
-	ELEVATOR_NOEXIT        (RoomMapParser.parse(RoomMap.NOEXIT_ELEVATOR_ROOM),        Room.Color.GREEN, Room.ExitLayout.NOEXIT); 
+	ELEVATOR_RIGHT_EXIT    (RoomMapParser.parse(RoomMap.RIGHTEXIT_ELEVATOR_ROOM),     Room.Color.GREEN, Room.ExitLayout.ONRIGHT,        RoomMap.bottomRightSpawnPosition, true),
+	ELEVATOR_LEFT_EXIT     (RoomMapParser.parse(RoomMap.LEFTEXIT_ELEVATOR_ROOM),      Room.Color.GREEN, Room.ExitLayout.ONLEFT,  	      RoomMap.bottomLeftSpawnPosition, true),
+	ELEVATOR_RIGHTLEFT_EXIT(RoomMapParser.parse(RoomMap.RIGHTLEFTEXIT_ELEVATOR_ROOM), Room.Color.GREEN, Room.ExitLayout.ONLEFTANDRIGHT, RoomMap.bottomLeftSpawnPosition, RoomMap.bottomRightSpawnPosition, true),
+	ELEVATOR_NOEXIT        (RoomMapParser.parse(RoomMap.NOEXIT_ELEVATOR_ROOM),        Room.Color.GREEN, Room.ExitLayout.NOEXIT, true); 
 	
-	private static final PresettedRoom[] leftRoom          = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONLEFT).toArray(PresettedRoom[]::new);
-	private static final PresettedRoom[] rightRoom         = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONRIGHT).toArray(PresettedRoom[]::new);
-	private static final PresettedRoom[] leftAndRightRoom  = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONLEFTANDRIGHT).toArray(PresettedRoom[]::new);
+	private static final PresettedRoom[] leftRoom          = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONLEFT && !r.isElevator).toArray(PresettedRoom[]::new);
+	private static final PresettedRoom[] rightRoom         = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONRIGHT && !r.isElevator).toArray(PresettedRoom[]::new);
+	private static final PresettedRoom[] leftAndRightRoom  = Arrays.stream(values()).filter(r -> r.exitLayout == Room.ExitLayout.ONLEFTANDRIGHT && !r.isElevator).toArray(PresettedRoom[]::new);
 	
 	public static final int LEFT_ROOM_NUMBER       = leftRoom.length;
 	public static final int RIGHT_ROOM_NUMBER      = rightRoom.length;
@@ -60,18 +59,29 @@ public enum PresettedRoom
 	private Room.Color color;
 	private Room.ExitLayout exitLayout;
 	private Point leftSpawnPosition, rightSpawnPosition;
+	private boolean isElevator;
 
-	private PresettedRoom(List<GameObject> gameObjectList, Room.Color color, Room.ExitLayout exitLayout, Point leftSpawnPosition, Point rightSpawnPosition)
+	private PresettedRoom(List<GameObject> gameObjectList, Room.Color color, Room.ExitLayout exitLayout, Point leftSpawnPosition, Point rightSpawnPosition, boolean isElevator)
 	{ 
 		this.gameObjectList = gameObjectList;
 		this.color = color;
 		this.exitLayout = exitLayout;
 		this.leftSpawnPosition = leftSpawnPosition;
 		this.rightSpawnPosition = rightSpawnPosition;
+		this.isElevator = isElevator;
 	}
+	
+	private PresettedRoom(List<GameObject> gameObjectList, Room.Color color, Room.ExitLayout exitLayout, Point leftSpawnPosition, Point rightSpawnPosition)
+	{ this(gameObjectList, color, exitLayout, leftSpawnPosition, rightSpawnPosition, false); }
+	
+	private PresettedRoom(List<GameObject> gameObjectList, Room.Color color, Room.ExitLayout exitLayout, Point spawnPosition, boolean isElevator)
+	{ this(gameObjectList, color, exitLayout, spawnPosition, spawnPosition, isElevator); }
 	
 	private PresettedRoom(List<GameObject> gameObjectList, Room.Color color, Room.ExitLayout exitLayout, Point spawnPosition)
 	{ this(gameObjectList, color, exitLayout, spawnPosition, spawnPosition); }
+	
+	private PresettedRoom(List<GameObject> gameObjectList, Room.Color color, Room.ExitLayout exitLayout, boolean isElevator)
+	{ this(gameObjectList, color, exitLayout, null, isElevator); }
 	
 	private PresettedRoom(List<GameObject> gameObjectList, Room.Color color, Room.ExitLayout exitLayout)
 	{ this(gameObjectList, color, exitLayout, null); }
@@ -82,8 +92,7 @@ public enum PresettedRoom
 			case Room.ExitLayout.ONLEFT  		-> leftRoom[index].getRoom();
 			case Room.ExitLayout.ONRIGHT		-> rightRoom[index].getRoom();
 			case Room.ExitLayout.ONLEFTANDRIGHT -> leftAndRightRoom[index].getRoom();
-			case Room.ExitLayout.NOEXIT         -> ELEVATOR_NOEXIT.getRoom();
-			default -> throw new IllegalArgumentException("ExitLayout \"ANY\" don't accept for this method");
+			default -> throw new IllegalArgumentException("Invalid ExitLayout");
 		};
 	}
 	

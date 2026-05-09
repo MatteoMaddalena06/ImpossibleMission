@@ -62,7 +62,7 @@ public class GameLoop extends Thread
 		EventDispatcher.subscribe(GameWillEnd.class,    	    x -> setGameEnd(((GameWillEnd)x).nanos()));
 		EventDispatcher.subscribe(TerminalOpened.class,		    x -> terminalOpened());
 		EventDispatcher.subscribe(GameResumed.class,    	    x -> pauseSimulation = false);
-		EventDispatcher.subscribe(PlatformResetRequested.class, x -> context.resetPlatform());
+		EventDispatcher.subscribe(PlatformResetRequested.class, x -> context.resetPlatforms());
 	}
 	
 	@Override 
