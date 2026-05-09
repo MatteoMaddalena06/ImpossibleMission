@@ -2,26 +2,27 @@ package code.model.context;
 
 //inproject import
 import code.model.room.Room;
+import code.model.GameWorld;
 import code.model.Leaderboard;
-import code.model.Point;
 import code.model.gameobjects.Player;
 
 public class GameContext
 {
 	private Player player; 
-	private Room currentRoom;
+	private GameWorld world;
+	private Leaderboard leaderboard;
 	private boolean[] userInput;
 	private boolean isRobotsDisabled;
 	private int platformsToReset;
-	private Leaderboard leaderboard;
-	private Point playerSpawn;
+	
+	private Room generatedElevatorRoom;
+	private boolean needToRegenerateElevatorRoom;
 	
 	private static double deltaTime;
 
 	public enum UserInput 
 	{ 
-		UP(0), DOWN(1), LEFT(2), RIGHT(3), 
-		JUMP(4), A_KEY(5), B_KEY(6), E_KEY(7), H_KEY(8);
+		UP(0), DOWN(1), LEFT(2), RIGHT(3), JUMP(4);
 		
 		private int index;
 		
@@ -32,24 +33,39 @@ public class GameContext
 		{ return index; }
 	}
 	
-	public GameContext(Player player, Room currentRoom, Leaderboard leaderboard)
+	public GameContext(Player player, GameWorld world, Leaderboard leaderboard)
 	{	
 		this.player = player;
-		this.currentRoom = currentRoom;
+		this.world = world;
 		this.leaderboard = leaderboard;
 		userInput = new boolean[UserInput.values().length];
 		isRobotsDisabled = false;
 		platformsToReset = 0;
+		needToRegenerateElevatorRoom = true;
 	}
 
 	public Player getPlayer()
 	{ return player; }
 	
-	public void setCurrentRoom(Room currentRoom)
-	{ this.currentRoom = currentRoom; }
-	
 	public Room getCurrentRoom()
-	{ return currentRoom; }
+	{ 
+		int worldX = (int)player.getWorldPosition().getX();
+		int worldY = (int)player.getWorldPosition().getY();
+		
+		if(worldX % 2 == 0)
+		{
+			needToRegenerateElevatorRoom = true;
+			return world.getWorldMatrix()[worldY][worldX];
+		}
+		
+		if(needToRegenerateElevatorRoom)
+		{
+			needToRegenerateElevatorRoom = false;
+			generatedElevatorRoom = world.getElevatorColumnAsRoom(worldX, player);
+		}
+		
+		return generatedElevatorRoom;
+	}
 	
 	public void setUserInput(UserInput userInput, boolean state)
 	{ this.userInput[userInput.getInput()] = state; }
@@ -67,7 +83,7 @@ public class GameContext
 	{ return isRobotsDisabled; }
 	
 	public void resetPlatform()
-	{ platformsToReset = (player.usePlatoformPassword()) ? currentRoom.getPlatformsNumber() : 0; }
+	{ platformsToReset = (player.usePlatoformPassword()) ? getCurrentRoom().getPlatformsNumber() : 0; }
 	
 	public void resetOnePlatform()
 	{ platformsToReset--; }
@@ -77,12 +93,6 @@ public class GameContext
 	
 	public Leaderboard getLeaderboard()
 	{ return leaderboard; }
-	
-	public Point getPlayerSpawn()
-	{ return playerSpawn; }
-	
-	public void setPlayerSpawn(Point playerSpawn)
-	{ this.playerSpawn = playerSpawn; }
 	
 	public static double getDeltaTime()
 	{ return deltaTime; }

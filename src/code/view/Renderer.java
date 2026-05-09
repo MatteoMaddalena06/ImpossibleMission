@@ -1,12 +1,13 @@
 package code.view;
 
+//councurrency import
+import java.util.concurrent.CountDownLatch;
 //data structure import
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.LinkedList;
-
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -25,6 +26,7 @@ import code.view.sprites.Sprite;
 import code.view.sprites.SpriteFactory;
 import code.view.images.ImageUtils;
 import code.view.images.StaticImage;
+import code.view.sprites.PlatformSprite;
 import code.view.sprites.PlayerSprite;
 import code.view.sprites.SearchingWindow;
 //model import
@@ -48,9 +50,6 @@ import code.model.context.PlayerFoundSomething;
 import code.model.context.PlayerIsSearching;
 import code.model.context.GameContext.UserInput;
 
-import code.model.gameobjects.enemy.Enemy.FieldOfView;
-import code.model.gameobjects.enemy.BlackOrb;
-
 public class Renderer extends JPanel
 {
 	private static final BufferedImage background  = StaticImage.BACKGROUND.getImage();
@@ -63,6 +62,7 @@ public class Renderer extends JPanel
 	private static final int DIGITICON_PADDING = 5;
 	
 	private Player player;
+	private PlayerSprite playerSprite;
 	private GameContext context;
 	private List<Sprite> currentSpritesList; 
 	private Map<Room, List<Sprite>> spritesListsCache;
@@ -73,6 +73,9 @@ public class Renderer extends JPanel
 	private boolean printFurnitureLoot;
 	private Furniture interestingFurniture;
 	
+	private CountDownLatch firstPaintLatch;
+	private boolean isFirstPaint;
+	
 	public Renderer(Player player, GameContext context)
 	{	
 		currentSpritesList = new LinkedList<Sprite>();
@@ -80,7 +83,9 @@ public class Renderer extends JPanel
 		currentWindowY = 0;
 		printSearchingState = printFurnitureLoot = false;
 		this.player = player;
+		this.playerSprite = (PlayerSprite)SpriteFactory.produce(player);
 		this.context = context;
+		isFirstPaint = true;
 		
 		EventDispatcher.subscribe(AttackLaunched.class,       x -> addAttackSprite(((AttackLaunched)x).source()));
 		EventDispatcher.subscribe(AttackEnded.class,          x -> removeAttackSprite(((AttackEnded)x).source()));
@@ -100,7 +105,10 @@ public class Renderer extends JPanel
     	
     	List<Sprite> spritesList = currentSpritesList;
     	
-    	if(player.isInElevator())
+    	if(!player.isOnElevator())
+    		currentWindowY = 0;
+    	
+    	if(player.isOnElevator())
     	{
     		double referenceY = context.getCurrentRoom().getPlatformList().get(0).copyPosition().getY();
     		
@@ -119,7 +127,7 @@ public class Renderer extends JPanel
     	
     	List<Sprite> secondLayerSprites = spritesList.stream().filter(s -> {
     		GameObject go = s.getGameObject();
-    		return go instanceof Enemy || go instanceof Player || go instanceof AttackerRobot.Attack;
+    		return go instanceof Enemy ||  go instanceof AttackerRobot.Attack;
     	}).toList();
     	
     	firstLayerSprites.forEach(s -> paintImage(s.getGameObject(), s.getImage(), g));
@@ -128,6 +136,9 @@ public class Renderer extends JPanel
     		s.computeImage(); 
     		paintImage(s.getGameObject(), s.getImage(), g)
     	;});
+    	
+    	playerSprite.computeImage();
+    	paintImage(playerSprite.getGameObject(), playerSprite.getImage(), g);
     	
     	if(printSearchingState)
     	{ paintFurnitureInfo(interestingFurniture, SearchingWindow.getSearchingWindow(interestingFurniture), g); printSearchingState = false; }
@@ -149,6 +160,12 @@ public class Renderer extends JPanel
     	
     	drawHUD(g);
     	g.dispose();
+    	
+    	if(isFirstPaint && firstPaintLatch != null)
+    	{
+    		isFirstPaint = false;
+    		firstPaintLatch.countDown();
+    	}
     } 
 	
 	private void drawHUD(Graphics g)
@@ -182,48 +199,43 @@ public class Renderer extends JPanel
 	
 	public void setCurrentSpritesList()
 	{
-		Room room = context.getCurrentRoom();
+		Room currentRoom = context.getCurrentRoom();
 		
-		if(!spritesListsCache.containsKey(room))
+		if(!spritesListsCache.containsKey(currentRoom))
 		{
-			List<Sprite> result = room.getGameObjectList().stream().map(g -> {
+			currentSpritesList = currentRoom.getGameObjectList().stream().map(g -> {
 				if(g instanceof FixedObject || g instanceof Furniture)
-					return SpriteFactory.produce(g, room.getColor());
-				
+					return SpriteFactory.produce(g, currentRoom.getColor());
+							
 				return SpriteFactory.produce(g);
 			}).collect(Collectors.toList());
 			
-			spritesListsCache.put(room, result);
-			currentSpritesList = result;
+			spritesListsCache.put(currentRoom, currentSpritesList);
 		}
-		else 
-			currentSpritesList = spritesListsCache.get(room);
-
-		currentSpritesList.add(SpriteFactory.produce(player));
-	}
-	
-	private void updateCache()
-	{ 
-		List<Sprite> spritesListToStore = 
-				currentSpritesList.stream().filter(s -> !(s instanceof PlayerSprite)).collect(Collectors.toList());
-		spritesListsCache.put(context.getCurrentRoom(), spritesListToStore);
+		else
+			currentSpritesList = spritesListsCache.get(currentRoom);
+		
+		if(player.getWorldPosition().getX() % 2 != 0)
+		{
+			Sprite spriteToRemove = currentSpritesList.stream().filter(s -> s instanceof PlatformSprite).findAny().get();
+			currentSpritesList.remove(spriteToRemove);
+			currentSpritesList.add(SpriteFactory.produce(currentRoom.getPlatformList().get(0)));
+		}
 	}
 	
 	private void addAttackSprite(AttackerRobot.Attack attack)
-	{ currentSpritesList.add(SpriteFactory.produce(attack)); updateCache(); }
+	{ currentSpritesList.add(SpriteFactory.produce(attack)); }
 	
 	private void removeAttackSprite(AttackerRobot.Attack attack)
 	{ 
 		Sprite spriteToRemove = currentSpritesList.stream().filter(s -> s.getGameObject() == attack).findFirst().get();
-		currentSpritesList.remove(spriteToRemove);
-		updateCache();
+		currentSpritesList.remove(spriteToRemove);;
 	}
 	
 	private void removeFurnitureSprite(Furniture furniture)
 	{ 
 		Sprite spriteToRemove = currentSpritesList.stream().filter(s -> s.getGameObject() == furniture).findFirst().get();
 		currentSpritesList.remove(spriteToRemove);
-		updateCache();
 	}
 	
 	private void printFurnitureLoot(Furniture furniture)
@@ -269,9 +281,14 @@ public class Renderer extends JPanel
 		});
 	}
 	
+	public void setFirstPaintLatch(CountDownLatch latch)
+	{ firstPaintLatch = latch; }
 	
 	public List<Sprite> getCurrentSpritesList()
 	{ return currentSpritesList; }
+	
+	public PlayerSprite getPlayerSprite()
+	{ return playerSprite; }
 	
 	@Override
 	public Dimension getPreferredSize() 

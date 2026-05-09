@@ -30,10 +30,13 @@ public class Player extends MovingObject
 	private static final long DIE_WAITING = 1500000000L;
 	private static final int  DIE_PENALITY = 350;
 	
-	public static final int START_GAME_SAPWN_X = RoomMap.PIXELS_MAP_WIDTH / 2;
+	public static final int START_GAME_SPAWN_X = RoomMap.PIXELS_MAP_WIDTH / 2;
 	public static final int START_GAME_SPAWN_Y = RoomMap.PIXELS_MAP_HEIGHT - 200;
+	public static final int START_GAME_WORLD_X = 1;
+	public static final int START_GAME_WORLD_Y = 0;
 	
-	private GameContext context;
+	private Point spawnPosition;
+	private Point worldPosition;
 	
 	private int lifes;
 	private String name;
@@ -46,16 +49,16 @@ public class Player extends MovingObject
 	private boolean isOnPlatform;
 	private Platform usedPlatform;
 	
-	private boolean isInElevator;
+	private boolean isOnElevator;
 	private boolean isDead;
 	private boolean isSearching;
 	private Furniture usedFurniture;
 	
 	private boolean wasHitboxModified;
 		
-	public Player(String name, Point position)
+	public Player(String name, Point spawnPosition, Point worldPosition)
 	{
-		super(position, NORMAL_WIDTH, NORMAL_HEIGHT); 
+		super(spawnPosition, NORMAL_WIDTH, NORMAL_HEIGHT); 
 		lifes = PLAYER_FULL_LIFES;
 		this.name = name;
 		points = 0;
@@ -63,22 +66,17 @@ public class Player extends MovingObject
 		robotPasswordsObtained = platformPasswordsObtained = 0;
 		setPhysicsState(MovingObject.PhysicsState.IDLE);
 		wasHitboxModified = isSearching = isOnPlatform  = false;
-		isInElevator = true;
+		isOnElevator = true;
+		this.spawnPosition = new Point(spawnPosition);
+		this.worldPosition = new Point(worldPosition);
 	}
 
 	@Override
 	public void update(GameContext context) 
 	{	
-		this.context = context;
-		
 		if(isDead)
-		{
-			Point spawnPosition = context.getPlayerSpawn();
-			Point thisPosition = getPosition();
-			
-			thisPosition.setX(spawnPosition.getX());
-			thisPosition.setY(spawnPosition.getY());
-			
+		{		
+			setPosition(new Point(spawnPosition));
 			isDead = false;
 		}
 		
@@ -108,8 +106,8 @@ public class Player extends MovingObject
 		applyHorizontalForce();
 		resolveHorizontalCollision(interestingGameObjects);
 		
-		addGravity();
-		applyVerticalForce();
+		if(getPosition().getX() < RoomMap.PIXELS_MAP_WIDTH && getPosition().getX() >= 0)
+		{ addGravity(); applyVerticalForce(); }
 
 		resolveVerticalCollision(interestingGameObjects);	
 		
@@ -135,10 +133,31 @@ public class Player extends MovingObject
 		
 		if(isOnGround() && wasHitboxModified) expandHitbox(NORMAL_WIDTH, NORMAL_HEIGHT);
 		
+		if(getPosition().getX() >= RoomMap.PIXELS_MAP_WIDTH)
+		{
+			worldPosition.setX(worldPosition.getX() + 1);
+			spawnPosition = context.getCurrentRoom().getLeftSpawnPosition();
+			setPosition(new Point(spawnPosition));
+			isOnElevator = !isOnElevator;
+		}
+		else if(getPosition().getX() < 0)
+		{
+			worldPosition.setX(worldPosition.getX() - 1);
+			spawnPosition = context.getCurrentRoom().getRightSpawnPosition();
+			setPosition(new Point(spawnPosition));
+			isOnElevator = !isOnElevator;
+		}
+		
+		if(isOnElevator && getPosition().getY() >= (worldPosition.getY() + 1) * RoomMap.PIXELS_MAP_HEIGHT)
+			worldPosition.setY(worldPosition.getY() + 1);
+		
+		else if(isOnElevator && getPosition().getY() <= worldPosition.getY() * RoomMap.PIXELS_MAP_HEIGHT)
+			worldPosition.setY(worldPosition.getY() - 1);
+		
 		boolean isCollidingWithEnemy = currentRoom.getEnemiesList().stream().anyMatch(g -> isColliding(g));
 		boolean isCollidingWithAttack = currentRoom.getGameObjectList().stream().filter(g -> g instanceof AttackerRobot.Attack).anyMatch(a -> isColliding(a));
 		
-		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || (getPosition().getY() >= RoomMap.PIXELS_MAP_HEIGHT && !isInElevator))
+		if((isCollidingWithEnemy || isCollidingWithAttack) && !context.isRobotsDisabled() || (getPosition().getY() >= RoomMap.PIXELS_MAP_HEIGHT && !isOnElevator))
 		{
 			isDead = true;
 			points = Math.max(0, points - DIE_PENALITY);
@@ -189,7 +208,7 @@ public class Player extends MovingObject
 
 	    return horizontalOverlap && verticalContact;
 	}
-
+	
 	public String getName()
 	{ return name; }
 	
@@ -238,8 +257,8 @@ public class Player extends MovingObject
 	void setSearchingState(boolean isSearching)
 	{ this.isSearching = isSearching; }
 	
-	public boolean isInElevator()
-	{ return isInElevator; }
+	public boolean isOnElevator()
+	{ return isOnElevator; }
 	
 	public boolean isDead()
 	{ return isDead; }
@@ -252,4 +271,13 @@ public class Player extends MovingObject
 	
 	public Furniture getUsedFurniture()
 	{ return usedFurniture; }
+	
+	public void setSpawnPosition(Point spawnPosition)
+	{ this.spawnPosition = spawnPosition; }
+	
+	public void setWorldPosition(Point worldPosition)
+	{ this.worldPosition = worldPosition; }
+	
+	public Point getWorldPosition()
+	{ return worldPosition; }
 }

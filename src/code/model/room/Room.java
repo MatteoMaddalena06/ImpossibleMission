@@ -21,14 +21,16 @@ public class Room
 	private List<Furniture> furnitureList;
 	private List<Enemy> enemiesList;
 	
+	private Point leftSpawnPosition, rightSpawnPosition;
 	private int platformsNumber;
 	private Color color;
-	
+	public ExitLayout exitLayout;
+
 	private int width;
 	private int height;
 
 	public enum Color 
-	{ RED, PURPLE, GREEN, ANY };
+	{ RED, PURPLE, GREEN };
 	
 	public enum ExitLayout
 	{ ONLEFT, ONRIGHT, ONLEFTANDRIGHT, NOEXIT }
@@ -44,9 +46,14 @@ public class Room
 		this.color = color; this.width = width; this.height = height;
 	}
 	
-	public Room(List<GameObject> gameObjectList, Color color)
-	{ this(gameObjectList, color, RoomMap.PIXELS_MAP_WIDTH, RoomMap.PIXELS_MAP_HEIGHT); }
-	
+	public Room(List<GameObject> gameObjectList, Color color, ExitLayout exitLayout, Point leftSpawnPosition, Point rightSpawnPosition)
+	{ 
+		this(gameObjectList, color, RoomMap.PIXELS_MAP_WIDTH, RoomMap.PIXELS_MAP_HEIGHT);
+		this.exitLayout = exitLayout;
+		this.leftSpawnPosition = leftSpawnPosition;
+		this.rightSpawnPosition = rightSpawnPosition;
+	}
+
 	public Room merge(Room room)
 	{
 		if(room.color != color)
@@ -123,16 +130,23 @@ public class Room
 		return true;
 	}
 	
+	public void setLeftSpawnPosition(Point leftSpawnPosition)
+	{ this.leftSpawnPosition = leftSpawnPosition; }
+	
+	public void setRightSpawnPosition(Point rightSpawnPosition)
+	{ this.rightSpawnPosition = rightSpawnPosition; }
+	
+	public Point getLeftSpawnPosition()
+	{ return (leftSpawnPosition != null) ? new Point(leftSpawnPosition) : null; }
+	
+	public Point getRightSpawnPosition()
+	{ return (rightSpawnPosition != null) ? new Point(rightSpawnPosition) : null; }
+	
 	public int getPlatformsNumber()
 	{ return platformsNumber; }
-	
-	public void setColor(Color color)
-	{
-		if(this.color != Color.ANY)
-			throw new IllegalArgumentException("Cannot set a color for an object with no color");
-		
-		this.color = color;
-	}
+
+	public ExitLayout getExitLayout()
+	{ return exitLayout; }
 	
 	public Color getColor()
 	{ return color; }

@@ -2,15 +2,18 @@ package code.model;
 
 //data structure modules
 import java.util.List;
+import java.util.Map;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 //inproject import
 import code.model.room.Room;
 import code.model.room.Room.Color;
+import code.model.room.Room.ExitLayout;
 import code.model.room.RoomMap;
 import code.model.room.PresettedRoom;
 import code.model.gameobjects.Furniture;
@@ -29,8 +32,13 @@ public class GameWorld
 
 	private Room[][] worldMatrix;
 
+	private Map<Integer, Room> elevatorRoomsCache;
+	
 	public GameWorld()
-	{ this.worldMatrix = randomGeneration(); }
+	{ 
+		this.worldMatrix = randomGeneration();
+		elevatorRoomsCache = new HashMap<Integer, Room>();
+	}
 	
 	private static Room[][] randomGeneration()
 	{
@@ -104,26 +112,36 @@ public class GameWorld
 		
 		for(int x = 1; x < cols; x += 2)
 		{
-			List<Room.Color> colors = new ArrayList<Room.Color>(Arrays.asList(Room.Color.values()));
-			colors.remove(Color.ANY);
-			Collections.shuffle(colors);
-			Room.Color randomColor = colors.get(0);
-			
 			for(int y = 0; y < rows; y++)
 			{
+				int exitCount = 0;
+				
 				if(worldMatrix[y][x - 1] == null && worldMatrix[y][x + 1] == null)
+				{ 
 					worldMatrix[y][x] = PresettedRoom.ELEVATOR_NOEXIT.getRoom();
+					continue; 
+				}
 				
-				else if(worldMatrix[y][x - 1] != null && worldMatrix[y][x + 1] == null)
-					worldMatrix[y][x] = PresettedRoom.ELEVATOR_LEFT_EXIT.getRoom();
+				if(worldMatrix[y][x - 1] != null)
+				{
+					if(worldMatrix[y][x - 1].getExitLayout() == ExitLayout.ONRIGHT || worldMatrix[y][x - 1].getExitLayout() == ExitLayout.ONLEFTANDRIGHT)
+					{ worldMatrix[y][x] = PresettedRoom.ELEVATOR_LEFT_EXIT.getRoom(); exitCount++; }
+					
+					else
+						worldMatrix[y][x] = PresettedRoom.ELEVATOR_NOEXIT.getRoom();
+				}	
 				
-				else if(worldMatrix[y][x - 1] == null && worldMatrix[y][x + 1] != null)
-					worldMatrix[y][x] = PresettedRoom.ELEVATOR_RIGHT_EXIT.getRoom();
+				if(worldMatrix[y][x + 1] != null)
+				{
+					if(worldMatrix[y][x + 1].getExitLayout() == ExitLayout.ONLEFT || worldMatrix[y][x + 1].getExitLayout() == ExitLayout.ONLEFTANDRIGHT)
+					{ worldMatrix[y][x] = PresettedRoom.ELEVATOR_RIGHT_EXIT.getRoom(); exitCount++; }
+					
+					else if(exitCount == 0)
+						worldMatrix[y][x] = PresettedRoom.ELEVATOR_NOEXIT.getRoom();
+				}
 				
-				else
+				if(exitCount == 2)
 					worldMatrix[y][x] = PresettedRoom.ELEVATOR_RIGHTLEFT_EXIT.getRoom();
-				
-				worldMatrix[y][x].setColor(randomColor);
 			}
 		}
 	}
@@ -158,24 +176,46 @@ public class GameWorld
 	
 	public Room getElevatorColumnAsRoom(int column, Player player)
 	{
+		Room result;
+		
 		if(column % 2 == 0)
 			throw new IllegalArgumentException("worldMatrix[][" + column + "] is not an elevator column");
 		
-		Room result = worldMatrix[0][column];
+		if(!elevatorRoomsCache.containsKey(column))
+		{
+			result = worldMatrix[0][column];
+			
+			for(int y = 1; y < worldMatrix.length; y++)
+				result = result.merge(worldMatrix[y][column]);
+			
+			elevatorRoomsCache.put(column, result);
+		}
+		else
+		{
+			result = elevatorRoomsCache.get(column);
+			result.removePlatform(result.getPlatformList().get(0));
+		}
 		
-		for(int y = 1; y < worldMatrix.length; y++)
-			result = result.merge(worldMatrix[y][column]);
+		int row =  (int)player.getWorldPosition().getY();
 		
-		double playerY = player.copyPosition().getY();
-	
 		result.addPlatform(
 				(Platform)GameObjectFactory.produce
 				(
 						RoomMap.PLATFORM_ID, 
-						new Point(RoomMap.ELEVATOR_X, RoomMap.ELEVATOR_Y + (int)(playerY / RoomMap.PIXELS_MAP_HEIGHT)),
+						new Point(RoomMap.ELEVATOR_X, RoomMap.ELEVATOR_Y + row * RoomMap.PIXELS_MAP_HEIGHT),
 						RoomMap.ELEVATOR_WIDTH, RoomMap.ELEVATOR_HEIGHT
 				)
 		);
+		
+		double playerX = player.copyPosition().getX();
+		Point spawnPosition = (playerX < 0) ? RoomMap.bottomRightSpawnPosition : RoomMap.bottomLeftSpawnPosition;
+		Point whereToSpawn = new Point(spawnPosition.getX(), spawnPosition.getY() + row * RoomMap.PIXELS_MAP_HEIGHT);
+		
+		if(playerX < 0)
+			result.setRightSpawnPosition(whereToSpawn);
+		
+		else if(playerX > RoomMap.PIXELS_MAP_WIDTH)
+			result.setLeftSpawnPosition(whereToSpawn);;
 		
 		return result;
 	}

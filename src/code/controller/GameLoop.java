@@ -1,5 +1,6 @@
 package code.controller;
 
+import java.lang.reflect.InvocationTargetException;
 //data structures import
 import java.util.List;
 //graphics import
@@ -100,6 +101,8 @@ public class GameLoop extends Thread
 					s -> (!context.isRobotsDisabled() && s instanceof AnimatedSprite) || s instanceof PlayerSprite
 			).forEach(s -> ((AnimatedSprite)s).updateElapsedTime(dt));
 			
+			renderer.getPlayerSprite().updateElapsedTime(dt);
+			
 			Room currentRoom = context.getCurrentRoom();
 			gameObjectList = currentRoom.getGameObjectList();
 			
@@ -123,14 +126,12 @@ public class GameLoop extends Thread
 			else
 				player.update(context);
 			
-			System.out.println(player.copyPosition().getX() + " " + player.copyPosition().getY());
-			
-			SwingUtilities.invokeLater(() -> renderer.repaint());
+			try { SwingUtilities.invokeAndWait(() -> renderer.repaint()); } catch(Exception e) {}
 			
 			try { Thread.sleep(1); } catch (Exception e) {}
 		}
 
-		SwingUtilities.invokeLater(() -> { EventDispatcher.notify(new StopGame()); });
+		try { SwingUtilities.invokeAndWait(() -> { EventDispatcher.notify(new StopGame()); }); } catch(Exception e) {}
 		
 		Leaderboard leaderboard = context.getLeaderboard();
 		leaderboard.addEntry(new Leaderboard.Entry(player.getName(), player.getPoints()));

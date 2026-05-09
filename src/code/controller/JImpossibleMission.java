@@ -12,11 +12,10 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
 //model import
 import code.model.context.GameContext;
 import code.model.gameobjects.Player;
-import code.model.room.Room;
 import code.model.room.RoomMap;
 import code.model.GameWorld;
 import code.model.Leaderboard;
@@ -112,14 +111,15 @@ public class JImpossibleMission
 	
 	private void startGame(String playerName, JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
 	{
-		GameWorld world = new GameWorld();
-		Player player = new Player(playerName, new Point(Player.START_GAME_SAPWN_X, Player.START_GAME_SPAWN_Y));
-		GameContext context = new GameContext(player, world.getElevatorColumnAsRoom(1, player), Leaderboard.load());
-		context.setPlayerSpawn(new Point(Player.START_GAME_SAPWN_X, Player.START_GAME_SPAWN_Y));
+		Player player = new Player(playerName, new Point(Player.START_GAME_SPAWN_X, Player.START_GAME_SPAWN_Y), new Point(Player.START_GAME_WORLD_X, Player.START_GAME_WORLD_Y));
+		GameContext context = new GameContext(player, new GameWorld(), Leaderboard.load());
 		
 		Renderer gamePanel = new Renderer(player, context);
 		GameLoop gameLoop = new GameLoop(context, gamePanel);
 		
+		CountDownLatch latch = new CountDownLatch(1);
+		gamePanel.setFirstPaintLatch(latch);
+	
 		if(oldGamePanel != null)
 			layeredPane.remove(oldGamePanel);
 
@@ -128,7 +128,11 @@ public class JImpossibleMission
 		gamePanel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 		layeredPane.add(gamePanel, JLayeredPane.DEFAULT_LAYER);
 		layout.show(rootPanel, GAMEPANEL_ID);
-		gameLoop.start();
+		
+		new Thread(() -> {
+		    try { latch.await(); } catch (InterruptedException e) {}
+		    gameLoop.start();
+		}).start();
 	}
 	
 	private void swapToLeaderboard(JPanel rootPanel, CardLayout layout)

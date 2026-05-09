@@ -1,5 +1,8 @@
 package code.model.room;
 
+//model import
+import code.model.Point;
+
 public enum RoomMap 
 {
 	ROOM3(new int[][] {
@@ -838,7 +841,7 @@ public enum RoomMap
 			{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 			{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 			{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-			{1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1}	
+			{1,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,1}	
 	}),
 	
 	RIGHTEXIT_ELEVATOR_ROOM(new int[][] {
@@ -944,6 +947,11 @@ public enum RoomMap
 	public static final int FURNITURE_ID = 5;
 	public static final int TERMINAL_ID  = 6;
 	public static final int BLACK_ORB_ID = 7;
+	
+	public static final Point upperLeftSpawnPosition   = new Point(0 * RoomMap.TILE_SIZE, 3 * RoomMap.TILE_SIZE);
+	public static final Point upperRightSpawnPosition  = new Point(38 * RoomMap.TILE_SIZE, 3 * RoomMap.TILE_SIZE);
+	public static final Point bottomLeftSpawnPosition  = new Point(0 * RoomMap.TILE_SIZE, 21 * RoomMap.TILE_SIZE);
+	public static final Point bottomRightSpawnPosition = new Point(38 * RoomMap.TILE_SIZE, 21 * RoomMap.TILE_SIZE);
 	
 	private int[][] mapMatrix;
 	
