@@ -1,6 +1,5 @@
 package code.controller;
 
-import java.lang.reflect.InvocationTargetException;
 //data structures import
 import java.util.List;
 //graphics import
@@ -29,8 +28,6 @@ import code.controller.event.TerminalMenuRequested;
 import code.controller.event.GameResumed;
 //event import
 import code.event.EventDispatcher;
-
-import code.model.gameobjects.Platform;
 
 public class GameLoop extends Thread
 {

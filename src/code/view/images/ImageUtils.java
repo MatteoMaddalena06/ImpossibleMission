@@ -22,17 +22,17 @@ public abstract class ImageUtils
 	public enum Direction
 	{ VERTICAL, HORIZONTAL }
 
-	public static BufferedImage loadImage(String pathname)
-	{ return IMAGE_CACHE.computeIfAbsent(pathname, f -> crop(loadRaw(pathname))); }
+	public static BufferedImage loadImage(String pathname, boolean crop)
+	{ return IMAGE_CACHE.computeIfAbsent(pathname, f -> (crop) ? crop(loadRaw(pathname)) : loadRaw(pathname)); }
 	
-	public static BufferedImage loadFlipped(String pathname)
-	{ return flipHorizontally(loadImage(pathname)); }
+	public static BufferedImage loadFlipped(String pathname, boolean crop)
+	{ return flipHorizontally(loadImage(pathname, crop)); }
 	
-	public static List<BufferedImage> loadAnimation(String pattern, int start, int end)
-	{ return IntStream.rangeClosed(start, end).mapToObj(i -> loadImage(String.format(pattern, i))).toList(); }
+	public static List<BufferedImage> loadAnimation(String pattern, int start, int end, boolean crop)
+	{ return IntStream.rangeClosed(start, end).mapToObj(i -> loadImage(String.format(pattern, i), crop)).toList(); }
 	
-	public static List<BufferedImage> loadFlippedAnimation(String pattern, int start, int end)
-	{ return IntStream.rangeClosed(start, end).mapToObj(i -> loadFlipped(String.format(pattern, i))).toList(); }
+	public static List<BufferedImage> loadFlippedAnimation(String pattern, int start, int end, boolean crop)
+	{ return IntStream.rangeClosed(start, end).mapToObj(i -> loadFlipped(String.format(pattern, i), crop)).toList(); }
 	
 	private static BufferedImage loadRaw(String pathname)
 	{

@@ -30,6 +30,37 @@ public enum PresettedPassword
 	
 	private PresettedPassword(String password)
 	{ this.password = password; }
+
+	public static boolean checkAttempt(PresettedPassword password, PuzzlePiece[][][] attempt)
+	{
+		if(password == null || attempt == null || attempt.length != SIZE)
+			return false;
+		
+		String passwordString = password.getPassword();
+		
+		for(int i = 0; i < passwordString.length(); i++)
+		{
+			PuzzlePiece[][] puzzleMatrix = attempt[i];
+			char correctLetter = passwordString.charAt(i);
+			
+			if(puzzleMatrix == null)
+				return false;
+			
+			if(puzzleMatrix[0][0] == null || puzzleMatrix[0][0].getPosition() != PuzzlePiece.Position.UPPER_LEFT || puzzleMatrix[0][0].getLetter() != correctLetter)
+				return false;
+			
+			if(puzzleMatrix[0][1] == null || puzzleMatrix[0][1].getPosition() != PuzzlePiece.Position.UPPER_RIGHT || puzzleMatrix[0][1].getLetter() != correctLetter)
+				return false;
+			
+			if(puzzleMatrix[1][0] == null || puzzleMatrix[1][0].getPosition() != PuzzlePiece.Position.BOTTOM_LEFT || puzzleMatrix[1][0].getLetter() != correctLetter)
+				return false;
+			
+			if(puzzleMatrix[0][1] == null || puzzleMatrix[1][1].getPosition() != PuzzlePiece.Position.BOTTOM_RIGHT || puzzleMatrix[1][1].getLetter() != correctLetter)
+				return false;
+		}
+		
+		return true;
+	}
 	
 	public String getPassword()
 	{ return password; }

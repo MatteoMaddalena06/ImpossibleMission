@@ -12,10 +12,13 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 //model import
 import code.model.context.GameContext;
 import code.model.gameobjects.Player;
+import code.model.puzzle.PresettedPassword;
+import code.model.puzzle.PuzzlePiece;
 import code.model.room.RoomMap;
 import code.model.GameWorld;
 import code.model.Leaderboard;
@@ -28,6 +31,7 @@ import code.view.menu.Menu;
 import code.view.menu.PlayerNameMenu;
 import code.view.menu.TerminalMenu;
 import code.view.menu.event.*;
+import code.view.menu.PuzzleMenu;
 //controller import
 import code.controller.event.StopGame;
 import code.controller.event.TerminalMenuRequested;
@@ -69,7 +73,14 @@ public class JImpossibleMission
 		catch (FontFormatException | IOException e)
 		{ System.out.println(CUSTOMFONT_LOAD_ERROR); } 
 
-		new JImpossibleMission().start();
+		JFrame frame = new JFrame();
+		PuzzleMenu puzzle = new PuzzleMenu(PresettedPassword.PASSWORD1, List.of(PuzzlePiece.values()), customFont);
+		
+		frame.add(puzzle);
+		frame.pack();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		//new JImpossibleMission().start();
 	}
 
 	private void start()
