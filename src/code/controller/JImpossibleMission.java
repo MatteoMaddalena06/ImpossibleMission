@@ -56,9 +56,11 @@ public class JImpossibleMission
 	private static final int FRAME_WIDTH  = RoomMap.PIXELS_MAP_WIDTH;
 	private static final int FRAME_HEIGHT = RoomMap.PIXELS_MAP_HEIGHT + RoomMap.TILE_SIZE;
 	
+	private GameWorld world;
 	private LeaderboardMenu oldLeaderboardPanel;
 	private Renderer oldGamePanel;
 	private TerminalMenu oldTerminalMenu;
+	private PuzzleMenu oldPuzzleMenu;
 	
 	public static void main(String[] args)
 	{ 
@@ -72,15 +74,8 @@ public class JImpossibleMission
 		} 
 		catch (FontFormatException | IOException e)
 		{ System.out.println(CUSTOMFONT_LOAD_ERROR); } 
-
-		JFrame frame = new JFrame();
-		PuzzleMenu puzzle = new PuzzleMenu(PresettedPassword.PASSWORD1, List.of(PuzzlePiece.values()), customFont);
 		
-		frame.add(puzzle);
-		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		//new JImpossibleMission().start();
+		new JImpossibleMission().start();
 	}
 
 	private void start()
@@ -115,15 +110,18 @@ public class JImpossibleMission
 		EventDispatcher.subscribe(InputBoxMenuRequested.class,    x -> layout.show(rootPanel, PLAYER_MENU_ID));
 		EventDispatcher.subscribe(GamePanelRequested.class,       x -> { x = (GamePanelRequested)x; startGame(x.playerName(), rootPanel, layout, layeredPane); });
 		EventDispatcher.subscribe(LeaderboardMenuRequested.class, x -> swapToLeaderboard(rootPanel, layout));
-		EventDispatcher.subscribe(StopGame.class,                 x -> layout.show(rootPanel, MAIN_MENU_ID) );
+		EventDispatcher.subscribe(StopGame.class,                 x -> layout.show(rootPanel, MAIN_MENU_ID));
 		EventDispatcher.subscribe(TerminalMenuRequested.class,    x -> swapToTerminalMenu(((TerminalMenuRequested)x).player(), layeredPane));
 		EventDispatcher.subscribe(TerminalClosed.class,           x -> { oldTerminalMenu.setVisible(false); EventDispatcher.notify(new GameResumed()); });
+		EventDispatcher.subscribe(PuzzleMenuRequested.class,      x -> swapToPuzzleMenu(((PuzzleMenuRequested)x).player(), layeredPane));
+		EventDispatcher.subscribe(PuzzleMenuClosed.class,         x -> { oldPuzzleMenu.setVisible(false); EventDispatcher.notify(new GameResumed()); });
 	}
 	
 	private void startGame(String playerName, JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
 	{
 		Player player = new Player(playerName, new Point(Player.START_GAME_SPAWN_X, Player.START_GAME_SPAWN_Y), new Point(Player.START_GAME_WORLD_X, Player.START_GAME_WORLD_Y));
-		GameContext context = new GameContext(player, new GameWorld(), Leaderboard.load());
+		world = new GameWorld();
+		GameContext context = new GameContext(player, world, Leaderboard.load());
 		
 		Renderer gamePanel = new Renderer(player, context);
 		GameLoop gameLoop = new GameLoop(context, gamePanel);
@@ -170,5 +168,18 @@ public class JImpossibleMission
 		
 		terminalMenu.setPositionInFrame(FRAME_WIDTH, FRAME_HEIGHT);
 		layeredPane.add(terminalMenu, JLayeredPane.PALETTE_LAYER);
+	}
+	
+	private void swapToPuzzleMenu(Player player, JLayeredPane layeredPane)
+	{
+		PuzzleMenu puzzleMenu = new PuzzleMenu(world.getWorldPassword(), player.getPuzzlePiecesObtained(), customFont);
+			
+		if(oldPuzzleMenu != null)
+			layeredPane.remove(oldPuzzleMenu);
+		
+		oldPuzzleMenu = puzzleMenu;
+		
+		puzzleMenu.setPositionInFrame(FRAME_WIDTH, FRAME_HEIGHT);
+		layeredPane.add(puzzleMenu, JLayeredPane.PALETTE_LAYER);
 	}
 }

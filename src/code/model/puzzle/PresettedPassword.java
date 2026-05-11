@@ -31,17 +31,15 @@ public enum PresettedPassword
 	private PresettedPassword(String password)
 	{ this.password = password; }
 
-	public static boolean checkAttempt(PresettedPassword password, PuzzlePiece[][][] attempt)
+	public boolean checkAttempt(PuzzlePiece[][][] attempt)
 	{
 		if(password == null || attempt == null || attempt.length != SIZE)
 			return false;
 		
-		String passwordString = password.getPassword();
-		
-		for(int i = 0; i < passwordString.length(); i++)
+		for(int i = 0; i < password.length(); i++)
 		{
 			PuzzlePiece[][] puzzleMatrix = attempt[i];
-			char correctLetter = passwordString.charAt(i);
+			char correctLetter = password.charAt(i);
 			
 			if(puzzleMatrix == null)
 				return false;

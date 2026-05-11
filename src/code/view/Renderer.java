@@ -15,7 +15,6 @@ import javax.swing.JComponent;
 //graphics import
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -26,6 +25,8 @@ import code.view.sprites.Sprite;
 import code.view.sprites.SpriteFactory;
 import code.view.images.ImageUtils;
 import code.view.images.StaticImage;
+import code.view.menu.event.PuzzleMenuOpened;
+import code.view.menu.event.PuzzleMenuRequested;
 import code.view.sprites.PlatformSprite;
 import code.view.sprites.PlayerSprite;
 import code.view.sprites.SearchingWindow;
@@ -249,6 +250,7 @@ public class Renderer extends JPanel
 		bindKey(renderer, context, "UP_PRESSED",    KeyEvent.VK_UP,    true);
 		bindKey(renderer, context, "DOWN_PRESSED",  KeyEvent.VK_DOWN,  true);
 		bindKey(renderer, context, "JUMP_PRESSED",  KeyEvent.VK_SPACE, true);
+		bindKey(renderer, context, "M_PRESSED",     KeyEvent.VK_M,     true);
 		
 		bindKey(renderer, context, "LEFT_RELEASED",  KeyEvent.VK_LEFT,  false);
 		bindKey(renderer, context, "RIGHT_RELEASED", KeyEvent.VK_RIGHT, false);
@@ -274,6 +276,7 @@ public class Renderer extends JPanel
 					case KeyEvent.VK_UP    -> context.setUserInput(UserInput.UP,    pressed);
 					case KeyEvent.VK_DOWN  -> context.setUserInput(UserInput.DOWN,  pressed);
 					case KeyEvent.VK_SPACE -> context.setUserInput(UserInput.JUMP,  pressed);
+					case KeyEvent.VK_M     -> { if (pressed) EventDispatcher.notify(new PuzzleMenuOpened()); }
 				}
 			}	
 		});

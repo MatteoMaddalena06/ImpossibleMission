@@ -226,6 +226,9 @@ public class Player extends MovingObject
 	public void givePuzzlePiece(PuzzlePiece piece)
 	{ puzzlePiecesObtained.add(piece); }
 	
+	public List<PuzzlePiece> getPuzzlePiecesObtained()
+	{ return new ArrayList<PuzzlePiece>(puzzlePiecesObtained); }
+	
 	public void giveRobotPassword()
 	{ robotPasswordsObtained++; }
 	

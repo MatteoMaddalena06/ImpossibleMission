@@ -31,6 +31,7 @@ public class GameWorld
 	private static final int MAX_PLATFORM_PASSWORD = 10;
 
 	private Room[][] worldMatrix;
+	private PresettedPassword worldPassword;
 
 	private Map<Integer, Room> elevatorRoomsCache;
 	
@@ -40,20 +41,20 @@ public class GameWorld
 		elevatorRoomsCache = new HashMap<Integer, Room>();
 	}
 	
-	private static Room[][] randomGeneration()
+	private Room[][] randomGeneration()
 	{
 		Room[][] worldMatrix = new Room[WORLD_DEPTH][(ELEVATOR_NUMBER << 1) + 1];
 		
 		createTraversableRandomMap(worldMatrix);
-		PresettedPassword randomPassword = PresettedPassword.values()[(int)(Math.random() * PresettedPassword.PASSWORD_NUMBER)];
+		worldPassword = PresettedPassword.values()[(int)(Math.random() * PresettedPassword.PASSWORD_NUMBER)];
 		List<Furniture> allFurnitures =
 				Arrays.stream(PresettedRoom.values()).flatMap(r -> r.getFurnitures().stream()).collect(Collectors.toList());
-		makeTheMapPlayable(allFurnitures, randomPassword);
+		makeTheMapPlayable(allFurnitures, worldPassword);
 		
 		return worldMatrix;
 	}
 	
-	private static void createTraversableRandomMap(Room[][] worldMatrix)
+	private void createTraversableRandomMap(Room[][] worldMatrix)
 	{
 		int rows = worldMatrix.length, cols = worldMatrix[0].length;
 		 
@@ -146,7 +147,7 @@ public class GameWorld
 		}
 	}
 	
-	private static void makeTheMapPlayable(List<Furniture> furnitureList, PresettedPassword password)
+	private void makeTheMapPlayable(List<Furniture> furnitureList, PresettedPassword password)
 	{
 		Collections.shuffle(furnitureList);
 		distributeInFurniture(furnitureList, PuzzlePiece.getPieces(password.getPassword()));
@@ -154,7 +155,7 @@ public class GameWorld
 		distributeInFurniture(furnitureList, (int)(Math.random() * MAX_PLATFORM_PASSWORD) + 1, Furniture.LootType.PLATFORM_PASSWORD);
 	}
 	
-	private static List<Furniture> distributeInFurniture(List<Furniture> furnitureList, int amount, Furniture.LootType type)
+	private List<Furniture> distributeInFurniture(List<Furniture> furnitureList, int amount, Furniture.LootType type)
 	{
 		List<Furniture> visitedFurniture = new ArrayList<Furniture>();
 		
@@ -168,9 +169,9 @@ public class GameWorld
 		return visitedFurniture;
 	}
 	
-	private static void distributeInFurniture(List<Furniture> furnitureList, PuzzlePiece[] puzzlePieces)
+	private void distributeInFurniture(List<Furniture> furnitureList, PuzzlePiece[] puzzlePieces)
 	{ 
-		List<Furniture> visitedFurniture =  distributeInFurniture(furnitureList, puzzlePieces.length, Furniture.LootType.PUZZLE_PIECE); 
+		List<Furniture> visitedFurniture = distributeInFurniture(furnitureList, puzzlePieces.length, Furniture.LootType.PUZZLE_PIECE); 
 		IntStream.range(0, visitedFurniture.size()).forEach(i -> visitedFurniture.get(i).setPuzzlePiece(puzzlePieces[i]));
 	}
 	
@@ -222,4 +223,7 @@ public class GameWorld
 	
 	public Room[][] getWorldMatrix()
 	{ return worldMatrix; }
+	
+	public PresettedPassword getWorldPassword()
+	{ return worldPassword; }
 }

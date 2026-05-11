@@ -20,6 +20,8 @@ import code.model.Leaderboard;
 import code.view.Renderer;
 import code.view.menu.event.RobotDisableRequested;
 import code.view.menu.event.PlatformResetRequested;
+import code.view.menu.event.PuzzleMenuOpened;
+import code.view.menu.event.PuzzleMenuRequested;
 import code.view.sprites.AnimatedSprite;
 import code.view.sprites.PlayerSprite;
 //controller import
@@ -60,6 +62,7 @@ public class GameLoop extends Thread
 		EventDispatcher.subscribe(TerminalOpened.class,		    x -> terminalOpened());
 		EventDispatcher.subscribe(GameResumed.class,    	    x -> pauseSimulation = false);
 		EventDispatcher.subscribe(PlatformResetRequested.class, x -> context.resetPlatforms());
+		EventDispatcher.subscribe(PuzzleMenuOpened.class,       x -> puzzleMenuOpened());
 	}
 	
 	@Override 
@@ -74,6 +77,9 @@ public class GameLoop extends Thread
 			
 		while(true)
 		{
+			if(gameWillEnd && System.nanoTime() > continueUntil)
+				break;
+			
 			if(pauseSimulationUntil || pauseSimulation)
 			{ 
 				long currentTime = previousTime = System.nanoTime();
@@ -114,10 +120,7 @@ public class GameLoop extends Thread
 			
 			for(int i = gameObjectList.size() - 1; i >= 0; i--)
 				gameObjectList.get(i).update(context);
-			
-			if(gameWillEnd && currentTime > continueUntil)
-				break;
-			
+				
 			if(skipPlayerUpdateUntil)
 				skipPlayerUpdateUntil = currentTime < skipUntil;
 			else
@@ -146,6 +149,9 @@ public class GameLoop extends Thread
 	
 	private void terminalOpened()
 	{ pauseSimulation = true; EventDispatcher.notify(new TerminalMenuRequested(context.getPlayer())); }
+	
+	private void puzzleMenuOpened()
+	{ pauseSimulation = true; EventDispatcher.notify(new PuzzleMenuRequested(context.getPlayer())); }
 	
 	private void disableRobots()
 	{ context.disableRobots(); disableRobotsFor = Enemy.ROBOT_DISABLE_NANOS; }
