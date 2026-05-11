@@ -83,7 +83,7 @@ public class GameContext
 	{ return isRobotsDisabled; }
 	
 	public void resetPlatforms()
-	{ platformsToReset = (player.usePlatoformPassword() || player.isDead()) ? getCurrentRoom().getPlatformsNumber() : 0; }
+	{ platformsToReset = (player.isDead() || player.usePlatoformPassword()) ? getCurrentRoom().getPlatformsNumber() : 0; }
 	
 	public void resetOnePlatform()
 	{ platformsToReset--; }
