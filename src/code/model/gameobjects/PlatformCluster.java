@@ -6,10 +6,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.Comparator;
-
-import code.model.context.GameContext;
 //inproject import
 import code.model.room.Room;
+import code.event.EventDispatcher;
+import code.model.context.GameContext;
+import code.model.context.PlayerOnPlatform;
 
 public class PlatformCluster 
 {
@@ -22,6 +23,7 @@ public class PlatformCluster
 	private int width;
 	private boolean isMoving;
 	private Direction direction;
+	private boolean firstTime;
 	
 	private enum Direction
 	{ UP, DOWN }
@@ -33,6 +35,7 @@ public class PlatformCluster
 		bottomPlatform = platforms.stream().max(Comparator.comparingDouble(p -> p.getPosition().getY())).get();
 		width = platforms.getFirst().getWidth();
 		isMoving = false;
+		firstTime = true;
 	}
 
 	public void update(GameContext context)
@@ -52,8 +55,15 @@ public class PlatformCluster
 			if(platforms.contains(player.getUsedPlatform()))
 				player.setOnPlatformState(false);
 			
+			firstTime = true;
+			
 			return;
 		}
+		
+		if(firstTime)
+			EventDispatcher.notify(new PlayerOnPlatform());
+		
+		firstTime = false;
 			
 		player.setOnPlatformState(true);
 		player.setUsedPlatform(playerUsedPlatform);

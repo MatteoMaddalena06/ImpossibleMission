@@ -62,7 +62,7 @@ public class JumperRobot extends Enemy
 		else 
 		{
 			jumpInterval = 0;
-			applyGroundMovement(context, HORIZONTAL_SPEED);
+			applyGroundMovement(context);
 		}
 		
 		double thisX = getPosition().getX(), thisY = getPosition().getY();

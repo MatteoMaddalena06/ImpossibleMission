@@ -38,7 +38,7 @@ public abstract class Enemy extends MovingObject
 		randomDelay = 0;
 	}
 	
-	protected void applyGroundMovement(GameContext context, double horizontalSpeed)
+	protected void applyGroundMovement(GameContext context)
 	{
 		setRandomHorizontalVelocity();
 		

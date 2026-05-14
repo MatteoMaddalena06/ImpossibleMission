@@ -2,15 +2,19 @@ package code.model.gameobjects.enemy;
 
 //data structure import
 import java.util.List;
-
+//model import
 import code.model.Point;
 import code.model.context.GameContext;
+import code.model.context.RunnerStartRunning;
+import code.model.context.RunnerStopRunning;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.Player;
 //inproject import
 import code.model.room.RoomMap;
+//event import
+import code.event.EventDispatcher;
 
 public class RunnerRobot extends Enemy
 {	
@@ -22,12 +26,14 @@ public class RunnerRobot extends Enemy
 	private static final double    ACTION_DELAY     = 0.5f;
 	
 	private double actionDelay;
+	private boolean firstTimeColliding;
 	
 	public RunnerRobot(Point point, int width, int height)
 	{ 
 		super(point, width, height);
 		setFov(this.new FieldOfView(new Point(INITIAL_FOV_X, INITIAL_FOV_Y), FOV_WIDTH, FOV_HEIGHT));
 		actionDelay = ACTION_DELAY;
+		firstTimeColliding = true;
 	}
 
 	@Override
@@ -49,7 +55,7 @@ public class RunnerRobot extends Enemy
 		if(thisFov.isColliding(player) && (actionDelay -= GameContext.getDeltaTime()) <= 0)
 		{
 			List<FixedObject> fixedObjects = context.getCurrentRoom().getFixedObjectList();
-			List<GameObject> interstingObjects = fixedObjects.stream().map(f -> (GameObject)f).toList();
+			List<GameObject> interestingObjects = fixedObjects.stream().map(f -> (GameObject)f).toList();
 			
 			setHorizontalVelocity((thisX > playerX) ? -HORIZONTAL_SPEED : HORIZONTAL_SPEED);
 			
@@ -57,7 +63,7 @@ public class RunnerRobot extends Enemy
 				setHorizontalVelocity(0);
 			
 			applyHorizontalForce();
-			resolveHorizontalCollision(interstingObjects);
+			resolveHorizontalCollision(interestingObjects);
 			
 			double currentHorizontalVelocity = getHorizontalVelocity();
 			
@@ -70,8 +76,14 @@ public class RunnerRobot extends Enemy
 				setPhysicsState(MovingObject.PhysicsState.IDLE);
 		}	
 		else if(!thisFov.isColliding(player))
-		{ applyGroundMovement(context, HORIZONTAL_SPEED); actionDelay = ACTION_DELAY; }
+		{ applyGroundMovement(context); actionDelay = ACTION_DELAY; }
+
+		if(firstTimeColliding && thisFov.isColliding(player))
+		{ EventDispatcher.notify(new RunnerStartRunning(this)); firstTimeColliding = false; }
 		
+		if(!firstTimeColliding && !thisFov.isColliding(player))
+		{ EventDispatcher.notify(new RunnerStopRunning(this)); firstTimeColliding = true; }
+
 		thisFov.setX(thisX - (FOV_WIDTH - getWidth())/2); 
 		thisFov.setY(thisY - (FOV_HEIGHT - getHeight()));
 	}

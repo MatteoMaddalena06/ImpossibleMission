@@ -66,6 +66,7 @@ public class Leaderboard implements Serializable
 			
 			ObjectOutputStream output = new ObjectOutputStream(Files.newOutputStream(storePath));
 		    output.writeObject(this);
+		    output.close();
 		}
 		catch (URISyntaxException | IOException e) 
 		{ throw new RuntimeException(WRITE_ERROR); }
@@ -84,6 +85,7 @@ public class Leaderboard implements Serializable
 			
 			ObjectInputStream input = new ObjectInputStream(Files.newInputStream(loadPath));
 			instance = (Leaderboard)input.readObject();
+			input.close();
 		}
 		catch(IOException | ClassNotFoundException | URISyntaxException e)
 		{ instance = new Leaderboard(); }	

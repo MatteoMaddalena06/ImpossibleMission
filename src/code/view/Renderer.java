@@ -26,7 +26,6 @@ import code.view.sprites.SpriteFactory;
 import code.view.images.ImageUtils;
 import code.view.images.StaticImage;
 import code.view.menu.event.PuzzleMenuOpened;
-import code.view.menu.event.PuzzleMenuRequested;
 import code.view.sprites.PlatformSprite;
 import code.view.sprites.PlayerSprite;
 import code.view.sprites.SearchingWindow;
@@ -226,9 +225,9 @@ public class Renderer extends JPanel
 	{ currentSpritesList.add(SpriteFactory.produce(attack)); }
 	
 	private void removeAttackSprite(AttackerRobot.Attack attack)
-	{ 
+	{
 		Sprite spriteToRemove = currentSpritesList.stream().filter(s -> s.getGameObject() == attack).findFirst().get();
-		currentSpritesList.remove(spriteToRemove);;
+		currentSpritesList.remove(spriteToRemove);
 	}
 	
 	private void removeFurnitureSprite(Furniture furniture)

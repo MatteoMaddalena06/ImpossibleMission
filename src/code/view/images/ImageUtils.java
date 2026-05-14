@@ -36,7 +36,7 @@ public abstract class ImageUtils
 	
 	private static BufferedImage loadRaw(String pathname)
 	{
-		try(InputStream input = StaticImage.class.getResourceAsStream(pathname))
+		try(InputStream input = ImageUtils.class.getResourceAsStream(pathname))
 		{
 			if(input == null)
 				throw new IllegalStateException("Unable to load the sprite: " + pathname + " not found.");

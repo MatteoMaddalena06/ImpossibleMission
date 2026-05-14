@@ -10,16 +10,24 @@ public abstract class AttackerRobot extends Enemy
 	public abstract class Attack extends MovingObject
 	{	
 		private AttackerRobot attacker;
+		private Type type;
 		
-		public Attack(Point position, int width, int height)
+		public enum Type 
+		{ ISTANT, PROLONGED }
+		
+		public Attack(Type type, Point position, int width, int height)
 		{
 			super(position, width, height);
 			attacker = AttackerRobot.this;
+			this.type = type;
 			setDirection(AttackerRobot.this.getDirection());
 		}
 		
 		public AttackerRobot getAttacker()
 		{ return attacker; }
+		
+		public Type getType()
+		{ return type; }
 	}
 	
 	public AttackerRobot(Point position, int width, int height)

@@ -10,21 +10,21 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 //model import
 import code.model.context.GameContext;
 import code.model.gameobjects.Player;
-import code.model.puzzle.PresettedPassword;
-import code.model.puzzle.PuzzlePiece;
 import code.model.room.RoomMap;
 import code.model.GameWorld;
 import code.model.Leaderboard;
 import code.model.Point;
 //view import
 import code.view.Renderer;
+import code.view.audio.AudioPlayer;
 import code.view.images.StaticImage;
 import code.view.menu.LeaderboardMenu;
 import code.view.menu.Menu;
@@ -98,23 +98,31 @@ public class JImpossibleMission
 		frame.pack();
 		frame.setContentPane(rootPanel);	
 		frame.setIconImage(CUSTOM_FRAME_ICON);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setVisible(true);
+		
+		AudioPlayer.getIstance().playBackgroundMusic();
+		
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e)
+			{ closeGame(); }
+		});
 	}
 	
 	private void initEventHandler(JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
 	{
-		EventDispatcher.subscribe(CloseGame.class,                x -> System.exit(0));
-		EventDispatcher.subscribe(SecondaryMenuClosed.class,      x -> layout.show(rootPanel, MAIN_MENU_ID));
-		EventDispatcher.subscribe(InputBoxMenuRequested.class,    x -> layout.show(rootPanel, PLAYER_MENU_ID));
-		EventDispatcher.subscribe(GamePanelRequested.class,       x -> { x = (GamePanelRequested)x; startGame(x.playerName(), rootPanel, layout, layeredPane); });
-		EventDispatcher.subscribe(LeaderboardMenuRequested.class, x -> swapToLeaderboard(rootPanel, layout));
-		EventDispatcher.subscribe(StopGame.class,                 x -> layout.show(rootPanel, MAIN_MENU_ID));
-		EventDispatcher.subscribe(TerminalMenuRequested.class,    x -> swapToTerminalMenu(((TerminalMenuRequested)x).player(), layeredPane));
-		EventDispatcher.subscribe(TerminalClosed.class,           x -> { oldTerminalMenu.setVisible(false); EventDispatcher.notify(new GameResumed()); });
-		EventDispatcher.subscribe(PuzzleMenuRequested.class,      x -> swapToPuzzleMenu(((PuzzleMenuRequested)x).player(), layeredPane));
-		EventDispatcher.subscribe(PuzzleMenuClosed.class,         x -> { oldPuzzleMenu.setVisible(false); EventDispatcher.notify(new GameResumed()); });
+		EventDispatcher.subscribeAsStatic(CloseGame.class,                x -> closeGame());
+		EventDispatcher.subscribeAsStatic(SecondaryMenuClosed.class,      x -> layout.show(rootPanel, MAIN_MENU_ID));
+		EventDispatcher.subscribeAsStatic(InputBoxMenuRequested.class,    x -> layout.show(rootPanel, PLAYER_MENU_ID));
+		EventDispatcher.subscribeAsStatic(GamePanelRequested.class,       x -> { x = (GamePanelRequested)x; startGame(x.playerName(), rootPanel, layout, layeredPane); });
+		EventDispatcher.subscribeAsStatic(LeaderboardMenuRequested.class, x -> swapToLeaderboard(rootPanel, layout));
+		EventDispatcher.subscribeAsStatic(StopGame.class,                 x -> stopGame(rootPanel, layout));
+		EventDispatcher.subscribeAsStatic(TerminalMenuRequested.class,    x -> swapToTerminalMenu(((TerminalMenuRequested)x).player(), layeredPane));
+		EventDispatcher.subscribeAsStatic(TerminalClosed.class,           x -> { oldTerminalMenu.setVisible(false); EventDispatcher.notify(new GameResumed()); });
+		EventDispatcher.subscribeAsStatic(PuzzleMenuRequested.class,      x -> swapToPuzzleMenu(((PuzzleMenuRequested)x).player(), layeredPane));
+		EventDispatcher.subscribeAsStatic(PuzzleMenuClosed.class,         x -> { oldPuzzleMenu.setVisible(false); EventDispatcher.notify(new GameResumed()); });
 	}
 	
 	private void startGame(String playerName, JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
@@ -142,6 +150,20 @@ public class JImpossibleMission
 		    try { latch.await(); } catch (InterruptedException e) {}
 		    gameLoop.start();
 		}).start();
+	}
+	
+	private void stopGame(JPanel rootPanel, CardLayout layout)
+	{
+		 layout.show(rootPanel, MAIN_MENU_ID); 
+		 EventDispatcher.disposeListeners();
+		 AudioPlayer.getIstance().disposeRunningClips(); 	 
+	}
+
+	private void closeGame()
+	{ 
+		AudioPlayer.getIstance().disposeBackgroundMusic();
+		AudioPlayer.getIstance().disposeRunningClips(); 
+		System.exit(0);
 	}
 	
 	private void swapToLeaderboard(JPanel rootPanel, CardLayout layout)

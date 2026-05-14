@@ -53,7 +53,7 @@ public class ThrowerRobot extends AttackerRobot
 			return;
 		}
 		
-		applyGroundMovement(context, HORIZONTAL_SPEED);
+		applyGroundMovement(context);
 		
 		double currentHorizontalVelocity = getHorizontalVelocity();
 		double thisX = getPosition().getX(), thisY = getPosition().getY();
@@ -79,7 +79,7 @@ public class ThrowerRobot extends AttackerRobot
 		else 
 			attackX = (getHorizontalVelocity() > 0 ) ? thisX + RoomMap.TILE_SIZE: thisX;
 		
-		return new Attack(new Point(attackX, attackY), ATTACK_WIDTH, ATTACK_HEIGHT) {
+		return new Attack(Attack.Type.ISTANT, new Point(attackX, attackY), ATTACK_WIDTH, ATTACK_HEIGHT) {
 			@Override
 			public void update(GameContext context)
 			{
