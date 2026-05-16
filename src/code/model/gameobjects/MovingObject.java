@@ -13,7 +13,7 @@ public abstract class MovingObject extends GameObject
 	private transient double horizontalVelocity;
 	private transient double verticalVelocity;
 	
-	private transient boolean onGround;
+	private boolean onGround;
 	
 	private PhysicsState physicsState;
 	private Direction direction;

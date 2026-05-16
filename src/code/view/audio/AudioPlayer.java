@@ -128,6 +128,6 @@ public class AudioPlayer
 	public void disposeRunningClips()
 	{ 
 		runningClips.forEach((k, v) -> v.close());
-		runningClips = new HashMap<Object, Clip>();
+		runningClips.clear();
 	}
 }

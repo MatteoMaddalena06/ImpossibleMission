@@ -61,7 +61,6 @@ public class Renderer extends JPanel
 	private static final int DIGITICON_SIZE    = 35;
 	private static final int DIGITICON_PADDING = 5;
 	
-	private Player player;
 	private PlayerSprite playerSprite;
 	private GameContext context;
 	private List<Sprite> currentSpritesList; 
@@ -76,14 +75,13 @@ public class Renderer extends JPanel
 	private CountDownLatch firstPaintLatch;
 	private boolean isFirstPaint;
 	
-	public Renderer(Player player, GameContext context)
+	public Renderer(GameContext context)
 	{	
 		currentSpritesList = new LinkedList<Sprite>();
 		spritesListsCache = new HashMap<Room, List<Sprite>>();
 		currentWindowY = 0;
 		printSearchingState = printFurnitureLoot = false;
-		this.player = player;
-		this.playerSprite = (PlayerSprite)SpriteFactory.produce(player);
+		this.playerSprite = (PlayerSprite)SpriteFactory.produce(context.getPlayer());
 		this.context = context;
 		isFirstPaint = true;
 		
@@ -104,6 +102,8 @@ public class Renderer extends JPanel
     	g.drawImage(background, 0, 0, this.getWidth(), this.getHeight(), this);
     	
     	List<Sprite> spritesList = currentSpritesList;
+    	
+    	Player player = context.getPlayer();
     	
     	if(!player.isOnElevator())
     		currentWindowY = 0;
@@ -168,6 +168,8 @@ public class Renderer extends JPanel
 	
 	private void drawHUD(Graphics g)
 	{
+		Player player = context.getPlayer();
+		
 		for(int i = 0; i < player.getLifes(); i++)
 			g.drawImage(lifeIcon, i * (LIFEICON_SIZE + LIFEICON_PADDING), 0, LIFEICON_SIZE, LIFEICON_SIZE, null);
 		
@@ -213,7 +215,7 @@ public class Renderer extends JPanel
 		else
 			currentSpritesList = spritesListsCache.get(currentRoom);
 		
-		if(player.getWorldPosition().getX() % 2 != 0)
+		if(context.getPlayer().getWorldPosition().getX() % 2 != 0)
 		{
 			Sprite spriteToRemove = currentSpritesList.stream().filter(s -> s instanceof PlatformSprite).findAny().get();
 			currentSpritesList.remove(spriteToRemove);

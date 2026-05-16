@@ -11,7 +11,7 @@ import code.model.gameobjects.MovingObject;
 
 public abstract class Enemy extends MovingObject 
 { 
-	public static long ROBOT_DISABLE_NANOS = 10000000000L;
+	public static final long ROBOT_DISABLE_NANOS = 10000000000L;
 	private static final double SHARED_HORIZONTAL_SPEED = 150f;
 	
 	private FieldOfView fieldOfView;
@@ -99,9 +99,5 @@ public abstract class Enemy extends MovingObject
 	{ fieldOfView = fov; }
 	
 	protected FieldOfView getFov()
-	{ return fieldOfView; }
-	
-	/* to delete */
-	public FieldOfView getFOV()
 	{ return fieldOfView; }
 }

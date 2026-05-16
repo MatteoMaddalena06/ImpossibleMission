@@ -131,7 +131,7 @@ public class JImpossibleMission
 		world = new GameWorld();
 		GameContext context = new GameContext(player, world, Leaderboard.load());
 		
-		Renderer gamePanel = new Renderer(player, context);
+		Renderer gamePanel = new Renderer(context);
 		GameLoop gameLoop = new GameLoop(context, gamePanel);
 		
 		CountDownLatch latch = new CountDownLatch(1);
@@ -156,7 +156,11 @@ public class JImpossibleMission
 	{
 		 layout.show(rootPanel, MAIN_MENU_ID); 
 		 EventDispatcher.disposeListeners();
-		 AudioPlayer.getIstance().disposeRunningClips(); 	 
+		 AudioPlayer.getIstance().disposeRunningClips(); 	
+		 world = null;
+		 oldLeaderboardPanel = null;
+		 oldTerminalMenu = null; 
+		 oldPuzzleMenu = null;
 	}
 
 	private void closeGame()

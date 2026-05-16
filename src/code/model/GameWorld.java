@@ -2,17 +2,14 @@ package code.model;
 
 //data structure modules
 import java.util.List;
-import java.util.Map;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 //inproject import
 import code.model.room.Room;
-import code.model.room.Room.Color;
 import code.model.room.Room.ExitLayout;
 import code.model.room.RoomMap;
 import code.model.room.PresettedRoom;
@@ -33,19 +30,19 @@ public class GameWorld
 	private Room[][] worldMatrix;
 	private PresettedPassword worldPassword;
 
-	private Map<Integer, Room> elevatorRoomsCache;
+	private Room[] elevatorRoomsCache;
 	
 	public GameWorld()
 	{ 
 		this.worldMatrix = randomGeneration();
-		elevatorRoomsCache = new HashMap<Integer, Room>();
+		elevatorRoomsCache = new Room[ELEVATOR_NUMBER];
 	}
 	
 	private Room[][] randomGeneration()
 	{
-		Room[][] worldMatrix = new Room[WORLD_DEPTH][(ELEVATOR_NUMBER << 1) + 1];
+		worldMatrix = new Room[WORLD_DEPTH][(ELEVATOR_NUMBER << 1) + 1];
 		
-		createTraversableRandomMap(worldMatrix);
+		createTraversableRandomMap();
 		worldPassword = PresettedPassword.values()[(int)(Math.random() * PresettedPassword.PASSWORD_NUMBER)];
 		List<Furniture> allFurnitures =
 				Arrays.stream(PresettedRoom.values()).flatMap(r -> r.getFurnitures().stream()).collect(Collectors.toList());
@@ -54,7 +51,7 @@ public class GameWorld
 		return worldMatrix;
 	}
 	
-	private void createTraversableRandomMap(Room[][] worldMatrix)
+	private void createTraversableRandomMap()
 	{
 		int rows = worldMatrix.length, cols = worldMatrix[0].length;
 		 
@@ -182,18 +179,18 @@ public class GameWorld
 		if(column % 2 == 0)
 			throw new IllegalArgumentException("worldMatrix[][" + column + "] is not an elevator column");
 		
-		if(!elevatorRoomsCache.containsKey(column))
+		if(elevatorRoomsCache[column - 1] == null)
 		{
 			result = worldMatrix[0][column];
 			
 			for(int y = 1; y < worldMatrix.length; y++)
 				result = result.merge(worldMatrix[y][column]);
 			
-			elevatorRoomsCache.put(column, result);
+			elevatorRoomsCache[column - 1] = result;
 		}
 		else
 		{
-			result = elevatorRoomsCache.get(column);
+			result = elevatorRoomsCache[column - 1];
 			result.removePlatform(result.getPlatformList().get(0));
 		}
 		

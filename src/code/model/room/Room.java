@@ -24,7 +24,7 @@ public class Room
 	private Point leftSpawnPosition, rightSpawnPosition;
 	private int platformsNumber;
 	private Color color;
-	public ExitLayout exitLayout;
+	private ExitLayout exitLayout;
 
 	private int width;
 	private int height;
@@ -102,8 +102,8 @@ public class Room
 	public boolean removeForniture(Furniture object)
 	{ return furnitureList.remove(object) && gameObjectList.remove(object); }
 	
-	public void addEnemyAttack(AttackerRobot.Attack attack)
-	{ gameObjectList.add(attack); }
+	public boolean addEnemyAttack(AttackerRobot.Attack attack)
+	{ return gameObjectList.add(attack); }
 	
 	public boolean removeEnemyAttack(AttackerRobot.Attack attack)
 	{ return gameObjectList.remove(attack); }

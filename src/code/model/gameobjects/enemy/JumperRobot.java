@@ -16,8 +16,8 @@ public class JumperRobot extends Enemy
 	private static final double    VERTICAL_SPEED   = 350f;
 	private static final int       FOV_WIDTH        = 6 * RoomMap.TILE_SIZE;
 	private static final int       FOV_HEIGHT       = 5 * RoomMap.TILE_SIZE;
-	private transient final double INITIAL_FOV_X    = getPosition().getX() - (FOV_WIDTH - getWidth())/2;
-	private transient final double INITIAL_FOV_Y    = getPosition().getY() - (FOV_HEIGHT - getHeight()); 
+	private final double 		   INITIAL_FOV_X    = getPosition().getX() - (FOV_WIDTH - getWidth())/2;
+	private final double 		   INITIAL_FOV_Y    = getPosition().getY() - (FOV_HEIGHT - getHeight()); 
 	private static final double    JUMP_DELAY       = 0.7f;
 	
 	private double jumpInterval;
