@@ -11,10 +11,25 @@ import code.model.gameobjects.enemy.EnemyFactory;
 //inproject import
 import code.model.room.RoomMap;
 
+/** Classe per implementare la factory di {@link GameObject} */
 public abstract class GameObjectFactory 
 {	
+	/** Errore della factory */
 	private static final String FACTORY_ERROR = "Unexpected value: ";
 	
+	/**
+	 * Produce un {@link GameObject}
+	 * @param type
+	 * il tipo di gameobject da produrre
+	 * @param position
+	 * la sua posizione di partenza
+	 * @param width
+	 * la sua larghezza
+	 * @param height
+	 * la sua altezza
+	 * @return
+	 * il gameobject prodotto
+	 */
 	public static GameObject produce(int type, Point position, int width, int height)
 	{ 
 		return switch(type) {

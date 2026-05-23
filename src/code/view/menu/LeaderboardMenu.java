@@ -22,43 +22,66 @@ import code.model.Leaderboard;
 import code.view.images.StaticImage;
 import code.view.menu.event.SecondaryMenuClosed;
 
+/** Classe per il menù della classifica */
 public class LeaderboardMenu extends JPanel
 {
+	/** L'immagine di sfondo */
 	private static final BufferedImage backgroundImage = StaticImage.MENU_BACKGROUND.getImage();
+	/** L'immagine di sfondo di una riga della classifica */
 	private static final BufferedImage entryBackground = StaticImage.ENTRY_BACKGROUND.getImage();
+	/** Le immagini delle ricompense che appaiono in classifica */
 	private static final List<StaticImage> awardsList  = StaticImage.getAwardsList();
 	
+	/** L'immagine del bottone di uscita quando non viene premuto */
 	private static final BufferedImage normalExitButtonImage  = StaticImage.NORMAL_EXIT_BUTTON.getImage();
+	/** L'immagine del bottone di uscita quando viene premuto */
 	private static final BufferedImage selectedExitButtonImage = StaticImage.SELECTED_EXIT_BUTTON.getImage();
 	
+	/** Larghezza della finestra a scorrimento */
 	private static final int SCROLLPANE_WIDTH  = 749;
+	/** Altezza della finestra a scorrimento */
 	private static final int SCROLLPANE_HEIGHT = 605;
+	/** Larghezza di una riga della classifica */
 	private static final int ENTRY_WIDTH       = 720;
+	/** Altezza di una riga della classifica */
 	private static final int ENTRY_HEIGHT      = 65;
+	/** Larghezza dell'icona della ricompensa */
 	private static final int AWARD_WIDTH       = 58;
+	/** Altezza dell'icona della ricompensa */
 	private static final int AWARD_HEIGHT      = 58;
+	/** Larghezza del bottone per uscire */
 	private static final int EXITBUTTON_WIDTH  = 749;
+	/** Altezza del botton per uscire */
 	private static final int EXITBUTTON_HEIGHT = 122;
 	
+	/** Spiazzamento orizzontale AWARD | NAME */
 	private static final int AWARD_NAME_PADDING  	  = 50;
+	/** Spizzamaneto orizzontale NAME | POINTS */
 	private static final int NAME_POINTS_PADDING 	  = 10;
+	/** Spiazzamento orizzontale sinistro per l'icona della ricompensa */
 	private static final int LEFT_AWARD_PADDING 	  = 10;
+	/** Spizzamento verticale per le righe della classifica */
 	private static final int VERTICAL_ENTRIES_PADDING = 10;
+	/** Spizzamento verticale fra la classifica e il bottone di uscita */
 	private static final int EXIT_LEADERBOARD_PADDING = 15;
+	/** Spiazzamento verticale per la scritta che informa l'assenza di contenuto nella classifica*/
 	private static final int EMPTYLEADERBOARD_SPACING = 100;
 	
+	/** Numero di pixel da scorrere nella finestra a scorrimento per ogni rotazione della rotellina del mouse */
 	private static final int PERMOUSEWHEEL_PIXEL = 16;
 	
+	/** Messaggio da visualizzare quando la classfica è vuota */
 	private static final String EMPTY_LEADERBOARD_MSG = "Leaderboard is empty";
 	
-	private Leaderboard leaderboard;
-	private Font leaderboardFont;
-	
+	/**
+	 * Costruisce la classe e disegna la classifica
+	 * @param leaderboard
+	 * la classifica da cui estrapolare i dati
+	 * @param leaderboardFont
+	 * il font personalizzato 
+	 */
 	public LeaderboardMenu(Leaderboard leaderboard, Font leaderboardFont)
 	{
-		this.leaderboard = leaderboard;
-		this.leaderboardFont = leaderboardFont;
-		
 		JPanel entriesPanel = new JPanel();
 		List<Leaderboard.Entry> leaderboardContent = leaderboard.getContent();
 		
@@ -110,6 +133,15 @@ public class LeaderboardMenu extends JPanel
 		}
 	}
 	
+	/**
+	 * Crea uan rida della classifica
+	 * @param entry
+	 * la riga da cui estrapolare i dati
+	 * @param leaderboardFont
+	 * il font personalizzato
+	 * @return 
+	 * la riga
+	 */
 	private JPanel createEntryPanel(Leaderboard.Entry entry, Font leaderboardFont)
 	{
 		JPanel entryPanel = new JPanel() {
@@ -166,6 +198,7 @@ public class LeaderboardMenu extends JPanel
 		return entryPanel;
 	}
 	
+	/** Usato per disegnare lo sfondo */
 	@Override
 	public void paintComponent(Graphics g)
 	{

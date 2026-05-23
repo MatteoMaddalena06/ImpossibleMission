@@ -41,15 +41,22 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+/** Classe per il menù della composizione dei pezzi di puzzle */
 public class PuzzleMenu extends JPanel
 {
+	/** Larghezza del menù */
 	private static final int WIDTH = 800;
+	/** Altezza del menù */
 	private static final int HEIGHT = 400;
+	/** Numero di pixel da scorrere nella finestra a scorrimento per ogni rotazione della rotellina del mouse */
 	private static final int PERMOUSEWHEEL_PIXEL = 16;
 	
+	/** {@DataFlavor} per i pezzi di puzzle da trascinare */
     private static final DataFlavor PIECE_FLAVOR;
     
+    /** Array dei {@JPanel} usati per le griglie che devono contenere i pezzi di puzzle */
     private final GridPanel[] gridPanels = new GridPanel[PresettedPassword.SIZE];
+    /** Container per il pezzo di puzzle da trasferire */
     private final JPanel piecesContainer;
 
     static 
@@ -66,14 +73,20 @@ public class PuzzleMenu extends JPanel
         PIECE_FLAVOR = f;
     }
     
+    /** Classe per la griglia che deve contenere i pezzi di puzzle */
     private class GridPanel extends JPanel 
     {
+    	/** Larghezza della griglia */
     	private static final int WIDTH = 2;
+    	/** Altezza della griglia */
     	private static final int HEIGHT = 2;
+    	/** Dimensione del bordo */
     	private static final int BORDER_SIZE = 2;
     	
+    	/** Array degli slot che compongono la griglia */
     	private final SlotPanel[][] slots = new SlotPanel[HEIGHT][WIDTH];
     	
+    	/** Costruisce la classe */
         public GridPanel()
         {
             this.setLayout(new GridLayout(WIDTH, HEIGHT));
@@ -90,15 +103,28 @@ public class PuzzleMenu extends JPanel
             }
         }
         
+        /**
+         * Restituisce gli slot che compongono la griglia 
+         * @return
+         * gli slot che compongono la griglia
+         */
         private SlotPanel[][] getSlots()
         { return slots; }
     }
     
+    /** Classe per lo slot di una griglia */
     private class SlotPanel extends JPanel
     {
+    	/** Dimensione dello slot */
     	private static final int SIZE = 40;
+    	/** Dimensione del bordo */
     	private static final int BORDER_SIZE = 1;
     	
+    	/**
+    	 * Costruice la classe
+    	 * @param piecesContainer
+    	 * container per il pezzo di puzzle
+    	 */
         public SlotPanel(JPanel piecesContainer)
         {
             this.setLayout(new GridBagLayout());
@@ -108,10 +134,16 @@ public class PuzzleMenu extends JPanel
             new DropTarget(this, new PieceDropTargetListener(this, piecesContainer));
         }
 
+        /**
+         * Indica se lo slot è vuoto 
+         * @return
+         * true se e solo se lo slot è vuoto
+         */
         boolean isEmpty() 
         { return this.getComponentCount() == 0; }
     }
     
+    /** Classe per trasferire i pezzi di puzzle */
     private class PieceTransferable implements Transferable 
     {
         private final JLabel label;
@@ -137,6 +169,7 @@ public class PuzzleMenu extends JPanel
         }
     }
 
+    /** Classe per inserire i pezzi di puzzle negli slot */
     private class PieceDropTargetListener extends DropTargetAdapter 
     {
         private final SlotPanel targetSlot;      
@@ -212,6 +245,15 @@ public class PuzzleMenu extends JPanel
         { return targetSlot == null || targetSlot.isEmpty(); }
     }
     
+    /**
+     * Costuisce la classe e disegna il menù
+     * @param password
+     * la password
+     * @param puzzlePieces
+     * i pezzi di puzzle in possesso del giocatore
+     * @param customFont
+     * il font personalizzato
+     */
     public PuzzleMenu(PresettedPassword password, List<PuzzlePiece> puzzlePieces, Font customFont)
     {
         JPanel northPanel = new JPanel(new BorderLayout());
@@ -278,6 +320,13 @@ public class PuzzleMenu extends JPanel
         new DropTarget(piecesContainer, new PieceDropTargetListener(null, piecesContainer));
     }
 
+    /**
+     * Crea una {@link JLabel} da un {@link PuzzlePiece}
+     * @param puzzlePiece
+     * il pezzo di puzzle
+     * @return
+     * la {@link JLabel}
+     */
     private JLabel createPieceLabel(PuzzlePiece puzzlePiece) 
     {
     	Image scaledImage = StaticImage.getPuzzlePiece(puzzlePiece).getImage().getScaledInstance(SlotPanel.SIZE, SlotPanel.SIZE, Image.SCALE_SMOOTH);
@@ -296,6 +345,11 @@ public class PuzzleMenu extends JPanel
         return label;
     }
     
+    /**
+     *  Restituisce il contenuto delle griglie del menù
+     *  @return 
+     *  il contenuto delle griglie sotto forma di array di matrici 2x2
+     */
     private PuzzlePiece[][][] getGridsContent()
     {
     	PuzzlePiece[][][] result = new PuzzlePiece[PresettedPassword.SIZE][GridPanel.HEIGHT][GridPanel.WIDTH];
@@ -320,6 +374,13 @@ public class PuzzleMenu extends JPanel
     	return result;
     }
     		
+    /**
+     * Imposta la posizione del menù nel pannello di gioco
+     * @param frameWidth
+     * larghezza del pannello di gioco
+     * @param frameHeight
+     * altezza del pannello di gioco
+     */
     public void setPositionInFrame(int frameWidth, int frameHeight)
 	{ this.setBounds((frameWidth - WIDTH) / 2, (frameHeight - HEIGHT) / 2, WIDTH, HEIGHT); }
 }

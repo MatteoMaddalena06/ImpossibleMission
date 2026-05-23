@@ -11,6 +11,7 @@ import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.Player;
 import code.model.gameobjects.enemy.AttackerRobot;
 
+/** Enumerazione per le animazioni */
 public enum Animation
 {
 	PLAYER(Map.ofEntries(
@@ -80,8 +81,10 @@ public enum Animation
 			entry(State.SEARCHING, ImageUtils.loadAnimation("/resources/SearchingWindows/SearchingWindow%d.png", 1, 11, true))
 	));
 	
+	/** Array associativo stato -> lista di immagini */
 	private Map<State, List<BufferedImage>> animationLists;
 	
+	/** Enumerazione per gli stati possibili di un'animazione*/
 	public enum State
 	{
 		WALKING_LEFT(1), WALKING_RIGHT(-1),
@@ -93,14 +96,28 @@ public enum Animation
 		ATTACK_LEFT(7), ATTACK_RIGHT(-7),
 		SEARCHING();	
 		
+		/** ID dello stato */
 		private int id;
 		
+		/**
+		 * Costruice l'istanza enumerativa
+		 * @param id
+		 * l'ID dello stato
+		 */
 		private State(int id)
 		{ this.id = id;}
 		
+		/** Costruice l'istanza enumerativa */
 		private State()
 		{ this(0); }
 	
+		/**
+		 * Converte lo stato del {@link MovingObject} nello stato dell'animazione corrispondente
+		 * @param movingObject
+		 * il {@link MovingObject} 
+		 * @return
+		 * lo stato dell'animazione corrispondente
+		 */
 		public static State getState(MovingObject movingObject)
 		{			
 			MovingObject.Direction direction = movingObject.getDirection();
@@ -127,14 +144,30 @@ public enum Animation
 			};
 		}
 		 
-		 
+		/**
+		 * Controlla se due stati sono uguali ma specchiati
+		 * @param otherState
+		 * l'altro stato
+		 * @return
+		 * true se e solo se sono lo stesso stato ma specchiati
+		 */
 		public boolean isMirrored(State otherState)
 		{ return otherState != null && this.id == -otherState.id; }
 	}
 	
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param animationLists
+	 * l'array associativo stato -> lista di immagini
+	 */
 	private Animation(Map<State, List<BufferedImage>> animationLists)
 	{ this.animationLists = animationLists; }
 	
+	/**
+	 * Restituisce l'array associativo tato -> lista di immagini
+	 * @return
+	 * l'array associativo tato -> lista di immagini
+	 */
 	public Map<State, List<BufferedImage>> getAnimationLists()
 	{ return animationLists; }
 }

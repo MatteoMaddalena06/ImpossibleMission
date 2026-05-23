@@ -31,24 +31,44 @@ import code.controller.event.GameResumed;
 //event import
 import code.event.EventDispatcher;
 
+/**
+ * La classe per il gameloop del gioco. Si occupa di aggiornare lo stato della simulazione
+ */
 public class GameLoop extends Thread
 {
+	/** Il pannello di gioco */
 	private Renderer renderer;
+	/** Il contesto di gioco corrente */
 	private GameContext context;
 	
+	/** Flag per stabilire se mettere in pausa la simulazione */
 	private boolean pauseSimulation;
 	
+	/** Flag per stabilire se interrompere la simulazione per un dato lasso di tempo */
 	private boolean pauseSimulationUntil;
+	/** Stabilisce per quanto tempo interrompere la simulazione (valido solo se {@link GameLoop#pauseSimulationUntil} == true)*/
 	private long pauseUntil;
 
+	/** Flag per statbilire se saltare l'aggiornamento dello stato del player */
 	private boolean skipPlayerUpdateUntil;
+	/** Stabilisce per quanto tempo saltare l'aggiornamente dello stato del player (valido solo se {@link GameLoop#skipPlayerUpdateUntil} == true) */
 	private long skipUntil;
 	
+	/** Flag per stabilire se la partita deve terminare */
 	private boolean gameWillEnd;
+	/** Stabilisce per quanto tempo continuare prima di terminare la partita  */
 	private long continueUntil;
 	
+	/** Stabilisce per quanto tempo disattivare i robot*/
 	private long disableRobotsFor;
 	
+	/**
+	 * Costruice la classe e ne registra gli event handler
+	 * @param context
+	 * il contesto di gioco
+	 * @param renderer
+	 * il pannello di gioco
+	 */
 	public GameLoop(GameContext context, Renderer renderer)
 	{ 
 		this.renderer = renderer;
@@ -65,6 +85,7 @@ public class GameLoop extends Thread
 		EventDispatcher.subscribe(PuzzleMenuOpened.class,       x -> puzzleMenuOpened());
 	}
 	
+	/** Il codice del thread */
 	@Override 
 	public void run()
 	{	
@@ -138,21 +159,39 @@ public class GameLoop extends Thread
 		leaderboard.store();		
 	}	
 	
+	/**
+	 * Salta gli aggiornamente dello stato del player
+	 * @param nanos
+	 * per quanto tempo saltare gli aggiornamenti
+	 */
 	private void skipPlayerUpdate(long nanos)
 	{ skipPlayerUpdateUntil = true; skipUntil = System.nanoTime() + nanos; }
 	
+	/**
+	 * Mette in pausa la simulazione
+	 * @param nanos
+	 * per quanto tempo mettere in pausa la simulazione
+	 */
 	private void pauseSimulation(long nanos)
 	{ pauseSimulationUntil = true; pauseUntil = System.nanoTime() + nanos; }
 	
+	/** 
+	 * Termina la partita dopo il lasso di tempo prestabilito 
+	 * @param nanos 
+	 * il tempo da aspettare 
+	 */
 	private void setGameEnd(long nanos)
 	{ gameWillEnd = true; continueUntil = System.nanoTime() + nanos; }
 	
+	/** Interrompe la simulazione quando si apre un terminale */
 	private void terminalOpened()
 	{ pauseSimulation = true; EventDispatcher.notify(new TerminalMenuRequested(context.getPlayer())); }
 	
+	/** Interrompe la simulazione quando si apre il menù per la composizione dei puzzle */
 	private void puzzleMenuOpened()
 	{ pauseSimulation = true; EventDispatcher.notify(new PuzzleMenuRequested(context.getPlayer())); }
 	
+	/** Disattiva i robot */
 	private void disableRobots()
 	{ context.disableRobots(); disableRobotsFor = Enemy.ROBOT_DISABLE_NANOS; }
 }

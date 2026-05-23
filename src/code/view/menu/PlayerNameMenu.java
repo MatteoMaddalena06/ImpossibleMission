@@ -23,30 +23,51 @@ import code.view.images.StaticImage;
 import code.view.menu.event.SecondaryMenuClosed;
 import code.view.menu.event.GamePanelRequested;
 
+/** Classe per il menù dove l'utente può selezionare il nome */
 public class PlayerNameMenu extends JPanel
 {
+	/** L'immagine di sfondo */
 	private static final BufferedImage backgroundImage = StaticImage.MENU_BACKGROUND.getImage();
 	
+	/** L'immagine del bottonoe di inizio partita quando non viene cliccato */
 	private static final BufferedImage normalStartButtonImage   = StaticImage.NORMAL_START_BUTTON.getImage();
+	/** L'immagine del bottonoe di inizio partita quando viene cliccato */
 	private static final BufferedImage selectedStartButtonImage = StaticImage.SELECTED_START_BUTTON.getImage();
+	/** L'immagine del bottonoe di uscita quando non viene cliccato */
 	private static final BufferedImage normalExitButtonImage    = StaticImage.NORMAL_EXIT_BUTTON.getImage();
+	/** L'immagine del bottonoe di uscita quando viene cliccato */
 	private static final BufferedImage selectedExitButtonImage  = StaticImage.SELECTED_EXIT_BUTTON.getImage();
+	/** Sfondo della casella di input dove l'utente può inserire il nome */
 	private static final BufferedImage inputBoxBackground       = StaticImage.ENTRY_BACKGROUND.getImage();
 	
+	/** Larghezza del bottone di inizio gioco */
 	private static final int STARTBUTTON_WIDTH  = 743;
+	/** Altezza del bottone di inizio gioco */
 	private static final int STARTBUTTON_HEIGHT = 127;
+	/** Larghezza del bottone di inizioe gioco */
 	private static final int EXITBUTTON_WIDTH   = 743;
+	/** Altezza del bottone di inizio gioco */
 	private static final int EXITBUTTON_HEIGHT  = 127;
 	
+	/** Spiazzamento verticale */
 	private static final int Y_SPACING = 20;
+	/** Dimensione massima dell'input dell'utente */
 	private static final int MAX_INPUT_SIZE = 10;
 	
+	/** Il font personalizzato */
 	private Font inputBoxFont;
 	
+	/** Classe per controllare l'input dell'utente */
 	private class LimitDocumentFilter extends DocumentFilter 
 	{
+		/** Dimensione massima dell'input */
 	    private final int max;
 
+	    /**
+	     * Costruice la classe
+	     * @param max
+	     * la dimensione massima dell'input
+	     */
 	    public LimitDocumentFilter(int max) 
 	    { this.max = max; }
 
@@ -65,6 +86,11 @@ public class PlayerNameMenu extends JPanel
 	    }
 	}
 	
+	/**
+	 * Costruisce la classe e disegna il menù
+	 * @param inputBoxFont
+	 * il font personalizzato
+	 */
 	public PlayerNameMenu(Font inputBoxFont)
 	{ 
 		this.inputBoxFont = inputBoxFont;
@@ -112,6 +138,7 @@ public class PlayerNameMenu extends JPanel
 		startButton.addActionListener(e -> EventDispatcher.notify(new GamePanelRequested(inputBox.getText())));
 	}
 
+	/** Usato per disegnare lo sfondo */
 	@Override
 	public void paintComponent(Graphics g)
 	{

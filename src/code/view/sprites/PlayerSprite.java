@@ -10,14 +10,29 @@ import code.model.gameobjects.MovingObject;
 //images import
 import code.view.images.Animation;
 
+/** Classe per la sprite del giocatore */
 public class PlayerSprite extends AnimatedSprite
 {
+	/** L'animazione della sprite */
 	private static final Animation PLAYER_ANIMATION = Animation.PLAYER;
+	/** La durata dei frame dell'animazione */
 	private static final double    IMAGE_DURATION   = 0.12f;
 	
+	/**
+	 * Costruice la classe
+	 * @param player
+	 * il giocatore a cui associare la sprite
+	 */
 	public PlayerSprite(Player player)
 	{ super(player, PLAYER_ANIMATION, IMAGE_DURATION); }
 
+	/** 
+	 * Stabilisce il prossimo indice del frame nell'animazione corrente seguendo la logica dell'animazione del giocatore
+	 * @param animationList
+	 * la lista dei frame
+	 * @return
+	 * l'indice stabilito
+	 */
 	@Override
 	protected int nextImageIndex(List<BufferedImage> animationList)
 	{

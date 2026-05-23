@@ -13,6 +13,7 @@ import code.model.gameobjects.Furniture;
 import code.model.puzzle.PuzzlePiece;
 import code.model.puzzle.PuzzlePiece.Position;
 
+/** Enumerazione per le immagini statiche del gioco */
 public enum StaticImage 
 {
 	GREEN_WALL_RIGHT          (ImageUtils.loadImage("/resources/FixedObjects/Walls/GreenWalls/GreenWall.png",              true ), Room.Color.GREEN, Type.MIDDLE_WALL_RIGHT),
@@ -312,40 +313,60 @@ public enum StaticImage
 	NUMBER_8 	 (ImageUtils.loadImage("/resources/Hud/Number_8.png", true)),
 	NUMBER_9 	 (ImageUtils.loadImage("/resources/Hud/Number_9.png", true));
 	
+	/** Array associativo per le immagine per i mobili */
 	private static final Map<Room.Color, Map<Furniture.Type, StaticImage>> furnitureMap =  
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.FURNITURE).collect(Collectors.groupingBy(i -> i.color, Collectors.toMap(i -> i.furnitureType, i -> i)));
 	
+	/**Array associativo per le immagini dei mobili verdi */
 	private static final StaticImage[] greenFurnitures  = Arrays.stream(StaticImage.values()).filter(i -> i.color == Room.Color.GREEN && i.type == Type.FURNITURE).toArray(StaticImage[]::new);
+	/**Array associativo per le immagini dei mobili rossi */
 	private static final StaticImage[] redFurnitures    = Arrays.stream(StaticImage.values()).filter(i -> i.color == Room.Color.RED && i.type == Type.FURNITURE).toArray(StaticImage[]::new);
+	/**Array associativo per le immagini dei mobili viola */
 	private static final StaticImage[] purpleFurnitures = Arrays.stream(StaticImage.values()).filter(i -> i.color == Room.Color.PURPLE && i.type == Type.FURNITURE).toArray(StaticImage[]::new);
 	
+	/** Array associativo per le immagini dei segmenti di muro intermedi destri */
 	private static final Map<Room.Color, StaticImage> rightMiddleWalls = 
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.MIDDLE_WALL_RIGHT).collect(Collectors.toMap(i -> i.color, i -> i));
+	/** Array associativo per le immagini dei segmenti di muro intermedi  sinistri */
 	private static final Map<Room.Color, StaticImage> leftMiddleWalls = 
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.MIDDLE_WALL_LEFT).collect(Collectors.toMap(i -> i.color, i -> i));
+	/** Array associativo per le immagini dei segmenti di muro finali in alto a sinistra */
 	private static final Map<Room.Color, StaticImage> upperLeftWalls = 
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.UPPER_LEFT_WALL).collect(Collectors.toMap(i -> i.color, i -> i));
+	/** Array associativo per le immagini dei segmenti di muro finali in alto a destra */
 	private static final Map<Room.Color, StaticImage> upperRightWalls = 
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.UPPER_RIGHT_WALL).collect(Collectors.toMap(i -> i.color, i -> i));
+	/** Array associativo per le immagini dei segmenti di muro finali in basso a sinistra */
 	private static final Map<Room.Color, StaticImage> bottomLeftWalls = 
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.BOTTOM_LEFT_WALL).collect(Collectors.toMap(i -> i.color, i -> i));
+	/** Array associativo per le immagini dei segmenti di muro finali in basso a destra */
 	private static final Map<Room.Color, StaticImage> bottomRightWalls = 
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.BOTTOM_RIGHT_WALL).collect(Collectors.toMap(i -> i.color, i -> i));
 	
+	/** Array associativo per le immagini dei pezzi di puzzle */
 	private static final Map<PuzzlePiece, StaticImage> puzzlePieces = 
 			Arrays.stream(StaticImage.values()).filter(i -> i.type == Type.FURNITURE_LOOT && i.furnitureLootType == Furniture.LootType.PUZZLE_PIECE).collect(Collectors.toMap(i -> i.puzzlePieceType, i -> i));
 	
+	/** Lista delle immagini dei premi che appaiono nella classifica */
 	private static final List<StaticImage> awardsList = Arrays.asList(new StaticImage[] {LEADERBOARD_1TROPHY, LEADERBOARD_2TROPHY, LEADERBOARD_3TROPHY, LEADERBOARD_STAR, LEADERBOARD_SAD});
 	
+	/** Lista delle immagini delle cifre del punteggio */
 	private static final StaticImage[] numbersList = new StaticImage[] {NUMBER_0, NUMBER_1, NUMBER_2, NUMBER_3, NUMBER_4, NUMBER_5, NUMBER_6, NUMBER_7, NUMBER_8, NUMBER_9}; 
 	
+	/** L'immagine */
 	private BufferedImage image;
+	/** Il colore */
 	private Room.Color color;
+	/** Il tipo */
 	private Type type;
+	/** Il tipo di mobile (valido solo se {@link type} = FURNITURE) */
 	private Furniture.Type furnitureType;
+	/** Il tipo di cotenuto di un mobile (valido solo se {@link type} = FURNITURE_LOOT) */
 	private Furniture.LootType furnitureLootType;
+	/** Il tipo di pezzo di puzzle (valido solo se {@link type} = FURNITURE_LOOT e {@link furnitureLootType} == PUZZLE_PIECE}) */
 	private PuzzlePiece puzzlePieceType;
 	
+	/** Enumerazione per il tipo di immagine in {@link StaticImage}*/
 	public enum Type 
 	{ 
 		TERMINAL, MIDDLE_WALL_RIGHT, MIDDLE_WALL_LEFT, UPPER_LEFT_WALL, 
@@ -353,9 +374,29 @@ public enum StaticImage
 		FURNITURE_LOOT
 	}
 	
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param image
+	 * l'immagine
+	 */
 	private StaticImage(BufferedImage image)
 	{ this.image = image; }
 		
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param image
+	 * l'immagine
+	 * @param color
+	 * il colore
+	 * @param type
+	 * il tipo
+	 * @param furnitureType
+	 * il tipo di mobile
+	 * @param furnitureLootType
+	 * il tipo del contenuto del mobile
+	 * @param puzzlePieceType
+	 * il tipo di pezzo di puzzle
+	 */
 	private StaticImage(BufferedImage image, Room.Color color, Type type, Furniture.Type furnitureType, Furniture.LootType furnitureLootType, PuzzlePiece puzzlePieceType)
 	{
 		this(image);
@@ -366,27 +407,95 @@ public enum StaticImage
 		this.puzzlePieceType = puzzlePieceType;
 	}
 	
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param image
+	 * l'immagine
+	 * @param type
+	 * il tipo
+	 * @param furnitureLootType
+	 * il tipo del contenuto del mobile
+	 * @param puzzlePieceType
+	 * il tipo di pezzo di puzzle
+	 */
 	private StaticImage(BufferedImage image, Type type, Furniture.LootType furnitureLootType, PuzzlePiece puzzlePieceType)
 	{ this(image, null, type, null, furnitureLootType, puzzlePieceType); }
 	
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param image
+	 * l'immagine
+	 * @param color
+	 * il colore
+	 * @param type
+	 * il tipo
+	 * @param furnitureType
+	 * il tipo di mobile
+	 */
 	private StaticImage(BufferedImage image, Room.Color color, Type type, Furniture.Type furnitureType)
 	{ this(image, color, type, furnitureType, null, null); }
 	
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param image
+	 * l'immagine
+	 * @param type
+	 * il tipo
+	 * @param furnitureLootType
+	 * il tipo del contenuto del mobile
+	 */
 	private StaticImage(BufferedImage image, Type type, Furniture.LootType furnitureLootType)
 	{ this(image, null, type, null, furnitureLootType, null); }
 	
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param image
+	 * l'immagine
+	 * @param type
+	 * il tipo
+	 */
 	private StaticImage(BufferedImage image, Type type)
 	{ this(image, type, null); }
 	
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param image
+	 * l'immagine
+	 * @param color 
+	 * il colore
+	 * @param type
+	 * il tipo
+	 */
 	private StaticImage(BufferedImage image, Room.Color color, Type type)
 	{ this(image, color, type, null); }
 
+	/**
+	 * Restituisce l'immagine
+	 * @return
+	 * l'immagine
+	 */
 	public BufferedImage getImage()
 	{ return image; }	
 	
+	/** 
+	 * Restituisce l'immagine di un mobile
+	 * @param type
+	 * il tipo di mobile
+	 * @param color
+	 * il colore del mobile
+	 * @return
+	 * l'immagine del mobile richiesto
+	 */
 	public static StaticImage getFurniture(Furniture.Type type, Room.Color color)
 	{ return furnitureMap.get(color).get(type); }
 	
+	/**
+	 * Restituisce le immagini ti tutti i mobili con un colore specifico
+	 * @param color
+	 * il colore
+	 * @return
+	 * lista dei mobili del colore richiesto
+	 */
 	public static StaticImage[] getFurnitures(Room.Color color)
 	{
 		return switch(color) {
@@ -397,6 +506,13 @@ public enum StaticImage
 		};
 	}
 	
+	/**
+	 * Restituisce l'immagine del pavimento del colore desiderato
+	 * @param color
+	 * il colore
+	 * @return
+	 * l'immagine del pavimento del colore richiesto
+	 */
 	public static StaticImage getFloor(Room.Color color)
 	{
 		return switch(color) {
@@ -407,6 +523,15 @@ public enum StaticImage
 		};
 	}
 	
+	/**
+	 * Restituisce l'immagine del muro del colore e del tipo desiderato
+	 * @param color
+	 * il colore
+	 * @param wallType
+	 * il tipo
+	 * @return
+	 * l'immagine del muro del colore e del tipo richiesto
+	 */
 	public static StaticImage getWall(Room.Color color, Type wallType)
 	{ 
 		return switch(wallType) {
@@ -420,9 +545,23 @@ public enum StaticImage
 		};
 	}
 	
+	/**
+	 * Restituisce l'immagine di un pezzo di puzzle 
+	 * @param puzzlePiece
+	 * il pezzo di puzzle
+	 * @return
+	 * l'immagine del pezzo di puzzle richiesto
+	 */
 	public static StaticImage getPuzzlePiece(PuzzlePiece puzzlePiece)
 	{ return puzzlePieces.get(puzzlePiece); }
 	
+	/**
+	 * Restituisce l'immagine del contenuto di un mobile
+	 * @param furnitureLootType
+	 * il tipo di contenuto
+	 * @return
+	 * l'immagine del contenuto richiesto
+	 */
 	public static StaticImage getFurnitureLoot(Furniture.LootType furnitureLootType)
 	{
 		return switch(furnitureLootType) {
@@ -433,9 +572,18 @@ public enum StaticImage
 		};
 	}
 	
+	/** Restituisce la lista delle immagine delle ricompense che appaiono in classifica 
+	 * @return
+	 *  la lista delle immagine delle ricompense che appaioni in classifica 
+	 */
 	public static List<StaticImage> getAwardsList()
 	{ return awardsList; }
 	
+	/** 
+	 * Restituisce le immagini delle cifre per il punteggio
+	 * @return
+	 * la lista delle immagini delle cifre per il punteggio
+	 */
 	public static StaticImage[] getNumbersList()
 	{ return numbersList; }
 }

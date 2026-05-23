@@ -8,20 +8,38 @@ import code.model.gameobjects.Platform;
 import code.view.images.ImageUtils;
 import code.view.images.StaticImage;
 
+/** Classe per la sprite delle piattaforme */
 public class PlatformSprite extends Sprite
 {
+	/** Immagine del primo segmento di piattaforma */
 	private static final BufferedImage platformStartImage = StaticImage.PLATFORM_START.getImage();
+	/** Immagine dei segmenti intermedi di piattaforma */
 	private static final BufferedImage platformMidImage   = StaticImage.PLATFORM_MID.getImage();
+	/** Immagine per l'ultimo segmento di piattaforma */
 	private static final BufferedImage platformEndImage   = StaticImage.PLATFORM_END.getImage();
 	
+	/** Larghezza del segmento di piattaforma */
 	private static final int SPRITE_WIDTH  = platformStartImage.getWidth();
 	
+	/**
+	 * Costruice la classe
+	 * @param platform
+	 * la piattaforma a cui associare la sprite
+	 */
 	public PlatformSprite(Platform platform)
 	{ 
 		super(platform); 
 		computeImage();
 	}
 	
+	/**
+	 * Calcola e imposta l'immagine per la sprite concatenando i segmenti di piattaforma
+	 * @see code.view.images.ImageUtils#imageStrip(BufferedImage, int, code.view.images.ImageUtils.Direction)
+	 * @see platformStartImage
+	 * @see platformMidImage
+	 * @see platformEndImage
+	 * @see code.view.images.ImageUtils#imageStrip(BufferedImage, int, code.view.images.ImageUtils.Direction)
+	 */
 	@Override
 	public void computeImage()
 	{

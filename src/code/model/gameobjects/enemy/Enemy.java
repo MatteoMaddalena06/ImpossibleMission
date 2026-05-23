@@ -2,42 +2,86 @@ package code.model.gameobjects.enemy;
 
 //data structure module
 import java.util.List;
-
+//model import
 import code.model.Point;
 import code.model.context.GameContext;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.MovingObject;
 
+/** Classe che modella i nemici */
 public abstract class Enemy extends MovingObject 
 { 
+	/** Per quanto tempo i robot vanno disabilitati */
 	public static final long ROBOT_DISABLE_NANOS = 10000000000L;
+	/** Velocità orizzontale condivisa fra i robot */
 	private static final double SHARED_HORIZONTAL_SPEED = 150f;
 	
+	/** FOV del robot */
 	private FieldOfView fieldOfView;
+	/** ritardo casuale per il movimento */
 	private double randomDelay;
 	
+	/** Enumerazione per i movimenti concessi a un robot */
 	private enum RandomHorizontalMovement
 	{ LEFT, RIGHT, IDLE }
 
+	/** Classe per la FOV dei robot */
 	public class FieldOfView extends GameObject
 	{	
+		/**
+		 * Costruisce la classe
+		 * @param position
+		 * la posizione originale
+		 * @param width
+		 * la larghezza
+		 * @param height
+		 * l'altezza
+		 */
 		public FieldOfView(Point position, int width, int height)
 		{ super(position, width, height);} 
 		
+		/**
+		 * Imposta la cooridnata x della FOV
+		 * @param x
+		 * la cooridnata x
+		 */
 		public void setX(double x) { getPosition().setX(x); }
+		/**
+		 * Imposta la cooridnata y della FOV
+		 * @param x
+		 * la cooridnata y
+		 */
 		public void setY(double y) { getPosition().setY(y); }
 		
+		/** Aggiorna lo stato della FOV 
+		 * @param context
+		 * il contesto in cui operare
+		 */
 		@Override
 		public void update(GameContext context) {}	
 	}
 	
+	/**
+	 * Costruisce la classe
+	 * @param position
+	 * la posizione originale
+	 * @param width
+	 * la larghezza
+	 * @param height
+	 * l'altezza
+	 */
 	public Enemy(Point position, int width, int height)
 	{ 
 		super(position, width, height);
 		randomDelay = 0;
 	}
 	
+	/**
+	 * Muove orizzontalmente il robot 
+	 * @param context
+	 * il contesto in cui operare
+	 */
 	protected void applyGroundMovement(GameContext context)
 	{
 		setRandomHorizontalVelocity();
@@ -67,6 +111,13 @@ public abstract class Enemy extends MovingObject
 			setPhysicsState(MovingObject.PhysicsState.IDLE);
 	}
 	
+	/**
+	 * Controlla se il robot se sul bordo di un pavimento
+	 * @param fixedObjectList
+	 * la lista dei pavimenti nella mappa
+	 * @return
+	 * true se e solo se il nemico è sul bordo
+	 */
 	public boolean isOnLedge(List<FixedObject> fixedObjectList)
 	{
 		Point thisPosition = getPosition();
@@ -76,6 +127,7 @@ public abstract class Enemy extends MovingObject
 		return !fixedObjectList.stream().filter(f -> f.getType() == FixedObject.Type.FLOOR).anyMatch(f -> f.containsPoint(footPosition));
 	}
 	
+	/** Imposta la velocità orizzontale del robot generandola casualmente */
 	private void setRandomHorizontalVelocity()
 	{
 		int randomMovementNumber = RandomHorizontalMovement.values().length;
@@ -95,9 +147,19 @@ public abstract class Enemy extends MovingObject
 		randomDelay = (int)(Math.random() * 3);
 	}
 	
+	/**
+	 * Impost la FOV
+	 * @param fov
+	 * la FOV
+	 */
 	protected void setFov(FieldOfView fov)
 	{ fieldOfView = fov; }
 	
+	/**
+	 * Restituisce la FOV
+	 * @return
+	 * la FOV
+	 */
 	protected FieldOfView getFov()
 	{ return fieldOfView; }
 }

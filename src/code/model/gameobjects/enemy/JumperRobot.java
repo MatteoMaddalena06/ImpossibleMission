@@ -10,18 +10,36 @@ import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.Platform;
 import code.model.room.RoomMap;
 
+/** Classe che modella il robot che salta */
 public class JumperRobot extends Enemy
 {
+	/** Velocità orizzontale del robot */
 	private static final double    HORIZONTAL_SPEED = 200f;
+	/** Velocità verticale del robot */
 	private static final double    VERTICAL_SPEED   = 350f;
+	/** Larghezza della FOV */
 	private static final int       FOV_WIDTH        = 6 * RoomMap.TILE_SIZE;
+	/** Altezza della FOV */
 	private static final int       FOV_HEIGHT       = 5 * RoomMap.TILE_SIZE;
+	/** Coordinata x originale della FOV */
 	private final double 		   INITIAL_FOV_X    = getPosition().getX() - (FOV_WIDTH - getWidth())/2;
+	/** Coordinata u originale della FOV */
 	private final double 		   INITIAL_FOV_Y    = getPosition().getY() - (FOV_HEIGHT - getHeight()); 
+	/** Quanto tempo aspettare prima di saltare */
 	private static final double    JUMP_DELAY       = 0.7f;
 	
+	/** Il tempo passato dal salto */
 	private double jumpInterval;
 	
+	/**
+	 * Costruice la classe
+	 * @param point
+	 * la posizione originale
+	 * @param width
+	 * la larghezza
+	 * @param height
+	 * l'altezza
+	 */
 	public JumperRobot(Point point, int width, int height)
 	{ 
 		super(point, width, height);
@@ -29,6 +47,11 @@ public class JumperRobot extends Enemy
 		jumpInterval = JUMP_DELAY;
 	}
 	
+	/**
+	 * Aggiorna lo stato del robot saltando quando si avvicina
+	 * @param context
+	 * il contesto in cui operare
+	 */
 	@Override
 	public void update(GameContext context)
 	{

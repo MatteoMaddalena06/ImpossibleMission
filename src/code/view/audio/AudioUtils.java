@@ -15,15 +15,32 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+/** Classe di utilità generale per la manipolazione dell'audio */
 public abstract class AudioUtils
 {
+	/** Dimensione del chunk di caricamento per le tracce audio */
 	private static final int BUFFER_SIZE = 4096;
 	
+	/** Cache per il caricamento della tracce audio */
 	private static final Map<String, AudioData> AUDIO_CACHE = new HashMap<String, AudioData>();
 	
+	/**
+	 * Carica una traccia audio dal disco
+	 * @param pathname
+	 * il percorso della traccia audio
+	 * @return
+	 * i dati della traccia audio
+	 */
 	public static AudioData loadAudioSample(String pathname)
 	{ return AUDIO_CACHE.computeIfAbsent(pathname, x -> loadRaw(pathname)); }
 	
+	/**
+	 * Converte i dati di una traccia audio in una {@link Clip}
+	 * @param audioSample
+	 * i dati della traccia audio
+	 * @return
+	 * la {@link Clip} risultante
+	 */
 	public static Clip toClip(AudioData audioSample)
 	{
 		try 
@@ -36,6 +53,13 @@ public abstract class AudioUtils
 		{ throw new IllegalStateException("Unable to properly read the audio sample " + audioSample + " to convert it into a Clip"); }
 	}
 	
+	/**
+	 * Carica una traccia audio senza memorizzarla nella cache
+	 * @param pathname
+	 * il percorso della traccia audio
+	 * @return
+	 * i dati della traccia audio
+	 */
 	private static AudioData loadRaw(String pathname) 
 	{
 		InputStream input = AudioUtils.class.getResourceAsStream(pathname);

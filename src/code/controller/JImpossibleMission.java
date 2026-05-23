@@ -39,29 +39,49 @@ import code.controller.event.GameResumed;
 //event import
 import code.event.EventDispatcher;
 
+/**
+ * La classe principale del gioco che contiene il metodo main(String[] args).
+ * Fa parte del controller e si occupa di creare la finestra e gestire i cambi di stato impartitegli dalla view.
+ */
 public class JImpossibleMission
 {
+	/** Il titolo della finestra di gioco */
 	private static final String WINDOW_TITLE          = "Impossible mission";
+	/** L'errore da visualizzare in caso di errato caricamento del font personalizzato*/
 	private static final String CUSTOMFONT_LOAD_ERROR = "Unable to load menu custom font";
-	
+	/** ID del menù principale per il {@link CardLayout}*/
 	private static final String MAIN_MENU_ID  	    = "MAIN_MENU";
+	/** ID del menù per inserire il nome del giocatore per il {@link CardLayout}*/
 	private static final String PLAYER_MENU_ID 		= "PLAYER_MENU_ID";
+	/** ID del menù per la classifica di gioco per il {@link CardLayout}*/
 	private static final String LEADERBOARD_MENU_ID = "LEADERBOARD_MENU_ID";
+	/** ID del panello di gioco per il {@link CardLayout}*/
 	private static final String GAMEPANEL_ID        = "GAMEPANEL_ID";
 	
+	/** La dimensione del font personalizzato */
 	private static final float FONT_SIZE = 32f;
+	/** L'immagine della finestra di gioco */
 	private static final BufferedImage CUSTOM_FRAME_ICON = StaticImage.WINDOW_ICON.getImage();
+	/** Il font personalizzato */
 	private static Font customFont = UIManager.getFont("Label.font").deriveFont(FONT_SIZE);
 	
+	/** La dimensione orizzontale della finestra di gioco*/
 	private static final int FRAME_WIDTH  = RoomMap.PIXELS_MAP_WIDTH;
+	/** La dimensione verticale della finestra di gioco*/
 	private static final int FRAME_HEIGHT = RoomMap.PIXELS_MAP_HEIGHT + RoomMap.TILE_SIZE;
 	
+	/**Il mondo di gioco  */
 	private GameWorld world;
+	/**Il vecchio menù della classifica da sostituire quando il giocatore apre un nuovo menù della classifica di gioco */
 	private LeaderboardMenu oldLeaderboardPanel;
+	/**Il vecchio pannello di gioco da sostituire quando il giocatore termina la partita */
 	private Renderer oldGamePanel;
+	/**La vecchia interfaccia del terminale da sostituire quando il giocatore apre un nuovo terminale */
 	private TerminalMenu oldTerminalMenu;
+	/**La vecchia interfaccia per la composizione dei pezzi di puzzle da sostiture quando il giocatore ne apre un'altra */
 	private PuzzleMenu oldPuzzleMenu;
 	
+	/** Il punto di ingresso del gioco */
 	public static void main(String[] args)
 	{ 
 		try 
@@ -78,6 +98,14 @@ public class JImpossibleMission
 		new JImpossibleMission().start();
 	}
 
+	/**
+	 * Si occupa di creare il necessario per l'avvio del gioco:
+	 * <ul>
+	 * 	<li>crea la finestra di gioco</li>
+	 *  <li>registra gli event handler di questa classe (si veda {@link code.controller.JImpossibleMission#initEventHandler(JPanel, CardLayout, JLayeredPane)})</li>
+	 *  <li>avvia la musica di sottofondo (si veda {@link code.view.audio.AudioPlayer#playBackgroundMusic()})</li>
+	 * </ul>
+	 */
 	private void start()
 	{
 		JFrame frame = new JFrame(WINDOW_TITLE);
@@ -111,6 +139,12 @@ public class JImpossibleMission
 		});
 	}
 	
+	/**
+	 * Registra gli event handler necessari per rispondere correttamente agli eventi generati dalla View e dalla Model.
+	 * @param rootPanel il {@link JPanel} principale della finestra di gioco.
+	 * @param layout il {@link CardLayout} usato per il menù.
+	 * @param layeredPane il {@link JLayeredPane} della finestra di gioco
+	 */
 	private void initEventHandler(JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
 	{
 		EventDispatcher.subscribeAsStatic(CloseGame.class,                x -> closeGame());
@@ -125,6 +159,13 @@ public class JImpossibleMission
 		EventDispatcher.subscribeAsStatic(PuzzleMenuClosed.class,         x -> { oldPuzzleMenu.setVisible(false); EventDispatcher.notify(new GameResumed()); });
 	}
 	
+	/**
+	 * Avvia la partita (un event handler)
+	 * @param playerName il nome del giocatore che intende iniziare la partita
+	 * @param rootPanel il {@link JPanel} principale della finestra di gioco.
+	 * @param layout il {@link CardLayout} usato per il menù.
+	 * @param layeredPane il {@link JLayeredPane} della finestra di gioco
+	 */
 	private void startGame(String playerName, JPanel rootPanel, CardLayout layout, JLayeredPane layeredPane)
 	{
 		Player player = new Player(playerName, new Point(Player.START_GAME_SPAWN_X, Player.START_GAME_SPAWN_Y), new Point(Player.START_GAME_WORLD_X, Player.START_GAME_WORLD_Y));
@@ -152,6 +193,11 @@ public class JImpossibleMission
 		}).start();
 	}
 	
+	/**
+	 * Termina una partita precedentemente iniziata (un event handler)
+	 * @param rootPanel il {@link JPanel} principale della finestra di gioco.
+	 * @param layout il {@link CardLayout} usato per il menù.
+	 */
 	private void stopGame(JPanel rootPanel, CardLayout layout)
 	{
 		 layout.show(rootPanel, MAIN_MENU_ID); 
@@ -163,6 +209,7 @@ public class JImpossibleMission
 		 oldPuzzleMenu = null;
 	}
 
+	/** Termina il gioco (un event handler) */
 	private void closeGame()
 	{ 
 		AudioPlayer.getIstance().disposeBackgroundMusic();
@@ -170,6 +217,11 @@ public class JImpossibleMission
 		System.exit(0);
 	}
 	
+	/**
+	 * Permette di passare all'interfaccia della classifica di gioco (un event handler)
+	 * @param rootPanel il {@link JPanel} principale della finestra di gioco.
+	 * @param layout il {@link CardLayout} usato per il menù.
+	 */
 	private void swapToLeaderboard(JPanel rootPanel, CardLayout layout)
 	{
 	    LeaderboardMenu leaderboardPanel = new LeaderboardMenu(Leaderboard.load(), customFont);
@@ -183,6 +235,11 @@ public class JImpossibleMission
 	    layout.show(rootPanel, LEADERBOARD_MENU_ID);
 	}
 	
+	/**
+	 * Permette di passare all'interfaccia dei terminali (un event handler)
+	 * @param rootPanel il {@link JPanel} principale della finestra di gioco.
+	 * @param layout il {@link CardLayout} usato per il menù.
+	 */
 	private void swapToTerminalMenu(Player player, JLayeredPane layeredPane)
 	{
 		TerminalMenu terminalMenu = new TerminalMenu(player, customFont);
@@ -196,6 +253,11 @@ public class JImpossibleMission
 		layeredPane.add(terminalMenu, JLayeredPane.PALETTE_LAYER);
 	}
 	
+	/**
+	 * Permette di passare all'interfaccia del menu per la composizione dei pezzi di puzzle (un event handler)
+	 * @param rootPanel il {@link JPanel} principale della finestra di gioco.
+	 * @param layout il {@link CardLayout} usato per il menù.
+	 */
 	private void swapToPuzzleMenu(Player player, JLayeredPane layeredPane)
 	{
 		PuzzleMenu puzzleMenu = new PuzzleMenu(world.getWorldPassword(), player.getPuzzlePiecesObtained(), customFont);

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
   
+/** Enumerazione per i pezzi di puzzle previsti dal gioco */
 public enum PuzzlePiece 
 {
 	A_UPPER_RIGHT (Position.UPPER_RIGHT,  'A'),
@@ -133,32 +134,54 @@ public enum PuzzlePiece
 	Z_BOTTOM_RIGHT(Position.BOTTOM_RIGHT, 'Z'),
 	Z_BOTTOM_LEFT (Position.BOTTOM_LEFT,  'Z');
 
+	/** Numero di pezzi di puzzle in cui viene scomposta una lettera */
 	private static final int LETTER_SIZE = 4;
 	
+	/** Mappa dei pezzi di puzzle da posizionare in alto a destra indicizzata per caratteri */
 	private static final Map<Character, PuzzlePiece> upperRightPieces = 
 			Arrays.stream(values()).filter(p -> p.position == Position.UPPER_RIGHT).collect(Collectors.toMap(PuzzlePiece::getLetter, Function.identity()));
+	/** Mappa dei pezzi di puzzle da posizionare in alto a sinistra indicizzata per caratteri */
 	private static final Map<Character, PuzzlePiece> upperLeftPieces = 
 			Arrays.stream(values()).filter(p -> p.position == Position.UPPER_LEFT).collect(Collectors.toMap(PuzzlePiece::getLetter, Function.identity()));
+	/** Mappa dei pezzi di puzzle da posizionare in basso a destra indicizzata per caratteri */
 	private static final Map<Character, PuzzlePiece> bottomRightPieces = 
 			Arrays.stream(values()).filter(p -> p.position == Position.BOTTOM_RIGHT).collect(Collectors.toMap(PuzzlePiece::getLetter, Function.identity()));
+	/** Mappa dei pezzi di puzzle da posizionare in basso a sinistra indicizzata per caratteri */
 	private static final Map<Character, PuzzlePiece> bottomLeftPieces = 
 			Arrays.stream(values()).filter(p -> p.position == Position.BOTTOM_LEFT).collect(Collectors.toMap(PuzzlePiece::getLetter, Function.identity()));
 	
+	/** Posizione occupata dal pezzo di puzzle */
 	private Position position;
+	/** Lettera di cui fa parte il pezzo di puzzle */
 	private char letter;
 	
+	/** Enumerazione per le posizioni occupate da un pezzo di puzzle */
 	public enum Position 
 	{
 		UPPER_RIGHT, UPPER_LEFT,
 		BOTTOM_RIGHT, BOTTOM_LEFT
 	};
 	
+	/**
+	 * Costruisce l'istanza enumerativa
+	 * @param position
+	 * la posizione occupata dal pezzo di puzzle
+	 * @param letter
+	 * la lettere di cui fa parte il pezzo di puzzle
+	 */
 	private PuzzlePiece(Position position, char letter)
 	{
 		this.position = position;
 		this.letter = letter;
 	}
 	
+	/**
+	 * Data una password restituisce i pezzi di puzzle che la compongono
+	 * @param password
+	 * la password
+	 * @return
+	 * un array di pezzi di puzzle da considerare a gruppi di quattro; ogni gruppo memorizza pezzi di puzzle per la stessa lettera
+	 */
 	public static PuzzlePiece[] getPieces(String password)
 	{
 		int passwordLength = password.length();
@@ -178,9 +201,19 @@ public enum PuzzlePiece
 		return pieces;
 	}
 	
+	/**
+	 * Restituisce la posizione occupata dal pezzo di password
+	 * @return
+	 * la posizione occupata dal pezzo di password
+	 */
 	public Position getPosition()
 	{ return position; }
 	
+	/** 
+	 * Restituisce la lettere di cui fa parte il pezzo di puzzle
+	 * @return
+	 * la lettere di cui fa parte il pezzo di puzzle
+	 */
 	public char getLetter()
 	{ return letter; }	
 }

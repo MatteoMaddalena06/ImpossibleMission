@@ -1,5 +1,6 @@
 package code.model.puzzle;
 
+/** Enumerazione per le password previste dal gioco */
 public enum PresettedPassword 
 {
 	PASSWORD1 ("Adventure"),
@@ -23,14 +24,29 @@ public enum PresettedPassword
 	PASSWORD19("Windmills"), 
 	PASSWORD20("Knowledge");
 	
+	/** Numero di caratteri delle password */
 	public static final int SIZE = 9;
+	/** Numero totale di password previste dal gioco */
 	public static final int PASSWORD_NUMBER = 20;
 	
+	/** La password */
 	private String password;
 	
+	/**
+	 * Costruice l'istanza enumerativa
+	 * @param password
+	 * la password
+	 */
 	private PresettedPassword(String password)
 	{ this.password = password; }
 
+	/**
+	 * Controlla se il tentativo del player di comporre la password è corretto
+	 * @param attempt
+	 * il tentativo rappresentato come lista di matrici di {@link PuzzlePiece}
+	 * @return
+	 * true se e solo se il giocatore è riuscito nel tentativo
+	 */
 	public boolean checkAttempt(PuzzlePiece[][][] attempt)
 	{
 		if(password == null || attempt == null || attempt.length != SIZE)
@@ -60,6 +76,11 @@ public enum PresettedPassword
 		return true;
 	}
 	
+	/**
+	 * Restituisce la password
+	 * @return
+	 * la password
+	 */
 	public String getPassword()
 	{ return password; }
 }

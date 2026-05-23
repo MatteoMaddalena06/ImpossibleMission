@@ -3,6 +3,7 @@ package code.model.room;
 //model import
 import code.model.Point;
 
+/** Enumerazione per memorizzare la struttura delle stanze del gioco */
 public enum RoomMap 
 {
 	ROOM3(new int[][] {
@@ -928,36 +929,68 @@ public enum RoomMap
 			{2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2}
 	});
 	
-	public static final int EMPTY_SPACE		  = 0;
+	/** Dimensione della singola cella */
 	public static final int TILE_SIZE   	  = 32;
+	/** Numero di celle orizzontali delle stanze */
 	public static final int TILES_MAP_WIDTH   = 40;
+	/** Numero di celle verticale delle stanze */
 	public static final int TILES_MAP_HEIGHT  = 25;
+	/** Dimensione orizzontale delle stanze in pixel */
 	public static final int PIXELS_MAP_WIDTH  = TILES_MAP_WIDTH * TILE_SIZE;
+	/** Dimensione verticale delle stanze in pixel */
 	public static final int PIXELS_MAP_HEIGHT = TILES_MAP_HEIGHT * TILE_SIZE;
 	
+	/** Coordinata x della piattaforma per le stanze degli ascensori */
 	public static final int ELEVATOR_X		= 4 * RoomMap.TILE_SIZE;
+	/** Coordianta y della piattaforma per le stanze degli ascensori */
 	public static final int ELEVATOR_Y 		= 24 * RoomMap.TILE_SIZE;
+	/** Dimensione orizzontale della piattaforma per le stanze degli ascensori */
 	public static final int ELEVATOR_WIDTH  = 32 * RoomMap.TILE_SIZE;
+	/** Dimensione verticale della piattaforma per le stanze degli ascensori */
 	public static final int ELEVATOR_HEIGHT = 1 * RoomMap.TILE_SIZE;
 	
+	/** ID degli spazi vuoti */
+	public static final int EMPTY_SPACE  = 0;
+	/** ID dei muri */
 	public static final int WALL_ID      = 1;
+	/** ID dei pavimenti */
 	public static final int FLOOR_ID 	 = 2;
+	/** ID delle piattaforme */
 	public static final int PLATFORM_ID  = 3;
+	/** ID dei robot */
 	public static final int ROBOT_ID     = 4;
+	/** ID dei mobili */
 	public static final int FURNITURE_ID = 5;
+	/** ID dei terminali */
 	public static final int TERMINAL_ID  = 6;
+	/** ID del bombone */
 	public static final int BLACK_ORB_ID = 7;
 	
+	/** Posizione di spawn in alto a sinistra per le stanze */
 	public static final Point upperLeftSpawnPosition   = new Point(0 * RoomMap.TILE_SIZE, 3 * RoomMap.TILE_SIZE);
+	/** Posizione di spawn in alto a destra per le stanze */
 	public static final Point upperRightSpawnPosition  = new Point(38 * RoomMap.TILE_SIZE, 3 * RoomMap.TILE_SIZE);
+	/** Posizione di spawn in basso a sinistra per le stanze */
 	public static final Point bottomLeftSpawnPosition  = new Point(0 * RoomMap.TILE_SIZE, 21 * RoomMap.TILE_SIZE);
+	/** Posizione di spawn in basso a destra per le stanze */
 	public static final Point bottomRightSpawnPosition = new Point(38 * RoomMap.TILE_SIZE, 21 * RoomMap.TILE_SIZE);
 	
+	/** Struttura della stanza */
 	private int[][] mapMatrix;
 	
+	/**
+	 * Costruisce l'istanza enumerativa
+	 * @param mapMatrix
+	 * la struttura della stanza
+	 */
 	private RoomMap(int[][] mapMatrix)
 	{ this.mapMatrix = mapMatrix; }	
 	
+	/**
+	 * Restituisce la struttura della stanza
+	 * @return
+	 * struttura della stanza come matrice di interi
+	 */
 	public int[][] getMap()
 	{ return mapMatrix; }
 }

@@ -50,31 +50,54 @@ import code.model.context.PlayerFoundSomething;
 import code.model.context.PlayerIsSearching;
 import code.model.context.GameContext.UserInput;
 
+/** Classe per il pannello di gioco */
 public class Renderer extends JPanel
 {
-	private static final BufferedImage background  = StaticImage.BACKGROUND.getImage();
+	/** Immagine di sfondo */
+    private static final BufferedImage background  = StaticImage.BACKGROUND.getImage();
+	/** Immagine delle vite */
 	private static final BufferedImage lifeIcon    = StaticImage.LIFE_ICON.getImage();
+	/** Lista delle cifre per il punteggio */
 	private static final StaticImage[] numbersList = StaticImage.getNumbersList();
 	
+	/** Dimensione dell'icona per le vite */
 	private static final int LIFEICON_SIZE     = 35;
+	/** Spiazzamento delle icone per le vite */
 	private static final int LIFEICON_PADDING  = 5;
+	/** Dimensione dell'icona per le cifre del punteggio */
 	private static final int DIGITICON_SIZE    = 35;
+	/** Spiazzamento delle icone per le cifre del punteggio */ 
 	private static final int DIGITICON_PADDING = 5;
 	
+	/** {@link Sprite} del giocatore */
 	private PlayerSprite playerSprite;
+	/** Contesto di gioco */
 	private GameContext context;
+	/** Lista delle {@link Sprite} da visualizzare */
 	private List<Sprite> currentSpritesList; 
+	/** Cache per la generazione delle liste di {@link Sprite} */
 	private Map<Room, List<Sprite>> spritesListsCache;
 	
+	/** Altezza della finestra virtuale da visualizzare */
 	private double currentWindowY;
 	
+	/** Indica se è necessario visualizzare lo stato di una ricerca in un mobile */
 	private boolean printSearchingState;
+	/** Indica se è necessario visualizzare il contenuto di un mobile */
 	private boolean printFurnitureLoot;
+	/** Il mobile in cui il giocatore sta cercando (valido solo se {@link printSearchingState} == true o {@link printFurnitureLoot} == true) */
 	private Furniture interestingFurniture;
 	
+	/** Sincronizza il thread {@link code.controller.GameLoop} con il thread AWT durante la prima visualizzazione del pannello di gioco */
 	private CountDownLatch firstPaintLatch;
+	/** Indica se è la prima visualizzazione del pannello di gioco */
 	private boolean isFirstPaint;
 	
+	/**
+	 * Costruisce la classe
+	 * @param context
+	 * il contesto di gioco in cui operare
+	 */
 	public Renderer(GameContext context)
 	{	
 		currentSpritesList = new LinkedList<Sprite>();
@@ -91,9 +114,22 @@ public class Renderer extends JPanel
 		EventDispatcher.subscribe(PlayerFoundSomething.class, x -> printFurnitureLoot(((PlayerFoundSomething)x).source()));
 		EventDispatcher.subscribe(PlayerIsSearching.class, 	  x -> printSearchingState(((PlayerIsSearching)x).source()));
 		
-		bindAllKey(this, context);
+		bindAllKey(context);
 	}
 	
+	/**
+	 * Disegna a schermo tutte le componenti del pannello di gioco:
+	 * <ul>
+	 *   <li>le sprite nella {@link currentSpritesList}</li>
+	 *   <li>la {@link playerSprite}</li>
+	 *   <li>le icone delle vite e del punteggio</li>
+	 * </ul>
+	 * @param g
+	 * il contesto grafico
+	 * @see drawHUD
+	 * @see paintImage
+	 * @see paintFurnitureInfo
+	 */
 	@Override
 	protected void paintComponent(Graphics g)
 	{
@@ -166,6 +202,11 @@ public class Renderer extends JPanel
     	}
     } 
 	
+	/**
+	 * Disegna sul pannello di gioco le vite e il punteggio del giocatore
+	 * @param g
+	 * il contesto grafico
+	 */
 	private void drawHUD(Graphics g)
 	{
 		Player player = context.getPlayer();
@@ -179,6 +220,15 @@ public class Renderer extends JPanel
 			g.drawImage(digitsList.get(i), this.getWidth() - (i + 1) * (DIGITICON_SIZE + DIGITICON_PADDING), 0, DIGITICON_SIZE, DIGITICON_SIZE, null);
 	}
 	
+	/**
+	 * Disegna sul pannelo di gioco un'immagine
+	 * @param bindedGameObject
+	 * il gameobject associato all'immagine
+	 * @param image
+	 * l'immagine
+	 * @param g
+	 * il contesto grafico
+	 */
 	private void paintImage(GameObject bindedGameObject, BufferedImage image, Graphics g)
 	{
 		Point gameObjectPosition = bindedGameObject.copyPosition();
@@ -190,6 +240,15 @@ public class Renderer extends JPanel
 		g.drawImage(image, paintX + bindedGameObject.getWidth() / 2 - image.getWidth() / 2, paintY - overflow, null);
 	}
 	
+	/**
+	 * Disegna sul pannello di gioco le informazione sulla ricerca in un mobile
+	 * @param furniture
+	 * il mobile in questione
+	 * @param image
+	 * l'immagine delle informazioni
+	 * @param g
+	 * il contesto grafico
+	 */
 	private void paintFurnitureInfo(Furniture furniture, BufferedImage image, Graphics g)
 	{
 		Point furniturePosition = interestingFurniture.copyPosition();
@@ -197,6 +256,7 @@ public class Renderer extends JPanel
 		g.drawImage(image,  furnitureX + furniture.getWidth() / 2 - image.getWidth() / 2, furnitureY - image.getHeight(), null);
 	}
 	
+	/** Genera la lista delle {@link Sprite} corrente */
 	public void setCurrentSpritesList()
 	{
 		Room currentRoom = context.getCurrentRoom();
@@ -223,47 +283,90 @@ public class Renderer extends JPanel
 		}
 	}
 	
+	/**
+	 * Aggiunge un attaco nella lista delle {@link Sprite} corrente 
+	 * @param attack
+	 * l'attacco
+	 */
 	private void addAttackSprite(AttackerRobot.Attack attack)
 	{ currentSpritesList.add(SpriteFactory.produce(attack)); }
 	
+	/**
+	 * Rimuove un attacco dalla lista delle {@link Sprite} corrente
+	 * @param attack
+	 * l'attacco
+	 */
 	private void removeAttackSprite(AttackerRobot.Attack attack)
 	{
 		Sprite spriteToRemove = currentSpritesList.stream().filter(s -> s.getGameObject() == attack).findFirst().get();
 		currentSpritesList.remove(spriteToRemove);
 	}
 	
+	/**
+	 * Rimuove un mobile dalla lista delle {@link Sprite} corrente
+	 * @param furniture
+	 * il mobile
+	 */
 	private void removeFurnitureSprite(Furniture furniture)
 	{ 
 		Sprite spriteToRemove = currentSpritesList.stream().filter(s -> s.getGameObject() == furniture).findFirst().get();
 		currentSpritesList.remove(spriteToRemove);
 	}
 	
+	/** 
+	 * Imposta gli attributi {@link printFurnitureLoot} e {@link  interestingFurniture} 
+	 * per segnalare il bisogno di visualizzare il contenuto di un mobile
+	 * @param furniture
+	 * il mobile 
+	 */
 	private void printFurnitureLoot(Furniture furniture)
 	{ printFurnitureLoot = true; interestingFurniture = furniture; }
 	
+	/** 
+	 * Imposta gli attributi {@link printSearchingState} e {@link  interestingFurniture} 
+	 * per segnalare il bisogno di visualizzare le informazioni sulla ricerca in un mobile
+	 * @param furniture
+	 * il mobile
+	 */
 	private void printSearchingState(Furniture furniture)
 	{ printSearchingState = true; interestingFurniture = furniture; }
 	
-	private void bindAllKey(Renderer renderer, GameContext context)
+	/**
+	 * Associa ai tasti della tastiera un'azione 
+	 * @param context
+	 * il contesto di gioco
+	 */
+	private void bindAllKey(GameContext context)
 	{
-		bindKey(renderer, context, "LEFT_PRESSED",  KeyEvent.VK_LEFT,  true);
-		bindKey(renderer, context, "RIGHT_PRESSED", KeyEvent.VK_RIGHT, true);
-		bindKey(renderer, context, "UP_PRESSED",    KeyEvent.VK_UP,    true);
-		bindKey(renderer, context, "DOWN_PRESSED",  KeyEvent.VK_DOWN,  true);
-		bindKey(renderer, context, "JUMP_PRESSED",  KeyEvent.VK_SPACE, true);
-		bindKey(renderer, context, "M_PRESSED",     KeyEvent.VK_M,     true);
+		bindKey(context, "LEFT_PRESSED",  KeyEvent.VK_LEFT,  true);
+		bindKey(context, "RIGHT_PRESSED", KeyEvent.VK_RIGHT, true);
+		bindKey(context, "UP_PRESSED",    KeyEvent.VK_UP,    true);
+		bindKey(context, "DOWN_PRESSED",  KeyEvent.VK_DOWN,  true);
+		bindKey(context, "JUMP_PRESSED",  KeyEvent.VK_SPACE, true);
+		bindKey(context, "M_PRESSED",     KeyEvent.VK_M,     true);
 		
-		bindKey(renderer, context, "LEFT_RELEASED",  KeyEvent.VK_LEFT,  false);
-		bindKey(renderer, context, "RIGHT_RELEASED", KeyEvent.VK_RIGHT, false);
-		bindKey(renderer, context, "UP_RELEASED",    KeyEvent.VK_UP,    false);
-		bindKey(renderer, context, "DOWN_RELEASED",  KeyEvent.VK_DOWN,  false);
-		bindKey(renderer, context, "JUMP_RELEASED",  KeyEvent.VK_SPACE, false);
+		bindKey(context, "LEFT_RELEASED",  KeyEvent.VK_LEFT,  false);
+		bindKey(context, "RIGHT_RELEASED", KeyEvent.VK_RIGHT, false);
+		bindKey(context, "UP_RELEASED",    KeyEvent.VK_UP,    false);
+		bindKey(context, "DOWN_RELEASED",  KeyEvent.VK_DOWN,  false);
+		bindKey(context, "JUMP_RELEASED",  KeyEvent.VK_SPACE, false);
 	}
 	
-	private void bindKey(Renderer renderer, GameContext context, String keyName, int keyCode , boolean pressed)
+	/**
+	 * Associa ad un tasto della tastiera un'azione
+	 * @param context
+	 * il contesto di gioco
+	 * @param keyName
+	 * l'ID del tasto
+	 * @param keyCode
+	 * il codice del tasto
+	 * @param pressed
+	 * true se e solo se il tasto è stato premuto
+	 */
+	private void bindKey(GameContext context, String keyName, int keyCode , boolean pressed)
 	{
-		InputMap inputMap = renderer.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		ActionMap actionMap = renderer.getActionMap();
+		InputMap inputMap = this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		ActionMap actionMap = this.getActionMap();
 		
 		inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, !pressed), keyName);
 		actionMap.put(keyName, new AbstractAction() {
@@ -283,15 +386,35 @@ public class Renderer extends JPanel
 		});
 	}
 	
+	/**
+	 * Imposta il {@link CountDownLatch} per la sincronizzazione fra {@link code.controller.GameLoop} e il thread AWT durante il primo {@link paintComponent}
+	 * @param latch
+	 * il {@link CountDownLatch} 
+	 */
 	public void setFirstPaintLatch(CountDownLatch latch)
 	{ firstPaintLatch = latch; }
 	
+	/**
+	 * Restituisce la lista delle {@link Sprite} corrente
+	 * @return
+	 * la lista delle {@link Sprite} corrente
+	 */
 	public List<Sprite> getCurrentSpritesList()
 	{ return currentSpritesList; }
 	
+	/**
+	 * Restituisce la {@link Sprite} del giocatore
+	 * @return
+	 * la {@link Sprite} del giocatore
+	 */
 	public PlayerSprite getPlayerSprite()
 	{ return playerSprite; }
 	
+	/**
+	 * Imposta la dimensione del pannello di gioco
+	 * @return 
+	 * la dimensione desiderata
+	 */
 	@Override
 	public Dimension getPreferredSize() 
 	{ return new Dimension(RoomMap.PIXELS_MAP_WIDTH, RoomMap.PIXELS_MAP_HEIGHT); }

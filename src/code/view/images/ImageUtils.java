@@ -15,25 +15,84 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
 
+/** Classe di utilità generale per la manipolazione delle immagine */
 public abstract class ImageUtils 
 {
+	/** Cache per il caricamento delle immagine dal disco */
 	private static final Map<String, BufferedImage> IMAGE_CACHE = new HashMap<String, BufferedImage>();
 	
+	/** 
+	 * Enumerazione per le direzione possibili in cui fare lo strip 
+	 * @see imageStrip
+	 */
 	public enum Direction
 	{ VERTICAL, HORIZONTAL }
 
+	/** 
+	 * Carica un'immagine dal disco
+	 * @param pathname
+	 * il percorso dell'immagine
+	 * @param crop
+	 * true se e solo se bisogna fare il crop
+	 * @return
+	 * l'immagine 
+	 */
 	public static BufferedImage loadImage(String pathname, boolean crop)
 	{ return IMAGE_CACHE.computeIfAbsent(pathname, f -> (crop) ? crop(loadRaw(pathname)) : loadRaw(pathname)); }
 	
+	/** 
+	 * Carica un'immagine dal disco e la specchia
+	 * @param pathname
+	 * il percorso dell'immagine
+	 * @param crop
+	 * true se e solo se bisogna fare il crop
+	 * @return
+	 * l'immagine 
+	 * @see flipHorizontally
+	 */
 	public static BufferedImage loadFlipped(String pathname, boolean crop)
 	{ return flipHorizontally(loadImage(pathname, crop)); }
 	
+	/**
+	 * Carica un'animazione dal disco
+	 * @param pattern
+	 * pattern che specifica il percors di tutti i file che compongono l'animazione
+	 * @param start
+	 * id della prima immagine che compone l'animazione
+	 * @param end
+	 * id dell'ultima immagine che compone l'animazione
+	 * @param crop
+	 * true se e solo se bisogna fare il crop
+	 * @return
+	 * la lista di immagini che compongono l'animazione
+	 */
 	public static List<BufferedImage> loadAnimation(String pattern, int start, int end, boolean crop)
 	{ return IntStream.rangeClosed(start, end).mapToObj(i -> loadImage(String.format(pattern, i), crop)).toList(); }
 	
+	/**
+	 * Carica un'animazione dal disco e la specchia
+	 * @param pattern
+	 * pattern che specifica il percors di tutti i file che compongono l'animazione
+	 * @param start
+	 * id della prima immagine che compone l'animazione
+	 * @param end
+	 * id dell'ultima immagine che compone l'animazione
+	 * @param crop
+	 * true se e solo se bisogna fare il crop
+	 * @return
+	 * la lista di immagini che compongono l'animazione
+	 * @see loadFlipped
+	 */
 	public static List<BufferedImage> loadFlippedAnimation(String pattern, int start, int end, boolean crop)
 	{ return IntStream.rangeClosed(start, end).mapToObj(i -> loadFlipped(String.format(pattern, i), crop)).toList(); }
 	
+	/**
+	 * Carica un'immagine dal disco senza memorizzarla in cache
+	 * @param pathname
+	 * il percorso dell'immagine
+	 * @return
+	 * l'immagine
+	 */
 	private static BufferedImage loadRaw(String pathname)
 	{
 		try(InputStream input = ImageUtils.class.getResourceAsStream(pathname))
@@ -47,6 +106,13 @@ public abstract class ImageUtils
 		{ throw new IllegalStateException("Unable to load the sprite " + pathname); }
 	}
 	
+	/**
+	 * Specchia orizzontalmente un'immagine
+	 * @param image
+	 * l'immagine
+	 * @return
+	 * la versione specchiata dell'immagine
+	 */
 	private static BufferedImage flipHorizontally(BufferedImage image)
 	{
 		int imageWidth = image.getWidth(), imageHeight = image.getHeight();
@@ -59,6 +125,13 @@ public abstract class ImageUtils
 		return flippedImage;
 	}
 	
+	/**
+	 * Effettua il crop di un'immagine
+	 * @param image
+	 * l'immagine
+	 * @return
+	 * l'immaggine risultante
+	 */
 	private static BufferedImage crop(BufferedImage image)
 	{
 		int imageWidth = image.getWidth(), imageHeight = image.getHeight();
@@ -81,6 +154,17 @@ public abstract class ImageUtils
 		return image.getSubimage(minX, minY, maxX - minX + 1, maxY - minY + 1);
 	}
 	
+	/**
+	 * Concatena un'immagine a se stessa
+	 * @param image
+	 * l'immagine
+	 * @param times
+	 * la lunghezza della concatenazione
+	 * @param direction
+	 * la direzione che deve seguire la concatenazione
+	 * @return
+	 * l'immagine risultante
+	 */
 	public static BufferedImage imageStrip(BufferedImage image, int times, Direction direction)
 	{
 		int imageWidth = image.getWidth(), imageHeight = image.getHeight();
@@ -103,6 +187,17 @@ public abstract class ImageUtils
 		return resultImage;
 	}
 	
+	/** 
+	 * Scala la dimensione di un'immagine
+	 * @param image
+	 * l'immagine
+	 * @param width
+	 * la nuova lunghezza
+	 * @param height
+	 * la nuova altezza
+	 * @return
+	 * l'immagine ridimensionata
+	 */
 	public static BufferedImage scaleImage(BufferedImage image, int width, int height)
 	{
 	    Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
@@ -116,6 +211,15 @@ public abstract class ImageUtils
 	    return resultImage;
 	}
 	
+	/**
+	 * Converte un numero in una lista di immagini di cifre
+	 * @param number
+	 * il numero
+	 * @param symbolsList
+	 * i simboli da usare (dove symbolList[i] è il simbolo della cifra i)
+	 * @return
+	 * la lista di immagini
+	 */
 	public static List<BufferedImage> getNumberAsImagesList(int number, StaticImage[] symbolsList)
 	{
 		List<BufferedImage> numbersList = new ArrayList<BufferedImage>();

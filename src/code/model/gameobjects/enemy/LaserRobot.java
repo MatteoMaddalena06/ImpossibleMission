@@ -10,17 +10,34 @@ import code.model.gameobjects.MovingObject;
 //event import
 import code.event.EventDispatcher;
 
+/** Classe che modella i robot che sparano laser */
 public class LaserRobot extends AttackerRobot
 {
+	/** Velocità orizzontale del robot */
 	private static final double HORIZONTAL_SPEED   = 150f;
+	/** Larghezza della FOV */
 	private static final int    FOV_WIDTH          = 3 * RoomMap.TILE_SIZE;
+	/** Altezza della FOV */
 	private static final int    FOV_HEIGHT         = 3 * RoomMap.TILE_SIZE;
+	/** Larghezza dell'attacco */
 	private static final int    ATTACK_WIDTH       = FOV_WIDTH;
+	/** Altezza dell'attacco */
 	private static final int    ATTACK_HEIGHT      = FOV_HEIGHT;
+	/** Durata dell'attacco*/
 	private static final double ATTACK_DURATION    = 3f; 
 	
+	/** Per quanto ancora attaccare */
 	private double attackDuration;
 	
+	/**
+	 * Costruisce la classe
+	 * @param position
+	 * la posizione originale
+	 * @param width
+	 * la larghezza
+	 * @param height
+	 * l'altezza
+	 */
 	public LaserRobot(Point position, int width, int height)
 	{ 
 		super(position, width, height);
@@ -28,6 +45,11 @@ public class LaserRobot extends AttackerRobot
 		attackDuration = ATTACK_DURATION;
 	}
 	
+	/**
+	 * Aggiorna lo stato del robot attaccando il giocatore quando si avvicina
+	 * @param context 
+	 * il contesto in cui operare
+	 */
 	@Override
 	public void update(GameContext context)
 	{	
@@ -57,6 +79,7 @@ public class LaserRobot extends AttackerRobot
 		}
 	}
 	
+	/** Produce l'attacco */
 	@Override
 	protected Attack produceAttack()
 	{

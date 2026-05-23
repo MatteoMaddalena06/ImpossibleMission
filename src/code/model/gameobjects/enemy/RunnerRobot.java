@@ -16,18 +16,36 @@ import code.model.room.RoomMap;
 //event import
 import code.event.EventDispatcher;
 
+/** Classe per i robot che corronno */
 public class RunnerRobot extends Enemy
 {	
+	/** Velocità orizzontale del robot */
 	private static final double    HORIZONTAL_SPEED = 350f;
+	/** Larghezza della FOV */
 	private static final int       FOV_WIDTH        = 16 * RoomMap.TILE_SIZE;
-	private static final int   	   FOV_HEIGHT       = 4 * RoomMap.TILE_SIZE;
+	/** Altezza della FOV */
+	private static final int  	   FOV_HEIGHT       = 4 * RoomMap.TILE_SIZE;
+	/** Coordinata x iniziale della FOV */
 	private transient final double INITIAL_FOV_X    = getPosition().getX() - (FOV_WIDTH - getWidth())/2;
-	private transient final double INITIAL_FOV_Y    = getPosition().getY() - (FOV_HEIGHT - getHeight()); 
+	/** Coordinate y iniziale della FOV */
+	private transient final double INITIAL_FOV_Y    = getPosition().getY() - (FOV_HEIGHT - getHeight());
+	/** Quanto tempo aspettare prima di correre contro il giocatore */
 	private static final double    ACTION_DELAY     = 0.5f;
-	
+
+	/** Quanto tempo aspettare prima di correre contro il giocatore */
 	private double actionDelay;
+	/** Indica se è la prima che il giocatore entra nella FOV del robot */
 	private boolean firstTimeColliding;
 	
+	/**
+	 * Costruice la classe
+	 * @param point
+	 * la posizione originale
+	 * @param width
+	 * la larghezza
+	 * @param height
+	 * l'altezza
+	 */
 	public RunnerRobot(Point point, int width, int height)
 	{ 
 		super(point, width, height);
@@ -36,6 +54,11 @@ public class RunnerRobot extends Enemy
 		firstTimeColliding = true;
 	}
 
+	/** 
+	 * Aggiorna lo stato del robot attaccando il player quando si avvicina
+	 * @param context 
+	 * il contesto di gioco in cui operare
+	 */
 	@Override
 	public void update(GameContext context) 
 	{

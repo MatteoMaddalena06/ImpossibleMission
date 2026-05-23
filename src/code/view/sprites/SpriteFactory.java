@@ -15,8 +15,16 @@ import code.model.room.Room;
 import code.model.gameobjects.FixedObject;
 import code.model.gameobjects.Furniture;
 
+/** Classe per la foactory di sprite */
 public abstract class SpriteFactory 
 {
+	/**
+	 * Produce la sprite giusta per il gameobject richiesto
+	 * @param gameObject
+	 * il gameobject 
+	 * @return
+	 * la sprite per il gameobject
+	 */
 	public static Sprite produce(GameObject gameObject)
 	{
 		if(gameObject instanceof AttackerRobot.Attack && ((AttackerRobot.Attack)gameObject).getAttacker() instanceof LaserRobot)
@@ -37,6 +45,15 @@ public abstract class SpriteFactory
 		throw new IllegalArgumentException("Unable to instantiate sprite for type " + gameObject.getClass().getSimpleName());
 	}
 	
+	/**
+	 * Produce la sprite giusta per il gameobject e il colore richiesto
+	 * @param gameObject
+	 * il gameobject
+	 * @param color
+	 * il colore
+	 * @return
+	 * la sprite per il gameobject
+	 */
 	public static Sprite produce(GameObject gameObject, Room.Color color)
 	{
 		if(gameObject instanceof FixedObject && ((FixedObject)gameObject).getType() == FixedObject.Type.FLOOR)

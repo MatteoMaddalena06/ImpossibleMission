@@ -11,15 +11,33 @@ import code.model.gameobjects.MovingObject;
 import code.model.gameobjects.Platform;
 import code.model.gameobjects.Player;
 
+/** Classe che modella il bombone */
 public class BlackOrb extends Enemy
 {
+	/** Velocità orizzontale del robot */
 	private static final double HORIZONTAL_SPEED = 100f;
+	/** Velocità verticale del robot */
 	private static final double VERTICAL_SPEED   = 150f;
+	/** Limite per i movimenti del bombone*/
 	private static final double BOUND            = 3;
 	
+	/**
+	 * Costruisce la classe
+	 * @param position
+	 * la posizione originale
+	 * @param width
+	 * la larghezza
+	 * @param height
+	 * l'altezza
+	 */
 	public BlackOrb(Point position, int width, int height)
 	{ super(position, width, height); }
 
+	/**
+	 * Aggiorna lo stato del robot muovendolo nella stanza
+	 * @param context
+	 * il contesto in cui operare
+	 */
 	@Override
 	public void update(GameContext context)
 	{

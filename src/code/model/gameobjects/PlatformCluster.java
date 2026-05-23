@@ -12,22 +12,39 @@ import code.event.EventDispatcher;
 import code.model.context.GameContext;
 import code.model.context.PlayerOnPlatform;
 
+/** Classe che modella una colonna di piattaforme */
 public class PlatformCluster 
 {
-	private static final double VERTICAL_SPEED = 300f;;
+	/** Velocità verticale delle piattaforma nel cluster */
+	private static final double VERTICAL_SPEED = 300f;
+	/** Limite oltre il quale la piattaforma viene considerata arrivata a destinazione */
 	private static final int 	BOUND = 4;
 	
+	/** Lista delle piattaforme nel cluster */
 	private List<Platform> platforms;
-	Platform upperPlatform, bottomPlatform;
+	/** Piattaforma più in alto nel cluster */
+	Platform upperPlatform;
+	/** Piattaforma più in basso nel cluster */
+	Platform bottomPlatform;
 	
+	/** Larghezza del cluster */
 	private int width;
+	/** Indica se il cluster è in movimento */
 	private boolean isMoving;
+	/** Indica la direzione in cui si sta muovendo il cluster (valido solo se {@link isMoving} == true) */
 	private Direction direction;
+	/** Indica se è il primo movimento del cluster */
 	private boolean firstTime;
 	
+	/** Enumerazione per i movimenti consentiti ai {@link PlatformCluster} */
 	private enum Direction
 	{ UP, DOWN }
 	
+	/**
+	 * Costruisce la classe
+	 * @param platforms
+	 * le piattaforme appartenenti al cluster
+	 */
 	private PlatformCluster(List<Platform> platforms)
 	{
 		this.platforms = platforms;
@@ -38,6 +55,11 @@ public class PlatformCluster
 		firstTime = true;
 	}
 
+	/**
+	 * Aggiorna lo stato del cluster muovendolo quando necessario nella direzione desiderata dal giocatore
+	 * @param context
+	 * il contesto di gioco su cui operare
+	 */
 	public void update(GameContext context)
 	{
 		if(context.getPlatformsToReset() != 0)
@@ -94,6 +116,13 @@ public class PlatformCluster
 		else destinationFloors.forEach((p, f) -> p.getPosition().setY(f.getPosition().getY()));
 	}
 	
+	/**
+	 * Controlla se il cluseter può muoversi in alto
+	 * @param floorList
+	 * la lista di pavimenti presenti nella stanza
+	 * @return
+	 * true se e solo se il cluster può muoversi in alto
+	 */
 	private boolean canGoUp(List<FixedObject> floorList)
 	{
 		double upperPlatformX = upperPlatform.getPosition().getX(), upperPlatformY = upperPlatform.getPosition().getY();
@@ -103,6 +132,13 @@ public class PlatformCluster
 		);	
 	}
 	
+	/**
+	 * Controlla se il cluseter può muoversi in basso
+	 * @param floorList
+	 * la lista di pavimenti presenti nella stanza
+	 * @return
+	 * true se e solo se il cluster può muoversi in basso
+	 */
 	private boolean canGoDown(List<FixedObject> floorList)
 	{
 		double bottomPlatformX = bottomPlatform.getPosition().getX(), bottomPlatformY = bottomPlatform.getPosition().getY();
@@ -112,6 +148,13 @@ public class PlatformCluster
 		);	
 	}
 	
+	/**
+	 * Restituisce le destinazioni verso le quali si stanno muovendo le piattaforme del cluster
+	 * @param floorList
+	 * la lista di pavimenti presenti nella stanza
+	 * @return
+	 * per ogni platform il suo pavimento di destinazione 
+	 */
 	private Map<Platform, FixedObject> getDestinations(List<FixedObject> floorList)
 	{
 		return platforms.stream().map(p -> {
@@ -128,6 +171,13 @@ public class PlatformCluster
 		}).filter(Objects::nonNull).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 	
+	/** 
+	 * Restituisce la lista dei cluster presenti nella stanza specificata
+	 * @param room
+	 * la stanza 
+	 * @return
+	 * la lista dei cluster presenti nella stanza
+	 */
 	public static List<PlatformCluster> getPlatformClusters(Room room)
 	{ 
 		return room.getPlatformList().stream().collect(Collectors.groupingBy(p -> p.getPosition().getX()))

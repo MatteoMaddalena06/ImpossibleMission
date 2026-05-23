@@ -20,24 +20,38 @@ import code.model.gameobjects.Player;
 import code.model.puzzle.PresettedPassword;
 import code.model.puzzle.PuzzlePiece;
 
+/** Classe che modella la mappa di gioco */
 public class GameWorld 
 {
+	/** Numero di ascensori previsti nella mappa*/
 	private static final int ELEVATOR_NUMBER       = 8;
+	/** Numero di piani previsti nella mappa */
 	private static final int WORLD_DEPTH           = 6;
+	/** Numero di password per disattivare i robot previsto da distribuire nella mappa */
 	private static final int MAX_ROBOT_PASSWORD    = 10;
+	/** Numero di password per ripristinare le piattaforme previsto da distruibuire nella mappa */
 	private static final int MAX_PLATFORM_PASSWORD = 10;
 
+	/** La mappa di gioco */
 	private Room[][] worldMatrix;
+	/** La password della mappa */
 	private PresettedPassword worldPassword;
 
+	/** Cache usata per memorizzare le stanze degli ascensori ed evitare la rigenerazione */
 	private Room[] elevatorRoomsCache;
 	
+	/** Costruisce la classe */
 	public GameWorld()
 	{ 
 		this.worldMatrix = randomGeneration();
 		elevatorRoomsCache = new Room[ELEVATOR_NUMBER];
 	}
 	
+	/**
+	 * Genera causualmente la mappa di gioco
+	 * @return
+	 * La mappa come matrice di stanze
+	 */
 	private Room[][] randomGeneration()
 	{
 		worldMatrix = new Room[WORLD_DEPTH][(ELEVATOR_NUMBER << 1) + 1];
@@ -51,6 +65,7 @@ public class GameWorld
 		return worldMatrix;
 	}
 	
+	/** Distribuisce le stanze nella mappa di gioco garantendo la traversabilità */
 	private void createTraversableRandomMap()
 	{
 		int rows = worldMatrix.length, cols = worldMatrix[0].length;
@@ -144,6 +159,13 @@ public class GameWorld
 		}
 	}
 	
+	/** 
+	 * Distribuisce gli oggetti da trovare nella mappa di gioco garantendo la giocabilità
+	 * @param furnitureList
+	 * la lista di mobili nella mappa di gioco
+	 * @param password
+	 * la password della mappa di gioco 
+	 */
 	private void makeTheMapPlayable(List<Furniture> furnitureList, PresettedPassword password)
 	{
 		Collections.shuffle(furnitureList);
@@ -152,6 +174,17 @@ public class GameWorld
 		distributeInFurniture(furnitureList, (int)(Math.random() * MAX_PLATFORM_PASSWORD) + 1, Furniture.LootType.PLATFORM_PASSWORD);
 	}
 	
+	/**
+	 *  Distribuisce gli oggetti da trovare nella mappa 
+	 * @param furnitureList
+	 * la lista di mobili nella mappa di gioco
+	 * @param amount
+	 * il numero di oggetti da distribuire 
+	 * @param type
+	 * il tipo di oggetto da distribuire
+	 * @return
+	 * la lista di mobili in cui è stato inserito qualcosa
+	 */
 	private List<Furniture> distributeInFurniture(List<Furniture> furnitureList, int amount, Furniture.LootType type)
 	{
 		List<Furniture> visitedFurniture = new ArrayList<Furniture>();
@@ -166,12 +199,28 @@ public class GameWorld
 		return visitedFurniture;
 	}
 	
+	/**
+	 * Distribuisce i pezzi di puzzle nella mappa
+	 * @param furnitureList
+	 * la lista di oggetti nella mappa di gioco
+	 * @param puzzlePieces
+	 * i pezzi di puzzle della password della mappa
+	 */
 	private void distributeInFurniture(List<Furniture> furnitureList, PuzzlePiece[] puzzlePieces)
 	{ 
 		List<Furniture> visitedFurniture = distributeInFurniture(furnitureList, puzzlePieces.length, Furniture.LootType.PUZZLE_PIECE); 
 		IntStream.range(0, visitedFurniture.size()).forEach(i -> visitedFurniture.get(i).setPuzzlePiece(puzzlePieces[i]));
 	}
 	
+	/**
+	 * Crea una stanza dell'ascensore
+	 * @param column
+	 * l'ascensore scelto
+	 * @param player
+	 * il giocatore
+	 * @return
+	 * la stanza dell'ascensore
+	 */
 	public Room getElevatorColumnAsRoom(int column, Player player)
 	{
 		Room result;
@@ -218,9 +267,18 @@ public class GameWorld
 		return result;
 	}
 	
+	/**
+	 * Restituisce la mappa di gioco
+	 * @return
+	 * la mappa di gioco
+	 */
 	public Room[][] getWorldMatrix()
 	{ return worldMatrix; }
 	
+	/**
+	 * Restituisce la password della mappa di gioco
+	 * @return la password della mappa di gioco
+	 */
 	public PresettedPassword getWorldPassword()
 	{ return worldPassword; }
 }

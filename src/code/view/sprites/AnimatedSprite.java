@@ -9,49 +9,85 @@ import code.model.gameobjects.MovingObject;
 //view import
 import code.view.images.Animation;
 
+/** Classe che modella la sprite animata */
 public abstract class AnimatedSprite extends Sprite 
 {
-	 private Animation animation;
-	 private Animation.State previousState;
-	 private double imageDuration;
-	 private double elapsedTime;
-	 private int imageIndex;
+	/** L'animazione della sprite */
+	private Animation animation;
+	/** Lo stato precendete dell'animazione */
+	private Animation.State previousState;
+	/** Durata dei frame dell'animazione */
+	private double imageDuration;
+	/** Tempo trascorso dall'ultimo aggiornamento dell'animazione */
+	private double elapsedTime;
+	/** Indice del frame nell'animazione corrente */
+	private int imageIndex;
+ 
+	/**
+	 * Costruisce la classe
+	 * @param gameObject
+	 * il gameobject associato alla sprite
+	 * @param animation
+	 * l'animazione della sprite
+	 * @param imageDuration
+	 * la durata dei frame dell'animazione
+	 */
+	public AnimatedSprite(MovingObject gameObject, Animation animation, double imageDuration)
+	{
+		super(gameObject);
+		this.animation = animation;
+		this.imageDuration = imageDuration;
+	}
+ 
+	/** 
+	 * Calcola l'immagine corrente della sprite seguendo la sua animazione e la imposta con {@link setImage}
+	 * @see setImage
+	 */
+	@Override 
+	public void computeImage()
+	{
+		MovingObject bindedMovingObject = (MovingObject)getGameObject();
+		Animation.State currentState = Animation.State.getState(bindedMovingObject);
+		 
+		if(previousState != currentState && !currentState.isMirrored(previousState))
+			imageIndex = 0;
 	 
-	 public AnimatedSprite(MovingObject gameObject, Animation animation, double imageDuration)
-	 {
-		 super(gameObject);
-		 this.animation = animation;
-		 this.imageDuration = imageDuration;
-	 }
-	 
-	 @Override 
-	 public void computeImage()
-	 {
-		 MovingObject bindedMovingObject = (MovingObject)getGameObject();
-		 Animation.State currentState = Animation.State.getState(bindedMovingObject);
+		previousState = currentState;
 		 
-		 if(previousState != currentState && !currentState.isMirrored(previousState))
-			 imageIndex = 0;
+		List<BufferedImage> animationList = animation.getAnimationLists().get(currentState);
 		 
-		 previousState = currentState;
+		while(elapsedTime >= imageDuration)
+		{
+			elapsedTime -= imageDuration;
+			imageIndex = nextImageIndex(animationList);
+		}
 		 
-		 List<BufferedImage> animationList = animation.getAnimationLists().get(currentState);
-		 
-		 while(elapsedTime >= imageDuration)
-		 {
-			 elapsedTime -= imageDuration;
-			 imageIndex = nextImageIndex(animationList);
-		 }
-		 
-		 setImage(animationList.get(imageIndex));
-	 }
-	 
-	 protected int nextImageIndex(List<BufferedImage> animationList)
-	 { return (imageIndex + 1) % animationList.size(); }
+		setImage(animationList.get(imageIndex));
+	}
+ 
+	/** 
+	 * Stabilisce il prossimo indice del frame nell'animazione corrente
+	 * @param animationList
+	 * la lista dei frame
+	 * @return
+	 * l'indice stabilito
+	 */
+	protected int nextImageIndex(List<BufferedImage> animationList)
+	{ return (imageIndex + 1) % animationList.size(); }
 
-	 public void updateElapsedTime(double deltaTime)
-	 { elapsedTime += deltaTime; }
-	 
-	 protected int getImageIndex()
-	 { return imageIndex; }
+	/** 
+	 * Aggiorna il tempo trascorso dall'ultimo aggiornamento dell'animazione
+	 * @param deltaTime
+	 * il delta time
+	 */
+	public void updateElapsedTime(double deltaTime)
+	{ elapsedTime += deltaTime; }
+ 
+	/**
+	 * Restituisce l'indice del frame corrente nell'animazione corrente
+	 * @return
+	 * l'indice del frame corrente
+	 */
+	protected int getImageIndex()
+	{ return imageIndex; }
 }

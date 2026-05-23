@@ -1,5 +1,6 @@
 package code.view.audio;
 
+/** Enumerazione per le tracce audio del gioco */
 public enum AudioBank 
 {
 	BACKGROUND_MUSIC       (AudioUtils.loadAudioSample("/resources/AudioSamples/backgroundMusic.wav")),
@@ -13,11 +14,22 @@ public enum AudioBank
 	CLOSINGTERMINAL_SAMPLE (AudioUtils.loadAudioSample("/resources/AudioSamples/closingTerminal.wav")),
 	PLAYERDEATH_SAMPLE     (AudioUtils.loadAudioSample("/resources/AudioSamples/playerDeath.wav"));
 
+	/** Dati della traccia audio */
 	private AudioData audioData;
 	
+	/**
+	 * Costruisce l'istanza enumerativa
+	 * @param audioData
+	 * i dati della traccia audio
+	 */
 	private AudioBank(AudioData audioData)
 	{ this.audioData = audioData; }
 	
+	/**
+	 * Restituisce i dati della traccia audio
+	 * @return
+	 * i dati della traccia audio
+	 */
 	public AudioData getAudioData()
 	{ return audioData; }
 }

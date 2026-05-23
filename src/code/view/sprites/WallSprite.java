@@ -10,15 +10,29 @@ import code.model.room.Room;
 import code.view.images.ImageUtils;
 import code.view.images.StaticImage;
 
+/** Classe per la sprite dei muri */
 public class WallSprite extends Sprite
 {
+	/** Immagine del segmento di muro intermedio destro */
 	private BufferedImage rightMiddleWallImage;
+	/** Immagine del segmento di muro intermedio sinistro */
 	private BufferedImage leftMiddleWallImage;
+	/** Immagine del segmento di muro finale in alto a sinistra*/
 	private BufferedImage wallUpperLeftImage;
+	/** Immagine del segmento di muro finale in alto a destra*/
 	private BufferedImage wallUpperRightImage;
+	/** Immagine del segmento di muro finale in basso a sinistra*/
 	private BufferedImage wallBottomLeftImage;
+	/** Immagine del segmento di muro finale in basso a destra*/
 	private BufferedImage wallBottomRightImage;;
 	
+	/**
+	 * Costruice la classe
+	 * @param wall
+	 * il muro a cui associare la sprite
+	 * @param wallColor
+	 * il colore del muro
+	 */
 	public WallSprite(FixedObject wall, Room.Color wallColor)
 	{ 
 		super(wall); 
@@ -33,6 +47,16 @@ public class WallSprite extends Sprite
 		computeImage();
 	}
 	
+	/** 
+	 * Calcola e imposta l'immagine per la sprite concatenando opportunamente i segmenti di muro
+	 * @see rightMiddleWallImage
+	 * @see leftMiddleWallImage
+	 * @see wallUpperLeftImage
+	 * @see wallUpperRightImage
+	 * @see wallBottomLeftImage
+	 * @see wallBottomRightImage
+	 * @see code.view.images.ImageUtils#imageStrip(BufferedImage, int, code.view.images.ImageUtils.Direction)
+	 */
 	@Override
 	public void computeImage()
 	{ 

@@ -15,20 +15,40 @@ import code.model.room.RoomMap;
 //event import
 import code.event.EventDispatcher;
 
+/** Classe che modella i robot che lanciano gli attacchi */
 public class ThrowerRobot extends AttackerRobot
 {
+	/**Velocità orizzontale del robot */
 	private static final double HORIZONTAL_SPEED        = 200f;
+	/** Larghezza della FOV */
 	private static final int    FOV_WIDTH               = 6 * RoomMap.TILE_SIZE;
+	/** Altezza della FOV */
 	private static final int    FOV_HEIGHT              = 5 * RoomMap.TILE_SIZE;
+	/** Coordinata x originale della FOV */
 	private final  double       INITIAL_FOV_X           = getPosition().getX();
+	/** Coordinata u originale della FOV */
 	private final  double       INITIAL_FOV_Y           = getPosition().getY() - (FOV_HEIGHT - getHeight());
+	/** Larghezza dell'attacco */
  	private static final int    ATTACK_WIDTH      	    = 1 * RoomMap.TILE_SIZE;
+ 	/** Altezza dell'attacco */
 	private static final int    ATTACK_HEIGHT     	    = 1 * RoomMap.TILE_SIZE;
+	/** Velocità orizzontale dell'attacco */
 	private static final double ATTACK_HORIZONTAL_SPEED = 400f;
+	/** Velocità verticale dell'attacco */
 	private static final double ATTACK_VERTICAL_SPEED   = 250f;;
 	
+	/** Conta da quanto esiste l'attacco */
 	private int attackCounter;
 	
+	/**
+	 * Costruice la classe
+	 * @param position
+	 * la posizioen originale
+	 * @param width
+	 * la larghezza
+	 * @param height
+	 * l'altezza
+	 */
 	public ThrowerRobot(Point position, int width, int height)
 	{
 		super(position, width, height);
@@ -36,6 +56,11 @@ public class ThrowerRobot extends AttackerRobot
 		attackCounter = 0;
 	}
 	
+	/**
+	 * Aggiorna lo stato del robot attaccando il giocatore quando si avvicina 
+	 * @param context
+	 * il contesto in cui operare
+	 */
 	@Override
 	public void update(GameContext context)
 	{
@@ -65,6 +90,7 @@ public class ThrowerRobot extends AttackerRobot
 		}
 	}
 	
+	/** Crea l'attacco da lanciare */
 	@Override 
 	protected Attack produceAttack()
 	{

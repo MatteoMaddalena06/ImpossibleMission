@@ -9,8 +9,16 @@ import code.model.Point;
 import code.model.gameobjects.GameObject;
 import code.model.gameobjects.GameObjectFactory;
 
+/** Classe di utilià generale per il package {@link code.model.room} */
 abstract class RoomMapParser
 {	
+	/**
+	 * Converte la struttura della stanza in una lista di gameobject
+	 * @param room
+	 * la struttura della stanza
+	 * @return
+	 * la lista di gameobject
+	 */
 	public static List<GameObject> parse(RoomMap room)
 	{
 		List<GameObject> result = new LinkedList<GameObject>();
@@ -46,6 +54,21 @@ abstract class RoomMapParser
 		return result;
 	}
 	
+	/**
+	 * Implementazione dell'algoritmo flood fill per raggruppare celle della matrice della stanza con lo stesso ID
+	 * @param map
+	 * la matrice della stanza
+	 * @param x
+	 * la coordinata x nella matrice da cui iniziare
+	 * @param y
+	 * la coorindata y nella matrice da cui iniziare
+	 * @param visited
+	 * matrice per stabilire se una data cella è già stata visitata; visited[i][j] == true se e solo se map[i][j] è stata visitata
+	 * @param type
+	 * l'ID da considerare
+	 * @return
+	 * restituisce la lista di celle raggruppate
+	 */
 	private static List<Point> floodFill(int[][] map, int x, int y, boolean[][] visited, int type)
 	{
 		List<Point> cluster = new LinkedList<Point>();

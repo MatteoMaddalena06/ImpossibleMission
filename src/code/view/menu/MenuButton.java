@@ -12,11 +12,25 @@ import javax.swing.ImageIcon;
 //view import
 import code.view.images.ImageUtils;
 
+/** Classe per il bottone da usare nei menù */
 public class MenuButton extends JButton
 {
+	/** ID per l'icona del bottone quando non vien cliccato */
 	private static final String normalIconID   = "normalIcon";
+	/** ID per l'icona del bottone quando viene cliccato */
 	private static final String selectedIconID = "selectedIcon";
 	
+	/**
+	 * Costruisce la classe 
+	 * @param normalImage
+	 * immagine per il bottone quando non viene cliccato
+	 * @param selectionImage
+	 * immagine per il bottone quando viene cliccato
+	 * @param width
+	 * larghezza del bottone
+	 * @param height
+	 * altezza del bottone
+	 */
 	public MenuButton(BufferedImage normalImage, BufferedImage selectionImage, int width, int height)
 	{
 		BufferedImage scaledNormalImage = ImageUtils.scaleImage(normalImage, width, height);

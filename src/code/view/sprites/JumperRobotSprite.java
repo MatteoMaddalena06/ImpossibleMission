@@ -10,14 +10,29 @@ import code.model.gameobjects.MovingObject;
 //images import
 import code.view.images.Animation;
 
+/** Class per la sprite del robot che salta */
 public class JumperRobotSprite extends AnimatedSprite
 {
+	/** L'animazione della sprite */
 	private static final Animation JUMPER_ROBOT_ANIMATION = Animation.JUMPER_ROBOT;
+	/** La durata dei frame dell'animazione*/
 	private static final double    IMAGE_DURATION   = 0.12f; 
 	
+	/**
+	 * Costruice la classe
+	 * @param jumperRobot
+	 * il robot a cui associare la sprite
+	 */
 	public JumperRobotSprite(JumperRobot jumperRobot)
 	{ super(jumperRobot, JUMPER_ROBOT_ANIMATION, IMAGE_DURATION); }
 	
+	/** 
+	 * Stabilisce il prossimo indice del frame nell'animazione corrente seguendo la logica dell'animazione del robot che salta
+	 * @param animationList
+	 * la lista dei frame
+	 * @return
+	 * l'indice stabilito
+	 */
 	@Override
 	protected int nextImageIndex(List<BufferedImage> animationList)
 	{

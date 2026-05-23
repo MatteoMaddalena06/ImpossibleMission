@@ -19,34 +19,58 @@ import code.event.EventDispatcher;
 //model import
 import code.model.gameobjects.Player;
 
+/** Classe per il menù dei terminale */
 public class TerminalMenu extends JPanel
 {
+	/** L'immagine di sfondo */
 	public static final BufferedImage terminalWallpaperImage = StaticImage.TERMINAL_WALLPAPER.getImage();
 	
+	/** L'immagine per il bottone per disattivare i robot quando non viene cliccato */
 	public static final BufferedImage normalRobotDisableButtonImage    = StaticImage.NORMAL_ROBODISABLE_BUTTON.getImage();
+	/** L'immagine per il bottone per ripristinare le piattaforme quando non viene cliccato */
 	public static final BufferedImage normalPlatformResetButtonImage   = StaticImage.NORMAL_PLATFORMREST_BUTTON.getImage();
+	/** L'immagine per il bottone di uscita quando non viene cliccato */
 	public static final BufferedImage normalExitButtonButtonImage      = StaticImage.NORMAL_EXIT_BUTTON.getImage();
+	/** L'immagine per il bottone per disattivare i robot quando viene cliccato */
 	public static final BufferedImage selectedRobotDisableButtonImage  = StaticImage.SELECTED_ROBOTDISABLE_BUTTON.getImage();
+	/** L'immagine per il bottone per ripristinare le piattaforme quando viene cliccato */
 	public static final BufferedImage selectedPlatformResetButtonImage = StaticImage.SELECTED_PLATFORMRESET_BUTTON.getImage(); 
+	/** L'immagine per il bottone di uscita quando viene cliccato */
 	public static final BufferedImage selectedExtiButtonImage          = StaticImage.SELECTED_EXIT_BUTTON.getImage();
 	
-	public static final BufferedImage labelBackgroundIcon = StaticImage.ENTRY_BACKGROUND.getImage();
-	
+	/** Larghezza del bottone per disattivare i robot */
 	private static final int ROBOTDISABLEBUTTON_WIDTH   = 300;
+	/** Altezza del bottone per disattivare i robot */
 	private static final int ROBOTDISABLEBUTTON_HEIGHT  = 100;
+	/** Larghezza del bottone per ripristinare le piattaforme */
 	private static final int PLATFORMRESETBUTTON_WIDTH  = 300;
+	/** Altezza del bottone per ripristinare le piattaforme */
 	private static final int PLATFORMRESETBUTTON_HEIGHT = 100;
+	/** Larghezza del bottone per uscire */
 	private static final int EXITBUTTON_WIDTH         	= 250;
+	/** Altezza del bottone per uscire */
 	private static final int EXITBUTTON_HEIGHT         	= 50;
 	
+	/** Spiazzamento verticale */
 	private static final int Y_SPACING = 20;
+	/** Spiazzamento orizzontale */
 	private static final int X_SPACING = 20;
 	
+	/** Larghezza del menù */
 	private static final int WIDTH  = 500;
+	/** Altezza del menù */
 	private static final int HEIGHT = 350;
 	
+	/** Dimensione del font personalizzato */
 	private static final float TERMINAL_FONT_SIZE = 45f;
 	
+	/**
+	 * Costruisce la classe disegna il menù
+	 * @param player
+	 * il giocatore 
+	 * @param terminalFont
+	 * il font personalizzato
+	 */
 	public TerminalMenu(Player player, Font terminalFont)
 	{
 		JLabel numberOfRobotDisablePasswords = new JLabel(Integer.toString(player.getRobotPasswordsObtained()));
@@ -114,9 +138,17 @@ public class TerminalMenu extends JPanel
 		exitButton.addActionListener(e -> EventDispatcher.notify(new TerminalClosed()));
 	}
 	
+	/**
+	 * Imposta la posizione del menù nel pannello di gioco
+	 * @param frameWidth
+	 * larghezza del pannello
+	 * @param frameHeight
+	 * altezza del pannello
+	 */
 	public void setPositionInFrame(int frameWidth, int frameHeight)
 	{ this.setBounds((frameWidth - WIDTH) / 2, (frameHeight - HEIGHT) / 2, WIDTH, HEIGHT); }
 	
+	/** Per disegnare lo sfondo */
 	@Override
 	public void paintComponent(Graphics g)
 	{
