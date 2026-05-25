@@ -13,9 +13,9 @@ public abstract class MovingObject extends GameObject
 	private static final double GRAVITY = 1000f; 
 	
 	/** velocità orizzontale del gameobject*/
-	private transient double horizontalVelocity;
+	private double horizontalVelocity;
 	/** velocità verticale del gameobject */
-	private transient double verticalVelocity;
+	private double verticalVelocity;
 	
 	/** indica se il gameobject è a terra */
 	private boolean onGround;

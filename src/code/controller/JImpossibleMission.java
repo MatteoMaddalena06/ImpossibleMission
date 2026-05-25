@@ -130,7 +130,7 @@ public class JImpossibleMission
 		frame.setResizable(false);
 		frame.setVisible(true);
 		
-		AudioPlayer.getIstance().playBackgroundMusic();
+		AudioPlayer.getInstance().playBackgroundMusic();
 		
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -202,7 +202,7 @@ public class JImpossibleMission
 	{
 		 layout.show(rootPanel, MAIN_MENU_ID); 
 		 EventDispatcher.disposeListeners();
-		 AudioPlayer.getIstance().disposeRunningClips(); 	
+		 AudioPlayer.getInstance().disposeRunningClips(); 	
 		 world = null;
 		 oldLeaderboardPanel = null;
 		 oldTerminalMenu = null; 
@@ -212,8 +212,8 @@ public class JImpossibleMission
 	/** Termina il gioco (un event handler) */
 	private void closeGame()
 	{ 
-		AudioPlayer.getIstance().disposeBackgroundMusic();
-		AudioPlayer.getIstance().disposeRunningClips(); 
+		AudioPlayer.getInstance().disposeBackgroundMusic();
+		AudioPlayer.getInstance().disposeRunningClips(); 
 		System.exit(0);
 	}
 	

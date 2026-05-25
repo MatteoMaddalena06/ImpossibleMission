@@ -31,7 +31,7 @@ public class ThrowerRobotSprite extends AnimatedSprite
 		 * @param attack
 		 * l'attacco a cui associare la sprite
 		 */
-		public AttackSprite (AttackerRobot.Attack attack)
+		public AttackSprite(AttackerRobot.Attack attack)
 		{ super(attack, THROWER_ROBOT_ATTACK_ANIMATION, IMAGE_DURATION); }
 		
 		@Override

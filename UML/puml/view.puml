@@ -1,0 +1,500 @@
+@startuml view 
+
+namespace model {
+    class GameContext 
+    class Room 
+    class Furniture 
+    class GameObject
+    class AttackerRobot_Attack as "AttackerRobot.Attack"
+    class MovingObject
+    class BlackOrb 
+    class RunnerRobot 
+    class JumperRobot 
+    class ThrowerRobot 
+    class LaserRobot 
+    class Player 
+    class FixedObject 
+    class Room_color as "Room.Color"
+    class Platform
+    class Terminal
+    class Leaderboard_Entry as "Lederboard.Entry"
+    class PresettedPassword
+    class PuzzlePiece
+    class MovingObject
+    class Furniture_Type as "Furniture.Type"
+    class Furniture_LootType as "Furniture.LootType"
+    class AttackLaunced 
+    class AttackEnded
+    class FurnitureSearchEnded
+    class PlayerFoundSomething
+    class PlayerIsSearching
+    class PlayerOnPlatform
+    class RunnerStartRunning
+    class RunnerStopRunning
+    class TerminalOpened
+    class TerminalClosed
+    class PlayerDied
+}
+
+class javax_swing_JPanel as "javax.swing.JPanel"
+class javax_swing_JButton as "javax.swing.JButton"
+
+class Renderer {
+    -playerSprite: PlayerSprite
+	-context: GameContext
+	-currentSpritesList: List<Sprite> 
+	-spritesListsCache: Map<Room, List<Sprite>> 
+	-currentWindowY: double
+	-printSearchingState: boolean
+	-printFurnitureLoot: boolean
+	-interestingFurniture: Furniture
+	-firstPaintLatch: CountDownLatch
+	-isFirstPaint: boolean
+    +Renderer(context: GameContext)
+    #paintComponent(g: Graphics): void
+    -drawHUD(g: Graphics): void
+    -paintImage(bindedGameObject: GameObject , image: BufferedImage , g: Graphics): void
+    -paintFurnitureInfo(furniture: Furniture , image: BufferedImage , g: Graphics): void 
+    -setCurrentSpritesList(): void 
+    -addAttackSprite(attack: AttackerRobot.Attack): void
+    -removeAttackSprite(attack: AttackerRobot.Attack): void
+    -removeFurnitureSprite(furniture: Furniture): void
+    -printFurnitureLoot(furniture: Furniture): void
+    -printSearchingState(furniture: Furniture): void
+    -bindAllKey(context: GameContext): void
+    -bindKey(context: GameContext , keyName: String, keyCode: int, pressed: boolean): void
+    +setFirstPaintLatch(latch: CountDownLatch): void
+    +getCurrentSpritesList(): List<Sprite>
+    +getPlayerSprite(): PlayerSprite
+    +getPreferredSize(): Dimension 
+}
+
+Renderer --|> javax_swing_JPanel
+Renderer --> PlayerSprite 
+Renderer --> model.GameContext
+Renderer --> model.Room
+Renderer --> Sprite 
+Renderer --> model.Furniture 
+Renderer ..> model.GameObject
+Renderer ..> model.AttackerRobot_Attack
+
+Renderer ..> model.AttackLaunched      
+Renderer ..> model.AttackEnded       
+Renderer ..> model.FurnitureSearchEnded
+Renderer ..> model.PlayerFoundSomething
+Renderer ..> model.PlayerIsSearching
+
+abstract Sprite {
+    -image: BufferedImage
+    -gameObject: GameObject 
+    +Sprite(gameObject: GameObject)
+    +computeImage(): void //abstract 
+    +getImage(): BufferedImage
+    +setImage(image: BufferedImage): void 
+    +getGameObject(): GameObject
+}
+
+Sprite --> model.GameObject
+
+abstract AnimatedSprite {
+    -animation: Animation
+	-previousState: Animation.State
+	-imageDuration: double
+	-elapsedTime: double
+	-imageIndex: int
+    +AnimatedSprite(gameObject: MovingObject, animation Animation, imageDuration: double)
+    +computeImage(): void
+    #nextImageIndex(animationList: List<BufferedImage>): int
+    +updateElapsedTime(deltaTime: double): void
+    #getImageIndex(): int
+}
+
+AnimatedSprite --|> Sprite 
+AnimatedSprite --> Animation 
+AnimatedSprite --> Animation_State 
+AnimatedSprite ..> model.MovingObject
+
+class BlackOrbSprite {
+    +BlackOrbSprite(blackOrb: BlackOrb)
+}
+
+BlackOrbSprite --|> AnimatedSprite 
+BlackOrbSprite ..> model.BlackOrb
+
+class FloorSprite {
+    +FloorSprite(floor: FixedObject, floorColor: Room.Color)
+    +computeImage(): void
+}
+
+FloorSprite --|> Sprite 
+FloorSprite ..> model.FixedObject
+FloorSprite ..> model.Room_color
+
+class FurnitureSprite {
+    -chosenFurnitureImage: BufferedImage 
+    +FurnitureSprite(furniture: Furniture, color: Room.Color)
+    -choseBestImage(furniture: Furniture, furnitureImages: StaticImage[]): BufferedImage 
+    -cost(furnitureWidth: double, furnitureHeight: double, imageWidth: double, imageHeight: double): double
+    +computeImage(): void
+}
+
+FurnitureSprite --|> Sprite 
+FurnitureSprite ..> StaticImage 
+FurnitureSprite ..> model.Furniture
+FurnitureSprite ..> model.Room_color
+
+class JumperRobotSprite {
+    +JumperRobotSprite(jumperRobot: JumperRobot)
+    #nextImageIndex(animationList: List<BufferedImage>): int
+}
+
+JumperRobotSprite --|> AnimatedSprite
+JumperRobotSprite ..> model.JumperRobot
+
+class LaserRobotSprite {
+    +LaserRobotSprite(laserRobot: LaserRobot)
+}
+
+class LaserRobotSprite_AttackSprite as "LaserRobotSprite.AttackSprite" {
+    +AttackSprite(attack: AttackerRobot.Attack)
+}
+
+LaserRobotSprite_AttackSprite ..> model.AttackerRobot_Attack
+
+LaserRobotSprite --|> AnimatedSprite
+LaserRobotSprite *-- LaserRobotSprite_AttackSprite
+LaserRobotSprite ..> model.LaserRobot
+
+class PlatformSprite {
+    +PlatformSprite(platform: Platform)
+    +computeImage(): void
+}
+
+PlatformSprite --|> Sprite 
+PlatformSprite ..> model.Platform
+
+class PlayerSprite {
+    +PlayerSprite(player: Player)
+    #nextImageIndex(animationList: List<BufferedImage>): int
+}
+
+PlayerSprite --|> AnimatedSprite
+PlayerSprite ..> model.Player
+
+class RunnerRobotSprite {
+    +RunnerRobotSprite(runnerRobot: RunnerRobot)
+}
+
+RunnerRobotSprite --|> AnimatedSprite
+RunnerRobotSprite ..> model.RunnerRobot
+
+abstract SearchingWindow {
+    {static}+getSearchingWindow(furniture: Furniture): BufferedImage
+} 
+
+SearchingWindow ..> model.Furniture
+
+abstract SpriteFactory {
+    {static}+produce(gameObject: GameObject): Sprite 
+    {static}+produce(gameObject: GameObject, color: Room.Color): Sprite 
+}
+
+SpriteFactory ..> model.GameObject
+SpriteFactory ..> Sprite 
+SpriteFactory ..> model.Room_color
+
+class TerminalSprite {
+    +TerminalSprite(terminal: Terminal)
+    +computeImage(): void
+}
+
+TerminalSprite --|> Sprite 
+TerminalSprite ..> model.Terminal
+
+class ThrowerRobotSprite {
+    +ThrowerRobotSprite(throweRobot: ThrowerRobot)
+}
+
+class ThrowerRobotSprite_AttackSprite as "ThrowerRobotSprite.AttackSprite" {
+    +AttackSprite(attack: AttackerRobot.Attack)
+    #nextImageIndex(animationList: List<BufferedImage>): int   
+}
+
+ThrowerRobotSprite_AttackSprite ..> model.AttackerRobot_Attack
+
+ThrowerRobotSprite --|> AnimatedSprite
+ThrowerRobotSprite *-- ThrowerRobotSprite_AttackSprite
+ThrowerRobotSprite ..> model.ThrowerRobot
+
+class WallSprite {
+    +WallSprite(wall: FixedObject, wallColor: Room.Color)
+    +computeImage(): void
+}
+
+WallSprite --|> Sprite 
+WallSprite ..> model.FixedObject
+WallSprite ..> model.Room_color
+
+class Menu {
+    +Menu()
+    +paintComponent(g: Graphics): void
+}
+
+Menu --|> javax_swing_JPanel
+Menu ..> MenuButton
+
+class LeaderboardMenu {
+    +LeaderboardMenu(leaderboard: Leaderboard, leaderboardFont: Font)
+    +createEntryPanel(entry: Leaderboard.Entry, leaderboardFont: Font): JPanel
+    +paintComponent(g: Graphics): void
+}
+
+LeaderboardMenu --|> javax_swing_JPanel
+LeaderboardMenu ..> model.Leaderboard
+LeaderboardMenu ..> model.Leaderboard_Entry
+LeaderboardMenu ..> MenuButton
+
+class MenuButton {
+    +MenuButton(normalImage: BufferedImage, selectionImage: BufferedImage, width: int, height: int)
+}
+
+MenuButton --|> javax_swing_JButton
+
+class PlayerNameMenu {
+    +PlayerNameMenu(inputBoxFont: Font)
+    +paintComponent(g: Graphics): void
+}
+
+PlayerNameMenu --|> javax_swing_JPanel
+PlayerNameMenu ..> MenuButton
+
+class PuzzleMenu {
+    +gridPanels: PuzzleMenu.GridPanel[]
+    +PuzzleMenu(password: PresettedPassword, puzzlePieces: List<PuzzlePiece>, customFont: font)
+    +createPieceLabel(puzzlePiece: PuzzlePiece): JLabel
+    +getGridsContent(): PuzzlePiece[][][]
+}
+
+class PuzzleMenu_GridPanel as "PuzzleMenu.GridPanel" {
+    -slots: PuzzleMenu.SlotPanel[][]
+    +GridPanel()
+    +getSlots(): PuzzleMenu.SlotPanel[][]
+} 
+
+PuzzleMenu_GridPanel --|> javax_swing_JPanel
+PuzzleMenu_GridPanel --> PuzzleMenu_SlotPanel
+
+class PuzzleMenu_SlotPanel as "PuzzleMenu.SlotPanel" {
+    +SlotPanel(piecesContainer: JPanel)
+    +isEmpty(): boolean
+}
+
+PuzzleMenu_SlotPanel --|> javax_swing_JPanel
+
+PuzzleMenu --|> javax_swing_JPanel
+PuzzleMenu *-- PuzzleMenu_GridPanel
+PuzzleMenu *-- PuzzleMenu_SlotPanel
+PuzzleMenu ..> model.PresettedPassword
+PuzzleMenu ..> model.PuzzlePiece
+
+class TerminalMenu {
+    +TerminalMenu(player: Player, terminalFont: Font)
+    +setPositionInFrame(frameWidth: int, frameHeight: int): void
+    +paintComponent(g: Graphics): void
+}
+
+TerminalMenu --|> javax_swing_JPanel
+TerminalMenu ..> model.Player
+TerminalMenu ..> MenuButton
+
+interface MenuEvent
+
+class CloseGame <<record>> 
+CloseGame ..|> MenuEvent
+
+class GamePanelRequested <<record>> {
+    playerName: String 
+}
+
+GamePanelRequested ..|> MenuEvent
+
+class InputBoxMenuRequested <<record>> 
+InputBoxMenuRequested ..|> MenuEvent
+
+class LeaderboardMenuRequested <<record>> 
+LeaderboardMenuRequested ..|> MenuEvent
+
+class PlatformResetRequested <<record>> 
+PlatformResetRequested ..|> MenuEvent
+
+class PuzzleMenuClosed <<record>> 
+PuzzleMenuClosed ..|> MenuEvent
+
+class PuzzleMenuOpened <<record>> 
+PuzzleMenuOpened ..|> MenuEvent
+
+class PuzzleMenuRequested <<record>> {
+    player: Player 
+}
+
+PuzzleMenuRequested ..|> MenuEvent 
+PuzzleMenuRequested --> model.Player 
+
+class RobotDisableRequested <<record>> 
+RobotDisableRequested ..|> MenuEvent
+
+class SecondaryMenuClosed <<record>> 
+SecondaryMenuClosed ..|> MenuEvent
+
+class TerminalClosed <<record>> 
+TerminalClosed ..|> MenuEvent
+
+enum Animation {
+    PLAYER
+    BLACKORB
+    JUMPER_ROBOT
+    ...
+    SEARCHING_WINDOW
+   
+    -animationList: Map<Animation.State, List<BufferedImage>
+    -Animation(animationLists: Map<Animation.State, List<BufferedImage>)
+    +getAnimationList(): ap<Animation.State, List<BufferedImage>
+}
+
+enum Animation_State as "Animation.State"  {
+    WALKING_LEFT, WALKING_RIGHT
+    JUMPING_LEFT, JUMPING_RIGHT
+    ...
+    SEARCHING
+
+    -id: int 
+    +State(id: int)
+    +State()
+    +getState(movingObject: MovingObject): State
+    +isMirrored(otherState: State): boolean
+}
+
+Animation_State ..> model.MovingObject
+
+Animation *-- Animation_State
+
+abstract ImageUtils {
+    {static}+loadImage(pathname: String, crop: boolean): BufferedImage
+    {static}+loadFlipped(pathname: String, crop: boolean): BufferedImage
+    {static}+loadAnimation(pattern: String, start: int, end: int, crop: boolean): List<BufferedImage>
+    {static}+loadFlippedAnimation(pattern: String, start: int, end: int, crop: boolean): List<BufferedImage>
+    {static}-loadRaw(pathname: String): BufferedImage
+    {static}-flipHorizontally(image: BufferedImage): BufferedImage
+    {static}-crop(image: BufferedImage): BufferedImage
+    {static}-imageStrip(image: BufferedImage, times: int, direction: ImageUtils.Direction): BufferedImage
+    {static}-scaleImage(image: BufferedImage, width: int, height: int): BufferedImage
+    {static}-getNumberAsImagesList(number: int, symbolsList: StaticImage[]): List<BufferedImage>
+}
+
+enum ImageUtils_Direction as "ImageUtils.Direction" {
+    VERTICAL 
+    HORIZONTAL
+}
+
+ImageUtils *.. ImageUtils_Direction
+ImageUtils ..> StaticImage
+
+enum StaticImage {
+    GREEN_WALL_RIGHT
+    GREEN_WALL_LEFT
+    GREEN_UPPER_RIGHT_WALL
+    ...
+    NUMBER_9
+
+    -image: BufferedImage
+	-color: Room.Color
+	-type: StaticImage.Type
+	-furnitureType: Furniture.Type
+    -furnitureLootType: Furniture.LootType
+	-puzzlePieceType: PuzzlePiece
+    -StaticImage(image: BufferedImage)
+    -StaticImge(image: BufferdImage, color: Room.Color, type: StaticImage.Type, furnitureType: Furniture.Type, furnitureLootType: Furniture.LootType , puzzlePieceType: PuzzlePiece)
+    -StaticImge(image: BufferdImage, color: Room.Color, type: StaticImage.Type, furnitureLootType: Furniture.LootType , puzzlePieceType: PuzzlePiece)
+    -StaticImge(image: BufferdImage, color: Room.Color, type: StaticImage.Type, furnitureType: Furniture.Type)
+    -StaticImge(image: BufferdImage, color: Room.Color, type: StaticImage.Type, furnitureLootType: Furniture.LootType)
+    -StaticImge(image: BufferdImage, type: StaticImage.Type, furnitureLootType: Furniture.LootType)
+    -StaticImge(image: BufferdImage, type: StaticImage.Type)
+    -StaticImge(image: BufferdImage, color: Room.Color, type: StaticImage.Type)
+    +getImage(): BufferdImage
+    {static}+getFurniture(type: Furniture:Type, color: Room.Color): StaticImage
+    {static}+getFurnitures(color: Room.Color): StaticImage[]
+    {static}+getFloor(color: Room.Color): StaticImage
+    {static}+getWall(color: Room.Color, wallType StaticImage.Type): StaticImage
+    {static}+getPuzzlePiece(puzzlePiece: puzzlePiece): StaticImage
+    {static}+getFurnitureLoot(furnitureLootType: Furniture.LootType): StaticImage
+    {static}+getAwardsList(): List<StaticImage>
+    {static}+getNumbersList(): List<StaticImage>
+}
+
+enum StaticImage_Type as "StaticImage.Type" {
+    TERMINAL, MIDDLE_WALL_RIGHT, MIDDLE_WALL_LEFT, UPPER_LEFT_WALL, 
+	UPPER_RIGHT_WALL, BOTTOM_LEFT_WALL, BOTTOM_RIGHT_WALL, FURNITURE, FLOOR, PLATFORM,
+	FURNITURE_LOOT
+}
+
+StaticImage *-- StaticImage_Type
+StaticImage --> model.Room_color
+StaticImage --> model.Furniture_Type
+StaticImage --> model.Furniture_LootType
+StaticImage --> model.PuzzlePiece
+
+enum AudioBank {
+    BACKGROUND_MUSIC
+    EMPTYLOOT_SAMPLE
+    ... 
+    PLAYERDEATH_SAMPLE
+
+    -audioData: AudioData
+    -AudioBank(audioData: Audiodata)
+    +getAudioData(): AudioData
+}
+
+AudioBank --> AudioData
+
+class AudioData <<record>> {
+    +audioContent: byte[]
+    +audioFormat: AudioFormat
+}
+
+class AudioPlayer {
+    {static}-instance: AudioPlayer 
+    -backgroundClip: Clip 
+	-runningClips: Map<Object, Clip> 
+    {static}+getInstance()
+    -AudioPlayer()
+    -playSample(audioSample: AudioData): void
+    -startRunningClip(object: Object, audioSample: AudioData): void
+    -removeRunningClip(object: Object): void
+    -stopAllRunningClips(): void
+    -startAllRunningClips(): void 
+    -playBackgroundMusic: void
+    -disposeBackgroundMusic(): void
+    -disposeRunningClips(): void
+}
+
+AudioPlayer --> AudioData 
+
+abstract AudioUtils {
+    {static}+loadAudioSample(pathname: String): AudioData
+    {static}+toClip(audioSample: AudioData): Clip
+    {static}-loadRaw(pathname: String): AudioData
+}
+
+AudioUtils --> AudioData
+
+AudioPlayer ..> model.AttackLaunced
+AudioPlayer ..> model.AttackEnded
+AudioPlayer ..> model.PlayerOnPlatform
+AudioPlayer ..> model.RunnerStartRunning
+AudioPlayer ..> model.RunnerStopRunning
+AudioPlayer ..> model.PlayerFoundSomething
+AudioPlayer ..> model.TerminalOpened
+AudioPlayer ..> model.TerminalClosed 
+AudioPlayer ..> model.PlayerDied
+
+@enduml

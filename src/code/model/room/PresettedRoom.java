@@ -6,7 +6,6 @@ import java.util.List;
 //model import
 import code.model.Point;
 import code.model.gameobjects.Furniture;
-import code.model.gameobjects.GameObject;
 
 /** 
  * Enumerazione per le stanze previste dal gioco. Memorizza staticamente le informazioni sulle stanze del gioco ed espone un metodo per creare un'istanza di {@link Room} con queste quando richiesto

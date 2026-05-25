@@ -388,7 +388,7 @@ public class Player extends MovingObject
 	 * @param isSearching
 	 * lo stato del flag {@link isSearching}
 	 */
-	void setSearchingState(boolean isSearching)
+	public void setSearchingState(boolean isSearching)
 	{ this.isSearching = isSearching; }
 	
 	/**

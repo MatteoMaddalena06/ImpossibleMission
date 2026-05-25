@@ -178,7 +178,7 @@ public class Room
 	 * @return
 	 * true se e solo se è stata possibile la rimozione
 	 */
-	public boolean removeForniture(Furniture object)
+	public boolean removeFurniture(Furniture object)
 	{ return furnitureList.remove(object) && gameObjectList.remove(object); }
 	
 	/**

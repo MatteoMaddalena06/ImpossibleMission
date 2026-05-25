@@ -25,7 +25,7 @@ import code.event.EventDispatcher;
 public class AudioPlayer
 {
 	/** Istanza per il singleton */
-	private static AudioPlayer istance;
+	private static AudioPlayer instance;
 	
 	/** {@link Clip} per la musica di sottofondo */
 	private Clip backgroundClip;
@@ -37,12 +37,12 @@ public class AudioPlayer
 	 * @return
 	 * l'istanza della classe
 	 */
-	public static AudioPlayer getIstance()
+	public static AudioPlayer getInstance()
 	{
-		if(istance == null)
-			istance = new AudioPlayer();
+		if(instance == null)
+			instance = new AudioPlayer();
 		
-		return istance;
+		return instance;
 	}
 	
 	/** Costruisce la classe */

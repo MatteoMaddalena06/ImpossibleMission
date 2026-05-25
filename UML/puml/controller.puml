@@ -1,0 +1,118 @@
+@startuml controller 
+
+skinparam dpi 300
+
+namespace model {
+    class GameWorld
+    class Player 
+    class GameContext
+    class PlayerDied 
+    class StopSimulation 
+    class GameWillEnd
+    class TerminalClosed
+}
+
+namespace view {
+    class Renderer
+    class LeaderboardMenu
+    class TerminalMenu
+    class PuzzleMenu
+    class CloseGame
+    class SecondaryMenuClosed      
+    class InputBoxMenuRequested    
+    class GamePanelRequested       
+    class LeaderboardMenuRequested               
+    class TerminalClosed          
+    class PuzzleMenuRequested      
+    class PuzzleMenuClosed   
+    class RobotDisableRequested
+    class PlatformResetRequested
+    class PuzzleMenuRequested
+}
+
+interface ControllerEvent
+
+class StopGame <<record>>
+StopGame ..|> ControllerEvent
+
+class TerminalMenuRequested <<record>> {
+    player: Player 
+}
+
+TerminalMenuRequested ..|> ControllerEvent
+TerminalMenuRequested --> model.Player
+
+class GameResumed <<record>>
+GameResumed ..|> ControllerEvent
+
+class JImpossibleMission {
+    -world: GameWorld 
+	-oldLeaderboardPanel: LeaderboardMenu 
+	-oldGamePanel: Renderer 
+	-oldTerminalMenu: TerminalMenu 
+	-oldPuzzleMenu: PuzzleMenu 
+    {static}+main(args: String): void 
+    -start(): void 
+    -initEventHandler(rootPanel: JPanel, layout: CardLayout, layeredPane: JLayeredPane): void
+    -sartGame(playerName: String, rootPanel: JPanel, layout: CardLayout, layeredPane: JLayeredPane): void
+    -stopGame(rootPanel: JPanel, layout: CardLayout): void
+    -closeGame()
+    -swapToLeaderboard(rootPanel: JPanel, layout: CardLayout): void
+    -wapToTerminalMenu(player: Player, layeredPane: JLayeredPane): void
+    -swapToPuzzleMenu(player: Player, layeredPane: JLayeredPane): void
+}
+
+JImpossibleMission --> model.GameWorld 
+JImpossibleMission --> view.Renderer 
+JImpossibleMission --> view.LeaderboardMenu
+JImpossibleMission --> view.TerminalMenu 
+JImpossibleMission --> view.PuzzleMenu
+JImpossibleMission ..> model.Player
+JImpossibleMission ..> view.CloseGame
+JImpossibleMission ..> view.SecondaryMenuClosed      
+JImpossibleMission ..> view.InputBoxMenuRequested    
+JImpossibleMission ..> view.GamePanelRequested       
+JImpossibleMission ..> view.LeaderboardMenuRequested               
+JImpossibleMission ..> view.TerminalClosed          
+JImpossibleMission ..> view.PuzzleMenuRequested      
+JImpossibleMission ..> view.PuzzleMenuClosed  
+JImpossibleMission ..> StopGame 
+JImpossibleMission ..> TerminalMenuRequested 
+
+class GameLoop {
+	-renderer:Renderer
+	-context: GameContext 
+	-pauseSimulation: boolean 
+	-pauseSimulationUntil: boolean 
+	-pauseUntil: long 
+	-skipPlayerUpdateUntil: boolean 
+	-skipUntil: long 
+	-gameWillEnd: boolean 
+	-continueUntil: long 
+	-disableRobotsFor: long 
+    +GameLoop(context: GameContext, renderer: Renderer)
+    +run(): void
+    -skipPlayerUpdate(nanos: long): void 
+    -pauseSimulation(nanos: long): void
+    -setGameEnd(nanos: long): void
+    -terminalOpened(): void 
+    -puzzleMenuOpened(): void 
+    -disableRobots(): void 
+}
+
+class java_lang_Thread as "java.lang.Thread"
+
+GameLoop --|> java_lang_Thread
+GameLoop --> view.Renderer
+GameLoop --> model.GameContext
+GameLoop ..> model.PlayerDied             
+GameLoop ..> model.StopSimulation		    
+GameLoop ..> view.RobotDisableRequested  
+GameLoop ..> model.GameWillEnd    	    
+GameLoop ..> model.TerminalOpened		    
+GameLoop ..> GameResumed    	    
+GameLoop ..> view.PlatformResetRequested 
+GameLoop ..> view.PuzzleMenuOpened      
+
+
+@enduml 

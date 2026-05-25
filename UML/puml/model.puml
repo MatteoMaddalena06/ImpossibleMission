@@ -1,0 +1,671 @@
+@startuml model 
+
+class Point {
+    +x: double
+    +y: double 
+    +Point(x: double, y: double)
+    +Point(source: Point)
+    +equals(obj: Object): boolean
+    +setX(x: double): void 
+    +setY(y: double): void 
+    +getX(): double 
+    +getY(): double
+}
+
+class Leaderboard {
+    {static}-instance: Leaderboard
+    -content: List<Entry>
+    {static}+load(): Leaderboard
+    +store(): void
+    +addEntry(entry Leaderboard_Entry): void
+    -findPlayer(name: String): int
+    -insertEntry(entry: Leaderboard_Entry): void
+    -removeEntry(index: int): void
+    +getContet(): List<Entry>
+}
+
+class Leaderboard_Entry as "Leaderboard_Entry"{
+    -name: String 
+    -points: int 
+    -rank: int 
+    +Entry(name: String, points: int)
+    +getName(): String 
+    +getPoints(): int 
+    +getRank(): int 
+    +setRank(rank: int): void
+}
+
+Leaderboard *-- Leaderboard_Entry
+
+class GameWorld {
+    -worldMatrix: Room[][]
+    -worldPassword: PresettedPassword
+    -elevatorRoomsCache: Room[]
+    +GameWorld() 
+    -randomGeneration(): Room[][]
+    -createTraversableRandomMap(): void 
+    -makeTheMapPlayable(furnitureList: List<Furniture>, password: PresettedPassword): void
+    -distributeInFurniture(furnitureList: List<Furniture>, amount: int, type: Furniture.LootType): List<Furniture>
+    -distributeInFurniture(furnitureList: List<Furniture>, puzzlePieces: PuzzlePiece[]): void
+    +getElevatorColumnAsRoom(column: int, player: Player): Room
+    +getWorldMatrix(): Room[][]
+    +getWorldPassword(): PresettedPassword
+}
+
+GameWorld --> Room 
+GameWorld --> PresettedPassword
+GameWorld ..> Furniture 
+GameWorld ..> Furniture_LootType
+GameWorld ..> PuzzlePiece
+GameWorld ..> Player
+
+class Room {
+    -gameObjectList: List<GameObject>
+	-platformList: List<Platform>
+	-fixedObjectList: List<FixedObject>
+	-furnitureList: List<Furniture>
+	-enemiesList: List<Enemy>
+    -leftSpawnPosition: Point 
+	-rightSpawnPosition: Point
+	-platformsNumber: int
+	-color: Room.Color
+	-exitLayout: Room.ExitLayout 
+	-width: int
+	-height: int
+    -Room(gameObjectList: List<GameObject>, color: Room.Color, width: int, height: int)
+    +public Room(gameObjectList: List<GameObject>, color: Room.Color, exitLayout: Room.ExitLayout, leftSpawnPosition: Point, rightSpawnPosition: Point)
+    +merge(room: Room): Room 
+    +getGameObjectList(): List<GameObject>
+    +getPlatformList(): List<Platform>
+    +getFixedObjectList(): List<FixedObject>
+    +getFurnitureList(): List<Furniture>
+    +getEnemiesList(): List<Enemy>
+    +removeFurniture(object: Furniture): boolean
+    +addEnemyAttack(attack: AttackerRobot.Attack): boolean
+    +removeEnemyAttack(attack: AttackerRobot.Attack): boolean
+    +addPlatform(platform: Platform): boolean 
+    +removePlatform(platform: Platform): boolean
+    +setLeftSpawnPosition(leftSpawnPosition: Point): void
+    +setRightSpawnPosition(rightSpawnPosition: Point): void
+    +getLeftSpawnPosition(): Point 
+    +getRightSpawnPosition(): Point 
+    +getPlatformsNumber(): int 
+    +getExitLayout(): Room.ExitLayout
+    +getColor(): Room.Color 
+    +getWidth(): int 
+    +getHeight(): int 
+}
+
+enum Room_Color as "Room.Color"{
+    RED 
+    PURPLE 
+    GREEN 
+}
+
+enum Room_ExitLayout as "Room.ExitLayout"{
+    ONLEFT
+    ONRIGHT
+    ONLEFTANDRIGHT
+    NOEXIT
+}
+
+Room --> GameObject 
+Room --> Platform 
+Room --> FixedObject 
+Room --> Furniture 
+Room --> Enemy 
+Room --> Point
+Room *-- Room_Color 
+Room *-- Room_ExitLayout
+Room ..> AttackerRobot_Attack 
+
+enum RoomMap {
+    ROOM3 
+    ROOM4 
+    ...
+    ROOM32 
+	NOEXIT_ELEVATOR_ROOM
+    RIGHTEXIT_ELEVATOR_ROOM
+    LEFTEXIT_ELEVATOR_ROOM
+    RIGHTLEFTEXIT_ELEVATOR_ROOM
+
+    -mapMatrix: int[][]
+    +RoomMap(mapMatrix: int[][])
+    +getMap(): int[][]
+}
+
+abstract RoomMapParser {
+    {static}+parse(room: RoomMap)
+    {static}-floodFill(map: int[][], x: int, y: int, visited: boolean, type: int)
+}
+
+RoomMapParser --> RoomMap
+
+enum PresettedRoom {
+    ROOM3 
+    ROOM4 
+    ...
+    ROOM32 
+	NOEXIT_ELEVATOR_ROOM
+    RIGHTEXIT_ELEVATOR_ROOM
+    LEFTEXIT_ELEVATOR_ROOM
+    RIGHTLEFTEXIT_ELEVATOR_ROOM
+
+    -roomMap: RoomMap
+	-color: Room.Color
+	-exitLayout: Room.ExitLayout 
+	-leftSpawnPosition: Point 
+	-rightSpawnPosition: Point 
+	-isElevator: boolean
+    -PresettedRoom(roomMap: RoomMap, color: Room.Color, exitLayout: Room.ExitLayout, leftSpawnPosition: Point, rightSpawnPosition: Point, isElevator: boolean)
+    -PresettedRoom(roomMap: RoomMap, color: Room.Color, exitLayout: Room.ExitLayout, leftSpawnPosition: Point, rightSpawnPosition: Point)
+    -PresettedRoom(roomMap: RoomMap, color: Room.Color, exitLayout: Room.ExitLayout, spawnPosition: Point, isElevator: boolean)
+    -PresettedRoom(roomMap: RoomMap, color: Room.Color, exitLayout: Room.ExitLayout, spawnPosition: Point)
+    -PresettedRoom(roomMap: RoomMap, color: Room.Color, exitLayout: Room.ExitLayout, isElevator: boolean)
+    -PresettedRoom(roomMap: RoomMap, color: Room.Color, exitLayout: Room.ExitLayout)
+    {static}+getRoom(layout: Room.ExitLayout, index: int): Room
+    +getRoom(): Room 
+    +getFurnitures(): List<Furniture>
+}
+
+PresettedRoom --> RoomMap
+PresettedRoom --> Room_Color 
+PresettedRoom --> Room_ExitLayout
+PresettedRoom --> Point 
+PresettedRoom ..> Room 
+PresettedRoom ..> Furniture
+
+enum PresettedPassword {
+    PASSWORD1 
+    PASSWORD2 
+    ...
+    PASSWORD20 
+
+    -password: String 
+    -PresettedPassword(password: String)
+    +checkAttempt(attempt: PuzzlePiece[][][]): boolean
+    +getPassword(): string 
+}
+
+PresettedPassword ..> PuzzlePiece 
+
+enum PuzzlePiece {
+    A_UPPER_RIGHT
+	A_UPPER_LEFT   
+	A_BOTTOM_RIGHT
+	A_BOTTOM_LEFT
+    ...
+    Z_BOTTOM_LEFT
+
+    -position: PuzzlePiece.Position 
+    -letter: char 
+    -PuzzlePiece(position: PuzzlePiece.Position, letter: char)
+    {staic}+getPieces(password: String): PuzzlePiece[]
+    +getPosition(): PuzzlePiece.Position
+    +getLetter(): char
+}
+
+enum PuzzlePiece_Position as "PuzzlePiece.Position"{
+    UPPER_RIGHT
+    UPPER_LEFT
+	BOTTOM_RIGHT
+    BOTTOM_LEFT
+}
+
+PuzzlePiece *-- PuzzlePiece_Position 
+
+abstract GameObject {
+    -position: Point 
+    -width: int 
+    -height: int 
+    +GameObject(position: Point, width: int, height: int)
+    +isColliding(other: GameObject): boolean
+    +containsPoint(point: Point): boolean
+    {abstract}+update(context: GameContext): void //abstract
+    #getPosition(): Point 
+    #setPosition(position: Point): void
+    +copyPosition(): Point 
+    +getHeight(): int 
+    +getWidth(): int 
+    #setHeight(height: int): void 
+    #setWidth(width: int): void
+}
+
+GameObject --> Point 
+GameObject ..> GameContext 
+
+abstract MovingObject {
+    -horizontalVelocity: double 
+    -verticalVelocity: double 
+    -onGround: boolean 
+    -physicsState: MovingObject.PhysicsState
+    -direction: MovingObject.Direction
+    +MovingObject(position: Point, width: int, height: int)
+    #addGravity(): void 
+    #applyHorizontalForce(): void 
+    #applyVerticalForce(): void 
+    #resolveHorizontalCollision(gameObjectList: List<GameObject>): void
+    #resolveVerticalCollision(gameObjectList: List<GameObject>): void
+    #getHorizontalVelocity(): double 
+    #getVerticalVelocity(): double 
+    #setHorizontalVelocity(velocity: double): void 
+    #setVerticalVelocity(velocity: double): void 
+    +isOnGround(): boolean 
+    #setPhysicsState(physicsState: MovingObject.PhysicsState): void 
+    #getPhysicsState(): MovingObject.PhysicsState
+    #setDirection(direction: MovingObject.Direction): void 
+    #getDirection(): MovingObject.Direction
+}
+
+enum MovingObject_PhysicsState as "MovingObject.PhysicsState" {
+    IDLE
+    WALKING
+    JUMPING
+    FALLING
+}
+
+enum MovingObject_Direction as "MovingObject.Direction" {
+    LEFT
+    RIGHT 
+}
+
+MovingObject --|> GameObject
+MovingObject *-- MovingObject_PhysicsState
+MovingObject *-- MovingObject_Direction 
+
+class Terminal {
+    +Terminal(position: Point, widht: int, height: int)
+    +update(context: GameContext)
+}
+
+Terminal --|> GameObject
+
+class Platform {
+    -originalPosition: Point 
+    +Platform(position: Point, widht: int, height: int)
+    +update(context: GameContext)
+}
+
+Platform --|> GameObject
+
+class FixedObject {
+    -type: FixedObject.Type 
+    +FixedObject(position: Point, widht: int, height: int)
+    +FixedObject(source: FixedObject, position: Point)
+    +getType(): FixedObject.Type
+    +update(context: GameContext)
+}
+
+enum FixedObject_Type as "FixedObject.Type" {
+    WALL 
+    FLOOR 
+}
+
+FixedObject *-- FixedObject_Type 
+
+class Furniture {
+    -contxete: Furniture.LootType
+    -type: Furniture.Type  
+    -puzzelPiece: PuzzlePiece 
+    +Furniture(position: Point, widht: int, height: int)
+    +update(context: GameContext)
+    +setContent(content: Furniture.LootType): void 
+    +getContet(): Furniture.LootType
+    +getType(): Furniture.Type 
+    +setPuzzlePiece(puzzlePiece: PuzzlePiece): void
+    +getPuzzlePiece(): PuzzlePiece
+    +getTimeForSearch(): double 
+    +getRemainingTimeForSearch(): double
+}
+
+enum Furniture_LootType as "Furniture.LootType" {
+    EMPY, 
+    PUZZLE_PIECE
+    ROBOT_PASSWORD 
+    PLATFORM_PASSWORD 
+
+    -points: int 
+    -LootType(points: int)
+    +getPoints(): int 
+}
+
+enum Furniture_Type as "Furniture.Type" {
+    ARMOR_TYPE1, ARMOR_TYPE2, BARREL, BIGMIRROR, BIGTOTEM, BOOKSHELF_TYPE1,
+    BOOKSHELFT_TYPE2, CAVE, CHALICE, CHEST, CLOCK, COLUMN_TYPE1, COLUMN_TYPE2,
+    LANTERN, LOG, LOGCHEST, MEDIUMMIRROR_TYPE1, MEDIUMMIRROR_TYPE2, PYRAMIDOFBARRELS,
+    RUINS_TYPE1, RUINS_TYPE2, SHIELD_TYPE1, SHIEDL_TYPE2, STRANGEDOOR, TABLE_TYPE1,
+    TABLE_TYP2, TOTEM_TYPE1, TOTEM_TYPE2, VASE, WARDROBE_TYPE1, WARDOROBE_TYPE2,
+    BROKEN_COLUMN, IDK,
+    RANDOM
+}
+
+Furniture --|> GameObject 
+Furniture *-- Furniture_LootType 
+Furniture *-- Furniture_Type 
+Furniture --> PuzzlePiece 
+
+abstract GameObjectFactory {
+    +produce(type: int, position: Point, width: int, height: int): GameObject
+}
+
+GameObjectFactory ..> Point 
+GameObjectFactory ..> GameObject
+
+class PlatformCluster {
+    -platforms: List<Platform>
+    -upperPlatform: Platform 
+	-lbottomPlatform: Platform 
+    -width: int
+	-isMoving: boolean
+	-direction: PlatformCluster.Direction
+	-firstTime: boolean
+    -PlatformCluster(platforms: List<Platform>)
+    +update(context: GameContext): void
+    -canGoDown(floorList: List<FixedObject>): boolean
+    -canGoUp(floorList: List<FixedObject>): boolean
+    -getDestinations(loorList: List<FixedObject>): Map<Platform, FixedObject> 
+    {static}+getPlatformClusters(room: Room): List<PlatformCluster> 
+}
+
+enum PlatformCluster_Direction as "PlatformCluster.Direction" {
+    UP 
+    DOWN 
+}
+
+PlatformCluster *-- PlatformCluster_Direction 
+PlatformCluster --> Platform
+PlatformCluster ..> FixedObject 
+PlatformCluster ..> GameContext
+PlatformCluster ..> Room
+
+class Player {
+    -spawnPosition: Point
+	-worldPosition: Point
+	-lifes: int
+	-name: String 
+	-points: int
+	-puzzlePiecesObtained: List<PuzzlePiece> 
+	-robotPasswordsObtained: int
+	-platformPasswordsObtained: int
+	-isOnPlatform: boolean
+	-usedPlatform: Platform
+	-isOnElevator: boolean 
+	-isDead: boolean 
+	-isSearching: boolean 
+	-usedFurniture: Furniture 
+	-wasHitboxModified: boolean
+    +Player(name: String, spawnPosition: Point, worldPosition: Point)
+    +update(context: GameContext): void
+    -shrinkHitbox(): void
+    -expandHitbox(): void 
+    -changeHitbox(newWidth: int, newHeight: int): void
+    -isStandingOnTopOf(obj: Platform): boolean
+    +getName(): String 
+    +getLifes(): int 
+    +getPoints(): int 
+    +updatePoints(amount: int): void 
+    +givePuzzlePiece(piece: PuzzlePiece): void 
+    +getPuzzlePiecesObtained(): List<PuzzlePiece>
+    +giveRobotPassword(): void 
+    +givePlatformPassword(): void 
+    +useRobotPassword(): boolean 
+    +usePlatformPassword(): boolean 
+    +getRobotPasswordsObtained(): int 
+    +getPlatformPasswordsObtained(): int 
+    +setOnPlatformState(isOnPlatform: boolean): void 
+    +isOnPlatform(): boolean 
+    +setUsedPlatform(platform: Platform): void
+    +getUsedPlatform(): Platform 
+    +setSearchingState(isSearching: boolean): void
+    +isOnElevator(): boolean 
+    +isDead(): boolean 
+    +isSearching(): boolean 
+    +setUsedFurniture(furniture Furniture): void
+    +getUsedFurniture(): Furniture 
+    +setSpawnPosition(spawnPosition: Point): void
+    +setWorldPosition(worldPosition: Point): void
+    +getWorldPosition(): Point
+}
+
+Player --|> MovingObject
+Player --> PuzzlePiece
+Player --> Platform
+Player --> Furniture
+
+class GameContext {
+    -player: Player
+    -world: GameWorld
+    -leaderboard: Leaderboard
+    -userInput: boolean[]
+    -isRobotsDisabled: boolean
+    -platformsToReset: in
+    -generatedElevatorRoom: Room
+    -needToRegenerateElevatorRoom: boolean
+    {static}-deltaTime: double
+    +GameContext(player: Player, world: GameWorld, leaderboard: Leaderboard)
+    +getPlayer(): Player 
+    +getCurrentRoom(): Room 
+    +setUserInput(userInput: GameContext.UserInput, state: boolean): void
+    +getUserInput(userInput: GameContext.UserInput): boolean 
+    +disableRobots(): void 
+    +enableRobots(): void 
+    +isRobotsDisabled(): boolean 
+    +resetPlatform(): void 
+    +resetOnePlatform(): void 
+    +getPLatformsToReset(): int 
+    +getLeaderboard(): Leaderboard
+    {static}+getDeltaTime(): double 
+    {static}+setDeltaTime(deltaTime: double): void 
+}
+
+enum GameContext_UserInput as "GameContext.UserInput" {
+    UP 
+    DOWN 
+    LEFT 
+    RIGHT 
+    JUMP 
+
+    -index: int 
+    -UserInput(index: int)
+    +getInput(): int
+}
+
+GameContext *-- GameContext_UserInput
+GameContext --> Player
+GameContext --> GameWorld
+GameContext --> Leaderboard
+GameContext --> Room 
+
+interface ModelEvent 
+interface ModelState 
+
+class AttackEnded <<record>> {
+    +source: AttackerRobot.Attack 
+}
+
+AttackEnded ..|> ModelEvent 
+AttackEnded --> AttackerRobot_Attack 
+
+class AttackLaunched <<record>> {
+    +source: AttackerRobot.Attack 
+}
+
+AttackLaunched ..|> ModelEvent 
+AttackLaunched --> AttackerRobot_Attack 
+
+class FurnitureSearchEnded <<record>> {
+    +source: Furniture
+}
+
+FurnitureSearchEnded ..|> ModelEvent 
+FurnitureSearchEnded --> Furniture
+
+class GameWillEnd <<record>> {
+    +nanos: long
+}
+
+GameWillEnd ..|> ModelState
+
+class PlayerDied <<record>> {
+    +nanos: long
+}
+
+PlayerDied ..|> ModelState
+
+class PlayerFoundSomething <<record>> {
+    +source: Furniture
+}
+
+PlayerFoundSomething ..|> ModelEvent 
+PlayerFoundSomething --> Furniture
+
+class PlayerIsSearching <<record>> {
+    +source: Furniture
+}
+
+PlayerIsSearching ..|> ModelEvent 
+PlayerIsSearching --> Furniture
+
+class PlayerOnPlatform <<record>> 
+PlayerOnPlatform ..|> ModelEvent
+
+class RunnerStartRunning <<record>> {
+    +robot: RunnerRobot
+}
+
+RunnerStartRunning ..|> ModelEvent 
+RunnerStartRunning --> RunnerRobot
+
+
+class RunnerStopRunning <<record>> {
+    +robot: RunnerRobot
+}
+
+RunnerStopRunning ..|> ModelEvent 
+RunnerStopRunning --> RunnerRobot
+
+class StopSimulation <<record>> {
+    +nanos: long
+}
+
+StopSimulation ..|> ModelState
+
+class TerminalOpened <<record>> 
+TerminalOpened ..|> ModelState
+
+abstract Enemy {
+    -fieldOfView: Enemy.FieldOfView
+	-randomDelay: double
+    +Enemy(position: Point, width: int, height: int)
+    #applyGroundMovement(context: GameContext): void 
+    +isOnLedge(fixedObjectList: List<FixedObject>): boolean 
+    -setRandomHorizontalVelocity(): void 
+    #setFov(fov: Enemy.FieldOfView): void 
+    #getFov(): Enemy.FieldOfView
+}
+
+class Enemy_FieldOfView as "Enemy.FieldOfView" {
+    +FieldOfView(position: Point, width: int, height: int)
+    +setX(x: double): void 
+    +setY(y: double): void
+    +update(context: GameContext): void
+}
+
+enum Enemy_RandomHorizontalMovement as "Enemy.RandomHorizontalMovement" {
+    LEFT 
+    RIGHT 
+    IDLE 
+}
+
+Enemy --|> MovingObject
+Enemy *-- Enemy_FieldOfView
+Enemy *-- Enemy_RandomHorizontalMovement 
+Enemy_FieldOfView --|> GameObject 
+Enemy ..> FixedObject 
+
+abstract AttackerRobot {
+    -isAttacking: boolean 
+    +AttackerRobot(position: Point, width: int, height: int)
+    {abstract}#produceAttack(): AttackerRobot.Attack //abstract
+    #setAttackingState(isAttacking: boolean): void 
+    +isAttacking(): boolean 
+}
+
+abstract AttackerRobot_Attack as "AttackerRobot.Attack" {
+    -attacker: AttackerRobot 
+    -type:  AttackerRobot.Attack.Type
+    +Attack(type: AttackerRobot.Attack.Type, position: Point, width: int, height: int)
+    +getAttacker(): AttackerRobot
+    +getType(): AttackerRobot.Attack.Type
+}
+
+enum AttackerRobot_Attack_Type as "AttackerRobot.Attack.Type" {
+    ISTANT 
+    PROLONGED 
+}
+
+AttackerRobot --|> Enemy 
+AttackerRobot *-- AttackerRobot_Attack
+AttackerRobot_Attack --|> MovingObject 
+AttackerRobot_Attack *-- AttackerRobot_Attack_Type
+AttackerRobot_Attack --> AttackerRobot
+
+class BlackOrb {
+    +BlackOrb(position: Point, width: int, height: int)
+    +update(contex: GameContext): void
+}
+
+BlackOrb --|> Enemy
+
+class JumerRobot {
+    -jumpInterval: double
+    +JumerRobot(position: Point, width: int, height: int)
+    +update(contex: GameContext): void
+}
+
+JumerRobot --|> Enemy
+
+class LaserRobot {
+    -attackDuration: double 
+    +LaserRobot(position: Point, width: int, height: int)
+    +update(contex: GameContext): void
+    +produceAttack(): AttackerRobot.Attack
+}
+
+LaserRobot --|> AttackerRobot
+
+class RunnerRobot {
+    -actionDelay: double 
+    -firstTimeColliding: boolean 
+    +RunnerRobot(position: Point, width: int, height: int)
+    +update(contex: GameContext): void
+}
+
+RunnerRobot --|> Enemy 
+
+class ThrowerRobot {
+    -attackCounter: int 
+    +ThrowerRobot(position: Point, width: int, height: int)
+    +update(contex: GameContext): void
+    +produceAttack(): AttackerRobot.Attack
+}
+
+ThrowerRobot --|> AttackerRobot
+
+abstract EnemyFactory {
+    {static}+produce(position: Point, width: int, height: int, enemyType: EnemyFactory.Type)
+}
+
+enum EnemyFactory_Type  as "EnemyFactory.Type" {
+    RUNNER
+    JUMPER
+    THROWER
+    LASER
+    BLACKORB
+}
+
+EnemyFactory *-- EnemyFactory_Type  
+EnemyFactory ..> Point 
+
+
+@enduml

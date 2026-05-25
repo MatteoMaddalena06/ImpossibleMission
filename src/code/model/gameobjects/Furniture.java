@@ -122,7 +122,7 @@ public class Furniture extends GameObject
 		EventDispatcher.notify(new StopSimulation(LOOT_WAITING));
 		
 		player.setSearchingState(false);
-		context.getCurrentRoom().removeForniture(this);
+		context.getCurrentRoom().removeFurniture(this);
 	}
 	
 	/**
