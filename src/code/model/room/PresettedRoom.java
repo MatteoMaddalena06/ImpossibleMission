@@ -201,12 +201,4 @@ public enum PresettedRoom
 	 */
 	public Room getRoom()
 	{ return new Room(RoomMapParser.parse(roomMap), color, exitLayout, (leftSpawnPosition != null) ? new Point(leftSpawnPosition): null, (rightSpawnPosition != null) ? new Point(rightSpawnPosition) : null); }
-	
-	/** 
-	 * Restituisce la lista dei mobili della stanza che l'istanza enumerativa su cui viene chiamato il metodo rappresenta
-	 * @return
-	 * la lista di mobili
-	 */
-	public List<Furniture> getFurnitures()
-	{ return RoomMapParser.parse(roomMap).stream().filter(g -> g instanceof Furniture).map(g -> (Furniture)g).toList(); }
 }
